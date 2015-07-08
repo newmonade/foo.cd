@@ -59,10 +59,15 @@ Secondary
 
 Documentation
 
+<!---
+![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
+-->
+
+
 -+=/ Default behaviour
 Tree	
 	- enter: append songs to playlist and play
-	- shift+enter : append song to playlit
+	- shift+enter : append songs to playlist
 
 Playlist
 	- enter: play
@@ -112,20 +117,20 @@ Example :
 	A tree order like so : %albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title%
 	Would give a tree like :
 		Buena Vista Social Club (cubano)
-			|--	[1996] - Buena Vista Social Club
-					|--	1. Chan Chan
-					|--	2. De Camino A La Vereda
-					|--	...
+			|-- [1996] - Buena Vista Social Club
+					|-- 1. Chan Chan
+					|-- 2. De Camino A La Vereda
+					|-- ...
 		George Duke (Jazz)
-			|--	[1974] - Feel
-			|--	[1975] - The Aura Will Prevail
-			|--	[2006] - The Essential
+			|-- [1974] - Feel
+			|-- [1975] - The Aura Will Prevail
+			|-- [2006] - The Essential
 					|-- Disc 1
-						|--	1. Scuse me miss
-						|--	2. Reach for it
-						|--	...
-					|--	Disc 2
-			|--	[2008] - Dukey Treats
+						|-- 1. Scuse me miss
+						|-- 2. Reach for it
+						|-- ...
+					|-- Disc 2
+			|-- [2008] - Dukey Treats
 		...	
 		
 	
