@@ -1,7 +1,7 @@
 Presentation
 =============
 
-A simple audio player based on Qt, GStreamer and Python. Functionalities include customizable tree view, playlist view, global shortcuts, remote control, and web radio
+A simple audio player based on Qt, GStreamer and Python. Functionalities include customizable tree view, playlist view, global shortcuts, remote control, and web radio.
 
 
 <!---
@@ -24,10 +24,10 @@ Playlist
 Shortcuts
 =============
 
-Combination of the modifier+key to trigger shortcut. Modifier can take value among: Ctrl, Shift, Alt, Meta (windows key), and can be combined using `+` e.g. Ctrl+Shift.
+Shortcuts concist of a combination of a modifier+key to trigger an action. They can all be set in the config file. Modifier takes value among: `Ctrl, Shift, Alt, Meta (windows key)`, and can be combined using `+` e.g. `Ctrl+Shift`.
 
 Keys are named: A, B, ..., F1, F2, ..., Left, Right, 
-and can be combined using `+`, e.g. A+B, Ctrl+A, ... 
+and can be combined using `+`, e.g. `A+B, Ctrl+A, ... `
 
 Thus a config file could contain:
 ```
@@ -50,25 +50,21 @@ Functionalities:
 Tree order and Playlist columns functions
 =============
 
-	- tags: %tag% e.g. %albumartist%, %date%, %album%, %artist%, ...
-	- optional parts: $...$ e.g. $Disc %discnumber%$ will display `Disc 1`
+- tags: %tag% e.g. `%albumartist%, %date%, %album%, %artist%, ...`
+- optional parts: `$...$` e.g. `$Disc %discnumber%$` will display 'Disc 1'
 		for files having a discnumber tag, and nothing for the others
-	- separator: `|` used as sub-level for the tree, new column for the playlist
+- separator: `|` used as sub-level for the tree, new column for the playlist
 	
 All tags : length, samplerate, channels, bitrate, plus any tag in your file
 Special tags : 
-	- file : path of the file
-	- albumartist : if the tag exist in the file it contains the value 
-					otherwise contains the artist tag.
-					Useful for compilation type CDs
-	- trackartist : contains the artist tag for albums having an albumartist tag
+- file : path of the file
+- albumartist : if the tag exist in the file it contains the value otherwise contains the artist tag. Useful for compilation type CDs.
+- trackartist : contains the artist tag for albums having an albumartist tag
 
 
 A tree order like : `%albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title%`
 
-
 Would give a tree like :
-
 
 ```
 		Buena Vista Social Club (cubano)
