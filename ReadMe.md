@@ -28,7 +28,7 @@ Playlist
 Shortcuts
 =============
 
-Shortcuts concist of a combination of a *modifier+key* to trigger an action. They can all be customized in the config file. Modifier takes value among: `Ctrl, Shift, Alt, Meta (windows key)`, and can be combined using `+` e.g. `Ctrl+Shift`.
+Shortcuts concist of a combination of *modifier+key* to trigger an action. They can all be customized in the config file. Modifier takes value among: `Ctrl, Shift, Alt, Meta (windows key)`, and can be combined using `+` e.g. `Ctrl+Shift`.
 
 Keys are named: `A, B, ..., F1, F2, ..., Left, Right, Tab, Del, Ins, PgUp, Plus, Minus, ...,` and can be combined using `+`, e.g. `A+B, Ctrl+A, ... `
 
