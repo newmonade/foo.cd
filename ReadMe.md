@@ -13,12 +13,12 @@ A simple audio player based on Qt, GStreamer and Python. Functionalities include
 Default behaviour
 =============
 Tree	
-- enter: append songs to playlist and play
-- shift+enter : append songs to playlist
+- Enter: append songs to playlist and play
+- Shift+enter : append songs to playlist
 
 Playlist
-- enter: play
-- del: delete song from playlist 
+- Enter: play
+- Del: delete song from playlist 
 
 
 Shortcuts
@@ -35,6 +35,7 @@ modifier = Ctrl
 play_pause = Shift+Space
 stop = A
 ```
+Pressing `Ctrl+Shift+Space` would pause the playback, `Ctrl+A` would stop the playback.
 
 Functionalities:
 - play/pause
