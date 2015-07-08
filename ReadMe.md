@@ -24,17 +24,19 @@ Playlist
 Shortcuts
 =============
 
-Shortcuts concist of a combination of a modifier+key to trigger an action. They can all be set in the config file. Modifier takes value among: `Ctrl, Shift, Alt, Meta (windows key)`, and can be combined using `+` e.g. `Ctrl+Shift`.
+Shortcuts concist of a combination of a *modifier+key* to trigger an action. They can all be set in the config file. Modifier takes value among: `Ctrl, Shift, Alt, Meta (windows key)`, and can be combined using `+` e.g. `Ctrl+Shift`.
 
 Keys are named: `A, B, ..., F1, F2, ..., Left, Right, Tab, Del, Ins, PgUp, Plus, Minus, ...,` and can be combined using `+`, e.g. `A+B, Ctrl+A, ... `
 
-Thus a config file could contain:
+Thus for a config file like:
 ```
+...
 modifier = Ctrl
 play_pause = Shift+Space
 stop = A
+...
 ```
-Pressing `Ctrl+Shift+Space` would pause the playback, `Ctrl+A` would stop the playback.
+Pressing `Ctrl+Shift+Space` would *pause* the playback, `Ctrl+A` would *stop* the playback.
 
 Functionalities:
 - play/pause
@@ -50,11 +52,11 @@ Tree order and Playlist columns functions
 =============
 
 - Tags: `%tag%` e.g. `%albumartist%, %date%, %album%, %artist%, ...`
-- Optional parts: `$...$` e.g. `$Disc %discnumber%$` will display 'Disc 1'
+- Optional parts: `$...$` e.g. `$Disc %discnumber%$` will display *Disc 1*
 		for files having a discnumber tag, and nothing for the others
 - Separator: `|` used as sub-level for the tree, new column for the playlist
 	
-All tags : `%length%, %samplerate%, %channels%, %bitrate%`, plus any tag in your file
+Tags : `%length%, %samplerate%, %channels%, %bitrate%`, plus any tag in your file
 
 Special tags : 
 - `%file%` : path of the file
