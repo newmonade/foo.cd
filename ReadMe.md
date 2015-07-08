@@ -1,38 +1,42 @@
-Documentation
+Presentation
 =============
+
+A simple audio player based on Qt, GStreamer and Python. Functionalities include customizable tree view, playlist view, global shortcuts, remote control, and web radio
+
+
 <!---
 ![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
 -->
 
 
+
 Default behaviour
 =============
 Tree	
-	- enter: append songs to playlist and play
-	- shift+enter : append songs to playlist
+- enter: append songs to playlist and play
+- shift+enter : append songs to playlist
 
 Playlist
-	- enter: play
-	- del: delete song from playlist 
+- enter: play
+- del: delete song from playlist 
 
 
 Shortcuts
 =============
 
-Combination of the modifier+key to trigger shortcut. 
-Modifier can take value among: Ctrl, Shift, Alt, Meta (windows key),
-and can be combined using `+` e.g. Ctrl+Shift
+Combination of the modifier+key to trigger shortcut. Modifier can take value among: Ctrl, Shift, Alt, Meta (windows key), and can be combined using `+` e.g. Ctrl+Shift.
 
 Keys are named: A, B, ..., F1, F2, ..., Left, Right, 
-Tab, Del, Ins, PgUp, Plus, Minus, ..., 
-keys can be combined using `+`, e.g. A+B, Ctrl+A, ... 
+and can be combined using `+`, e.g. A+B, Ctrl+A, ... 
 
 Thus a config file could contain:
+'''
 modifier = Ctrl
 play_pause = Shift+Space
 stop = A
+'''
 
-Functionalities	 
+Functionalities:
 	- play/pause
 	- stop
 	- next
@@ -44,6 +48,7 @@ Functionalities
 
 Tree order and Playlist columns functions
 =============
+
 	- tags: %tag% e.g. %albumartist%, %date%, %album%, %artist%, ...
 	- optional parts: $...$ e.g. $Disc %discnumber%$ will display `Disc 1`
 		for files having a discnumber tag, and nothing for the others
