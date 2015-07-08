@@ -1,7 +1,7 @@
 Presentation
 =============
 
-A simple audio player based on Python, Qt, GStreamer and TagLib. Functionalities include customizable tree view, playlist view, global shortcuts, remote control, and web radio. The GUI is freely - and mostly - inspired by foobar2000 default interface.
+A simple audio player based on Python, Qt, GStreamer and TagLib. Functionalities include customizable tree view, playlist view, gapeless playback, global shortcuts, remote control, and web radio. All kinds of audio files are supported, provided that you installed the related gst-plugin (might already be installed on your computer). The GUI is freely - and mostly - inspired by foobar2000 default interface.
 
 
 <!---
