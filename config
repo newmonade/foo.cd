@@ -1,0 +1,17 @@
+[options]
+tree_order = %albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title% $- %trackartist%$
+playlist_order = %date% | %tracknumber%. %title% | %artist% - %album%
+#music_folder = /mnt/Torrenting/My Music
+music_folder = /mnt/Data/Documents/Boogie Bones
+cover_names = cover | Cover | folder | Folder
+extensions = png | jpg | jpeg
+
+[shortcuts]
+modifier=Meta
+quit = Q
+play_pause = Space
+stop = A
+volume_up = Right
+volume_down = Left
+previous = Up
+next = Down
