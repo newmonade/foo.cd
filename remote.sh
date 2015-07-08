@@ -52,7 +52,7 @@ do
 		d) echo "tree_right" > $SCRIPTPATH/$PIPE;;
 		1) echo "play_pause" > $SCRIPTPATH/$PIPE;;
 		2) echo "stop" > $SCRIPTPATH/$PIPE;;
-		7) echo "quit" > $SCRIPTPATH/$PIPE; i=1 ;;
+		9) echo "quit" > $SCRIPTPATH/$PIPE; i=1 ;;
 		*) printf "ERROR: Invalid selection"; printf $ui;;
 	esac
 	
