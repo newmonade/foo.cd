@@ -1,0 +1,130 @@
+
+Pour les tags : pytaglib
+Pour l'interface : pyqt
+Pour l'audio ? : GStreamerAudio
+		C'est a dire : le paquet gst-python  dans Community,
+			 python-gobject dans Extra
+			... ouf
+			...et gst-libav pour lire les mp3 et flac
+
+Done
+	fichier conf -> done
+	sort function -> done
+	ajout d'un noeud non feuille a la playlist -> done
+	gapeless playback -> Implemeted ???
+	si suppression de l'élément joué, arreter la lecture -> done
+	ajout d'un sous dossier a la database -> done
+	Commande par interface distance (raccourcis globaux et ssh) -> Done
+	search tabs-> Done
+	fuzy search dans la librairie -> Done
+	Gestion des covers ->Done
+	Gestion des raccourcis parametrables -> Done
+
+Primary
+
+	- Boutons play pause stop next previous -> In progress
+
+	- gestion des dossiers de la librairie 
+		* ajout d'un dossier ->Done
+		* suppression -> inutile ?
+
+	- Reminder des shortcuts -> Done
+		* Soit tous définit dans le fichier de conf donc l'utilisateur
+		les connais => à supprimer
+		* Soit foo.cd est gentil et doit afficher les raccourcis définis
+		dans le fichier de conf -> Done
+
+	- Replay Gain ->TBD
+	- Search functions dans la librairie ->TBD
+	- Ajouter à la suite dans une playlist -> Done
+
+Secondary
+	- Histogramme display
+	- style de la barre de volume (stylesheet)
+	- Bug: log erreur de gst dans console quand joue une chanson depuis le tree, 
+		fait stop puis play sans etre entré dans la table
+		Meme si on garde ce message d'erreur, définir un comportement
+		lorsque l'on stop puis que l'on fait play : 
+		* reprise du début de la playlist, 
+		* du début de la derniere chanson jouée ?->Done
+	- Web radio -> In progress
+	- Randomize playlist/Shuffle
+	- option pour activer ou desactiver remote interface 
+
+
+---------------------------------------------------------------------
+
+
+
+Documentation
+
+-+=/ Default behaviour
+-= Tree	
+	- enter: append songs to playlist and play
+	- shift+enter : append song to playlit
+
+-= Playlist
+	- enter: play
+	- del: delete song from playlist 
+
+
+-+=/ Shortcuts
+-= Combination of the modifier+key to trigger shortcut. Modifier key can take 
+value among: Meta (windows key), Ctrl, Shift, Alt.
+
+-= All other keys are are named: A, B, ..., F1, F2, ..., Left, Right, Tab, Del, 
+Ins, PgUp, Plus, Minus, ..., (keys can be combined using `+`, e.g. A+B, Ctrl+A, ...), 
+...
+
+-= Functionalities	 
+	- play/pause
+	- stop
+	- next
+	- previous
+	- quit
+	- volume up
+	- volume down
+
+
+-+=/ Tree order and Playlist columns functions
+	- tags: %tag% e.g. %albumartist%, %date%, %album%, %artist%, ...
+	- optional parts: $...$ e.g. $Disc %discnumber%$ will display 
+		the disc number only for files with existing disc number tag
+	- separator: `|` used as sub-level for the tree, new column for the playlist
+
+
+-+=/ Remote interface
+-= Foo.cd can be controled by writing to a pipe named pipe_test, 
+allowing global shortcuts (using xmonad), ssh control, etc
+
+-= Key words
+	- play_pause
+	- stop
+	- volume_up
+	- volume_down
+	- song_next
+	- song_prev
+	- tree_up
+	- tree_down
+	- tree_left
+	- tree_right
+	- tree_validate
+	- tree_append
+	- quit
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+echo # Foo.cd >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/newmonade/Foo.cd.git
+git push -u origin master
