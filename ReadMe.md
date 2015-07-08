@@ -8,6 +8,9 @@ A simple audio player based on Python, Qt, GStreamer and TagLib. Functionalities
 ![Alt text](/relative/path/to/img.jpg?raw=true "Optional Title")
 -->
 
+Installation
+=============
+Install the dependencies: pyTagLib, pyQt4, gst-python 1.0. Copy the repository in a folder. Create a named pipe called pipe_test in that folder by running `mkfifo pipe_test`. Run with Python3 ! (and hope everything is OK)
 
 
 Default behaviour
