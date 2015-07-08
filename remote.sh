@@ -1,8 +1,6 @@
 ﻿#!/bin/bash
 
-
 i="0"
-
 
 # Absolute path this script is in
 SCRIPTPATH=$(dirname $(readlink -f "$0"))
@@ -10,22 +8,20 @@ PIPE="pipe_test"
 
 echo -e \\033c
 	
-	echo '	            -=+/  Foo.cd pipe commands  \+=-'
+	echo -e '\e[91m	  -=+/  Foo.cd pipe commands  \+=- \e[39m'
 	echo ""
-	echo '	1.play/pause    2.stop'
+	echo -e "\e[37m	Play/Pause       Stop         Quit \e[21m"
+	echo -e "\e[1m	    1             2            9 \e[21m"
 	echo ""
-	echo ""
-	echo "	Navigate                Volume            Next/Previous"
-	echo "	in Tree                 Up/Down               Song "
-	echo '	    Z                                           ↑'
-	echo '	  Q S D                  ←  →                   ↓'
-	echo ""
-	echo ""
-	echo "	Validate               Append"
-	echo "	Enter                  TBD  "
+	echo -e "\e[37m	 Navigate       Volume      Previous/"
+	echo -e "	 in Tree        Up/Down     Next Song \e[39m"
+	echo -e '\e[1m	    Z                          ↑'
+	echo -e '	  Q S D          ←  →          ↓ \e[21m'
 	echo ""
 	echo ""
-	echo '	7. quit'
+	echo -e "\e[37m	 Validate       Append  \e[21m"
+	echo -e "\e[1m	  Enter          TBD \e[21m"
+	echo ""
 	echo ""
 	
 while [ $i -lt 1 ]
