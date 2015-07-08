@@ -91,7 +91,7 @@ Remote interface
 =============
 
 Foo.cd can be controlled by writing to a pipe named pipe_test, 
-allowing global shortcuts (e.g. using xmonad), ssh control, etc. The remote script provide an example of that behaviour
+allowing global shortcuts (e.g. using xmonad), ssh control, etc. The `remote.sh` script provide an example of that behaviour
 
 Key words:
 - play_pause
