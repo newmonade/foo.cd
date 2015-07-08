@@ -32,7 +32,7 @@ Shortcuts concist of a combination of *modifier+key* to trigger an action. They 
 
 Keys are named: `A, B, ..., F1, F2, ..., Left, Right, Tab, Del, Ins, PgUp, Plus, Minus, ...,` and can be combined using `+`, e.g. `A+B, Ctrl+A, ... `
 
-Thus for a config file like:
+Thus for a config file as:
 ```
 ...
 modifier = Ctrl
@@ -70,9 +70,9 @@ Special tags :
 - `%trackartist%` : contains the artist tag for albums having an albumartist tag
 
 
-A tree order like : `%albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title%`
+A tree order as : `%albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title%`
 
-Would give a tree like :
+Would give the following tree :
 
 ```
 		Buena Vista Social Club (cubano)
