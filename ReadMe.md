@@ -40,7 +40,7 @@ play_pause = Shift+Space
 stop = A
 ...
 ```
-Pressing `Ctrl+Shift+Space` would *pause* the playback, `Ctrl+A` would *stop* the playback.
+Pressing `Ctrl+Shift+Space` will *pause* the playback, `Ctrl+A` will *stop* the playback.
 
 Functionalities:
 - play/pause
