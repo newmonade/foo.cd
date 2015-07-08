@@ -42,7 +42,7 @@ stop = A
 ```
 Pressing `Ctrl+Shift+Space` will *pause* the playback, `Ctrl+A` will *stop* the playback.
 
-Functionalities:
+Actions:
 - play/pause
 - stop
 - next
