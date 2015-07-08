@@ -30,20 +30,20 @@ Keys are named: A, B, ..., F1, F2, ..., Left, Right,
 and can be combined using `+`, e.g. A+B, Ctrl+A, ... 
 
 Thus a config file could contain:
-'''
+```
 modifier = Ctrl
 play_pause = Shift+Space
 stop = A
-'''
+```
 
 Functionalities:
-	- play/pause
-	- stop
-	- next
-	- previous
-	- quit
-	- volume up
-	- volume down
+- play/pause
+- stop
+- next
+- previous
+- quit
+- volume up
+- volume down
 
 
 Tree order and Playlist columns functions
@@ -62,10 +62,14 @@ Special tags :
 					Useful for compilation type CDs
 	- trackartist : contains the artist tag for albums having an albumartist tag
 
-	
-Example :
-	A tree order like so : %albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title%
-	Would give a tree like :
+
+A tree order like : `%albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title%`
+
+
+Would give a tree like :
+
+
+```
 		Buena Vista Social Club (cubano)
 			|-- [1996] - Buena Vista Social Club
 					|-- 1. Chan Chan
@@ -82,27 +86,25 @@ Example :
 					|-- Disc 2
 			|-- [2008] - Dukey Treats
 		...	
-		
+```		
 	
 Remote interface
 =============
 
 Foo.cd can be controlled by writing to a pipe named pipe_test, 
-allowing global shortcuts (e.g. using xmonad), ssh control, etc.
-
-The remote script provide an example of that behaviour
+allowing global shortcuts (e.g. using xmonad), ssh control, etc. The remote script provide an example of that behaviour
 
 Key words:
-	- play_pause
-	- stop
-	- volume_up
-	- volume_down
-	- song_next
-	- song_prev
-	- tree_up
-	- tree_down
-	- tree_left
-	- tree_right
-	- tree_validate
-	- tree_append
-	- quit
+- play_pause
+- stop
+- volume_up
+- volume_down
+- song_next
+- song_prev
+- tree_up
+- tree_down
+- tree_left
+- tree_right
+- tree_validate
+- tree_append
+- quit
