@@ -193,7 +193,7 @@ class Foo(QtGui.QMainWindow):
 		#scanMusicFolderAction.setStatusTip('Create new file') 
 		scanMusicFolderAction.triggered.connect(self.scanMusicFolder)
 		actionMenu.addAction(scanMusicFolderAction)
-		showShortcutAction.triggered.connect(Foo.showShortcut)
+		showShortcutAction.triggered.connect(self.showShortcut)
 		actionMenu.addAction(showShortcutAction)
 		addFolderToLibraryAction.triggered.connect(self.addFolderToLibrary)
 		actionMenu.addAction(addFolderToLibraryAction)
@@ -207,7 +207,7 @@ class Foo(QtGui.QMainWindow):
 		self.thread.start()
 	
 	#Action 2 du menu
-	def showShortcut():
+	def showShortcut(self):
 		dictSC = Foo.readConfigShortcuts()
 		message = '''<b>'''+dictSC['modifier']+'''+'''+dictSC['stop']+'''</b> : Stop<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['quit']+'''</b> : Quit<br/>''' + '''
@@ -216,8 +216,11 @@ class Foo(QtGui.QMainWindow):
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['next']+'''</b> : Next<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['volume_down']+'''</b> : Volume down<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['volume_up']+'''</b> : Volume up<br/>'''
-		QMessageBox.about(None, 'About Message',
+		print(len(self.findChildren(QtCore.QObject)))
+		box = QMessageBox.about(self, 'About Message',
 		message)
+		print(len(self.findChildren(QtCore.QObject)))
+		print('must delete')
 
 	#Action3 du menu
 	#Must be subdirectory of music folder otherwise wont be rescanned

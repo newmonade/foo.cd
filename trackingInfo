@@ -22,6 +22,8 @@ Done
 
 Primary
 
+	- refactoriser le code : class player a part, séparer aussi search bar et boutons et l'image de la classe table
+	-deleteLater quaand ferme widget
 	- Boutons play pause stop next previous -> In progress
 
 	- gestion des dossiers de la librairie 

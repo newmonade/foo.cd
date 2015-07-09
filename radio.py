@@ -410,7 +410,7 @@ class TableRadio(QtGui.QTableView):
 
 	def focusOutEvent(self, e):
 		self.selectionModel().clearSelection()
-
+	
 	def focusInEvent(self, e):
 		currentIndex= self.model().index(self.selectionModel().currentIndex().row(),0)
 		currentIndex2=self.model().index(currentIndex.row(),self.model().columnCount()-1)
@@ -419,8 +419,8 @@ class TableRadio(QtGui.QTableView):
 			currentIndex2=self.model().index(0,self.model().columnCount()-1)
 			self.selectionModel().setCurrentIndex(currentIndex,QItemSelectionModel.Rows)
 		
-		self.selectionModel().select(QItemSelection(currentIndex,currentIndex2),QItemSelectionModel.Select)
-
+		self.selectionModel().select(QItemSelection(currentIndex, currentIndex2),QItemSelectionModel.Select)
+	
 
 	#met a jour les signes '[ ]' et '>'
 	#est forcement appellé par la touche entré venant de l'arbre ou 
