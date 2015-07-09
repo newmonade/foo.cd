@@ -15,3 +15,7 @@ volume_up = Right
 volume_down = Left
 previous = Up
 next = Down
+
+[radios]
+column_order = %name% | %file%
+stations = tsf jazz ! http://tsfjazz.ice.infomaniak.ch:80/tsfjazz-high | divergence fm ! http://stream.divergence-fm.org/divergence.ogg

@@ -19,7 +19,8 @@ from threads import WorkThreadPipe
 from table import Table
 
 
-
+#A enlever une fois les tests fini et integrer dans le code
+from radio import TableRadio
 
 
 
@@ -32,7 +33,7 @@ class Foo(QtGui.QMainWindow):
         
 	def initUI(self):
 		config = Foo.readConfig()
-
+		self.radio = True
 		self.statusBar().showMessage('Ready')
 		self.createMenu()
 		self.setWindowTitle("Foo.cd")
@@ -43,19 +44,24 @@ class Foo(QtGui.QMainWindow):
 		mainLayout.setContentsMargins(4, 4, 4, 4)
 
 		splitterLeftRight = QtGui.QSplitter()
-		splitterTopBottom = QtGui.QSplitter(Qt.Vertical, self)
+		self.splitterTopBottom = QtGui.QSplitter(Qt.Vertical, self)
 		dummyWidget = QtGui.QWidget()
 		frameInfo = QtGui.QFrame()
 		self.tree = Tree(splitterLeftRight, config['tree_order'])
 		
-		self.table=Table( self.tree, config)
+		if not self.radio:
+			self.table=Table( self.tree, config)
+			self.tree.addAndPlaySongs.connect(self.table.addAndPlaySongsFromTree)
+			self.tree.addSongs.connect(self.table.addSongsFromTree)
+			self.table.songUpdate.connect(self.update)
+			self.table.searchLine.returnPressed.connect(self.startSearch)
+		else:
+			configRadio = Foo.readConfigRadios()
+			self.table=TableRadio( self.tree, configRadio)
 		
 		
 		
-		self.tree.addAndPlaySongs.connect(self.table.addAndPlaySongsFromTree)
-		self.tree.addSongs.connect(self.table.addSongsFromTree)
-		self.table.songUpdate.connect(self.update)
-		self.table.searchLine.returnPressed.connect(self.startSearch)
+			
 		
 		
 		
@@ -85,16 +91,16 @@ class Foo(QtGui.QMainWindow):
 	
 			
 		frameInfo.setLayout(layout)
-		splitterTopBottom.addWidget(self.table)
-		splitterTopBottom.addWidget(frameInfo)
-		splitterTopBottom.setStretchFactor(0,3)
-		splitterTopBottom.setStretchFactor(1,1)
+		self.splitterTopBottom.addWidget(self.table)
+		self.splitterTopBottom.addWidget(frameInfo)
+		self.splitterTopBottom.setStretchFactor(0,3)
+		self.splitterTopBottom.setStretchFactor(1,1)
 		
 		
 		
 		
 		splitterLeftRight.addWidget(self.tree)
-		splitterLeftRight.addWidget(splitterTopBottom)
+		splitterLeftRight.addWidget(self.splitterTopBottom)
 		splitterLeftRight.setStretchFactor(0,2)
 		splitterLeftRight.setStretchFactor(1,3)
 
@@ -161,15 +167,28 @@ class Foo(QtGui.QMainWindow):
 		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
 		return dict(parser.items('shortcuts'))
 
+	@staticmethod
+	def readConfigRadios():
+		from configparser import RawConfigParser
+		parser = RawConfigParser()
+		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
+		return dict(parser.items('radios'))
+
+
 
 	#Create menu bar
 	def createMenu(self):
 		self.menuBar()
 		self.menuBar().setVisible(False)
-		actionMenu = self.menuBar().addMenu('Action')
+		actionMenu = self.menuBar().addMenu('&Action')
 		scanMusicFolderAction = QtGui.QAction('Scan Music Folder', self) 
 		showShortcutAction = QtGui.QAction('Show Shortcut',self)
 		addFolderToLibraryAction = QtGui.QAction('Add Folder to Library',self) 
+		toggleRadioAction= QtGui.QAction('Switch to Radio mode',self)
+		if not self.radio: 
+			toggleRadioAction.setText('Switch to Radio mode')
+		else:
+			toggleRadioAction.setText('Switch to Library mode') 
 		#scanMusicFolderAction.setShortcut('Ctrl+N') 
 		#scanMusicFolderAction.setStatusTip('Create new file') 
 		scanMusicFolderAction.triggered.connect(self.scanMusicFolder)
@@ -178,8 +197,10 @@ class Foo(QtGui.QMainWindow):
 		actionMenu.addAction(showShortcutAction)
 		addFolderToLibraryAction.triggered.connect(self.addFolderToLibrary)
 		actionMenu.addAction(addFolderToLibraryAction)
-
-
+		toggleRadioAction.triggered.connect(self.toggleRadio)
+		actionMenu.addAction(toggleRadioAction)
+		
+		
 	#Action 1 du menu
 	def scanMusicFolder(self):
 		self.thread = WorkThread(Foo.readConfig()['music_folder'], False)
@@ -210,6 +231,16 @@ class Foo(QtGui.QMainWindow):
 		self.thread.start()
 		print(dir)
 
+	#Action4 du menu
+	#Must be subdirectory of music folder otherwise wont be rescanned
+	def toggleRadio(self):
+		#self.table.close()
+		if not self.radio:
+			self.table.close()
+			configRadio = Foo.readConfigRadios()
+			self.table=TableRadio( self.splitterTopBottom, configRadio)
+		else:
+			self.table.close()
 
 	@QtCore.pyqtSlot()
 	def startSearch(self):
