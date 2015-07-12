@@ -50,6 +50,7 @@ Actions:
 - quit
 - volume up
 - volume down
+- toggle radio mode
 
 
 Tree order and Playlist columns functions
@@ -112,4 +113,5 @@ Key words:
 - tree_right
 - tree_validate
 - tree_append
+- radio_mode
 - quit

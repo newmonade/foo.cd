@@ -6,12 +6,14 @@ from PyQt4.QtGui import (QWidget, QTreeView, QStandardItemModel, QAbstractItemVi
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-import song
+#import song
 from song import Song
+import thread
+
 
 class Tree(QTreeView):
 	def sortFunc(self,chanson):
-		return chanson.getOptionalAttribs(self.comm, True)
+		return chanson.getOptionalValues(self.comm, True)
 
 	
 	def populateTree(self,disco):
@@ -20,7 +22,7 @@ class Tree(QTreeView):
 		if len(disco) < 1:
 			attribs = {}
 		else:
-			attribs = disco[0].getOptionalAttribs(self.comm)
+			attribs = disco[0].getOptionalValues(self.comm)
 		length=len(attribs)
 		
 		
@@ -45,7 +47,7 @@ class Tree(QTreeView):
 		
 		#Pour la tail de la liste
 		for s in disco[1:]:
-			attr = s.getOptionalAttribs(self.comm)
+			attr = s.getOptionalValues(self.comm)
 			length=len(attr) #Ajout, indice foireux?...!!!Il semble pas...
 			#Premier attribut a part car attache a mod
 			if attr[0] != attribs[0]:
@@ -71,8 +73,7 @@ class Tree(QTreeView):
 
 
 
-	addAndPlaySongs = QtCore.pyqtSignal(list)
-	addSongs = QtCore.pyqtSignal(list)
+	addSongs = QtCore.pyqtSignal(list,bool)
 	
 
 	def __init__(self, parent, comm):
@@ -88,7 +89,7 @@ class Tree(QTreeView):
 		self.setSelectionBehavior(QAbstractItemView.SelectRows)
 		self.setHeaderHidden(True)
 
-		db = song.load()
+		db = thread.load()
 
 		songList = []
 		for dict in db:
@@ -116,18 +117,17 @@ class Tree(QTreeView):
 			crawler = index.model().itemFromIndex(index)
 			children=[]
 			self.getChildren(crawler,children)
-			self.addSongs.emit(children)
+			self.addSongs.emit(children, False)
 		elif event.key() == Qt.Key_Return:
-			self.onActivated()
+			index = self.selectedIndexes()[0]
+			crawler = index.model().itemFromIndex(index)
+			children=[]
+			self.getChildren(crawler,children)
+			self.addSongs.emit(children, True)
 		else:
 			QTreeView.keyPressEvent(self, event)
 
-	def onActivated(self):
-		index = self.selectedIndexes()[0]
-		crawler = index.model().itemFromIndex(index)
-		children=[]
-		self.getChildren(crawler,children)
-		self.addAndPlaySongs.emit(children)
+
 		
 
 

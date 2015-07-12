@@ -15,6 +15,8 @@ volume_up = Right
 volume_down = Left
 previous = Up
 next = Down
+radio_mode = R
+
 
 [radios]
 column_order = %name% | %file%

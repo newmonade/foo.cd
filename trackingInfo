@@ -19,37 +19,41 @@ Done
 	fuzy search dans la librairie -> Done
 	Gestion des covers ->Done
 	Gestion des raccourcis parametrables -> Done
-
-Primary
-
-	- refactoriser le code : class player a part, séparer aussi search bar et boutons et l'image de la classe table
-	-deleteLater quaand ferme widget
-	- Boutons play pause stop next previous -> In progress
-
-	- gestion des dossiers de la librairie 
-		* ajout d'un dossier ->Done
-		* suppression -> inutile ?
-
+	- Ajouter à la suite dans une playlist -> Done
+	- Ecrire un readme en markdown pour github -> Done
 	- Reminder des shortcuts -> Done
 		* Soit tous définit dans le fichier de conf donc l'utilisateur
 		les connais => à supprimer
 		* Soit foo.cd est gentil et doit afficher les raccourcis définis
 		dans le fichier de conf -> Done
-
-	- Replay Gain ->TBD
-	- Search functions dans la librairie ->TBD
-	- Ajouter à la suite dans une playlist -> Done
-	- Ecrire un readme en markdown poour github -> Done
-
-Secondary
-	- Histogramme display
-	- style de la barre de volume (stylesheet)
 	- Bug: log erreur de gst dans console quand joue une chanson depuis le tree, 
 		fait stop puis play sans etre entré dans la table
 		Meme si on garde ce message d'erreur, définir un comportement
 		lorsque l'on stop puis que l'on fait play : 
 		* reprise du début de la playlist, 
 		* du début de la derniere chanson jouée ?->Done
+Primary
+
+	- refactoriser le code : class player a part, séparer aussi search bar et boutons et l'image de la classe table
+	-deleteLater quand ferme widget
+	
+	- Boutons play pause stop next previous -> Done
+
+	- gestion des dossiers de la librairie 
+		* ajout d'un dossier ->Done
+		* suppression -> inutile ?
+		
+	- Replay Gain ->TBD
+	- Search functions dans la librairie ->TBD
+	- Politique artwork :
+		* Fixe sur la chanson en train de jouer
+		* Variable sur la chanson selectionée dans la playlist
+		* Variable dans la chanson selectionnée dans l'arbre
+		* Variable sur les deux
+
+Secondary
+	- Histogramme display
+	- style de la barre de volume (stylesheet)
 	- Web radio -> In progress
 	- Randomize playlist/Shuffle
 	- Option pour activer ou desactiver remote interface 
