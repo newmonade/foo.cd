@@ -20,7 +20,7 @@ getStatus
 class TableRadio(TableMother):
 
 	def addRow(self, song):
-		attribs = song.getOptionalValuesDebug('%name%|'+self.radioConfig['prefered_informations'])
+		attribs = song.getOptionalValues('%name%|'+self.radioConfig['prefered_informations'])
 		
 		
 		nodes = [QStandardItem('')]
@@ -46,8 +46,7 @@ class TableRadio(TableMother):
 					value = value.replace('(uint)', '')
 				song.tags[tagName] = value.replace("\\", '')
 		
-		#self.model().columnCount()
-		attribs = song.getOptionalValuesDebug(self.radioConfig['prefered_informations'])
+		attribs = song.getOptionalValues(self.radioConfig['prefered_informations'])
 		
 		self.model().item(self.playingId, 2).setText(attribs[0])
 		

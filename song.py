@@ -86,16 +86,17 @@ class Song:
 	
 	#Add support for optional formating using '$ ... $'
 	def getOptionalValues(self, treeOrder):
+		#TODO Rewrite
 		(emptiedTreeOrder, optionalParts) = Song.getTagName(treeOrder, True)
-		optionalValues = []
+		optionalValues1 = []
 		for part in optionalParts:
 		    (emptiedPart, optionalTagNames) = Song.getTagName(part)
 		    optionalValues = self.getValues(optionalTagNames)
 		    for val in optionalValues:
 		        emptiedPart = emptiedPart.replace('%%', str(val), 1)
-		    optionalValues.append(emptiedPart)
+		    optionalValues1.append(emptiedPart)
 		
-		for val in optionalValues:
+		for val in optionalValues1:
 		    if '???' not in val:
 		        emptiedTreeOrder = emptiedTreeOrder.replace('$$', str(val), 1)
 		    else :
@@ -140,41 +141,15 @@ class Song:
 		return False
 	
 	
-	
+'''	
 #----Debug--------------------------------
-	def getOptionalValuesDebug(self, treeOrder):
-		(emptiedTreeOrder, optionalParts) = Song.getTagName(treeOrder, True)
-		#TODO Rewrite
-		
-		
-		
-		optionalValues1 = []
-		for part in optionalParts:
-		    (emptiedPart, optionalTagNames) = Song.getTagName(part)
-		    
-		    optionalValues = self.getValues(optionalTagNames)
-		    print('optional values:', optionalValues)
-		    for val in optionalValues:
-		        emptiedPart = emptiedPart.replace('%%', str(val), 1)
-		        print('empt:', emptiedPart)
-		    optionalValues1.append(emptiedPart)
-		    print(optionalValues)
-		print('first step finished', optionalValues)
-		
-		for val in optionalValues1:
-		    if '???' not in val:
-		        emptiedTreeOrder = emptiedTreeOrder.replace('$$', str(val), 1)
-		    else :
-		        emptiedTreeOrder = emptiedTreeOrder.replace('$$', '', 1)
-		return self.getFormatedValues(emptiedTreeOrder)	
-	
 tree_order = '%name%|%title%$ - %artist%$$ %genre%$$ %bitrate% bps$'
 dict_db = {
 	"BITRATE": '320',
 	"NAME": "TESTRADIO",
 	"FILE": "/mnt/Data/Documents/Boogie Bones/A/09 Brothers in arms.mp3",
 	"SAMPLERATE": '44100',
-	'CHANNELS': 'fuck',
+	'CHANNELS': '2Iguess',
 	"TITLE": "Brothers in arms",
 	"LENGTH": '489'}
 	
@@ -183,3 +158,4 @@ song = Song(dict_db, tree_order)
 
 	
 print(song.getOptionalValuesDebug(tree_order))
+'''

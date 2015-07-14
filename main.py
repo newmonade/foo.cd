@@ -47,7 +47,7 @@ class Foo(QtGui.QMainWindow):
 		self.player = Player()
 		self.player.bus.connect('message::eos', self.stop)
 		self.player.bus.connect('message::duration-changed', self.onDurationChanged)
-		#self.player.playbin.connect("about-to-finish", self.onAboutToFinish)      
+		   
         
 		
 		
@@ -87,8 +87,9 @@ class Foo(QtGui.QMainWindow):
 			self.table=Table( self.tree, config)
 			self.tree.addSongs.connect(self.addSongsFromTree)
 			
-			
+			self.player.playbin.connect("about-to-finish", self.onAboutToFinish)   
 			self.searchArea.searchLine.returnPressed.connect(self.startSearch)
+			
 			self.table.runAction.connect(self.tableAction)
 		else:
 			configRadio = Foo.readConfigRadios()
@@ -372,12 +373,14 @@ class Foo(QtGui.QMainWindow):
 		self.table.deleteLater()
 		self.table.close()
 		if not self.radio:
+			self.player.playbin.disconnect()
 			configRadio = Foo.readConfigRadios()
 			self.table=TableRadio( self.tree, configRadio)
 			self.player.bus.connect('message::tag', self.table.onTag)
 			self.toggleRadioAction.setText('Switch to Library mode')
 			self.radio=True
 		else:
+			self.player.playbin.connect("about-to-finish", self.onAboutToFinish)
 			config = Foo.readConfig()
 			self.table=Table( self.tree, config)
 			self.toggleRadioAction.setText('Switch to Radio mode')
