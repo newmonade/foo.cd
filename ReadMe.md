@@ -10,7 +10,7 @@ A simple music player based on Python, Qt, GStreamer and TagLib. Functionalities
 
 Installation
 =============
-Install the dependencies: pyTagLib, pyQt4, gst-python 1.0. Copy the repository in a folder. Create a named pipe called pipe_test in that folder by running `mkfifo pipe_test`. Run with Python3 ! (and hope everything is OK)
+Install the dependencies: pyTagLib, pyQt4, gst-python 1.0. Copy the repository in a folder. Create a named-pipe called pipe in that folder by running `mkfifo pipe`. Run with Python3 ! (and hope everything is OK)
 
 
 Default behaviour
@@ -97,7 +97,7 @@ Would give the following tree :
 Remote interface
 =============
 
-Foo.cd can be controlled by writing to a pipe named pipe_test, 
+Foo.cd can be controlled by writing to the pipe, 
 allowing global shortcuts (e.g. using xmonad), ssh control, etc. The `remote.sh` script provide an example of that behaviour
 
 Key words:
