@@ -5,13 +5,13 @@ from PyQt4.QtGui import (QStandardItemModel, QAbstractItemView, QStandardItem,
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-
+import song
 from song import Song
 from table_mother import TableMother
 
 '''
-Interface de table
-signal runAction(str) qui est connecté a Foo.tableAction
+Table interface
+signal runAction(str) connected to Foo.tableAction
 playingID
 displays...
 getStatus
@@ -20,7 +20,9 @@ getStatus
 class TableRadio(TableMother):
 
 	def addRow(self, song):
-		attribs = song.getFormatedValues(self.radioConfig['column_order'])
+		attribs = song.getOptionalValuesDebug('%name%|'+self.radioConfig['prefered_informations'])
+		
+		
 		nodes = [QStandardItem('')]
 		nodes[-1].setData(song) #[-1] is last element
 		for i in attribs:
@@ -30,20 +32,25 @@ class TableRadio(TableMother):
 
 	def onTag(self, bus, msg):
 		taglist = msg.parse_tag()
-		print(taglist.to_string())
-		tags = {}
 		
-		for i in range(0, taglist.n_tags()):
-			tag_name = taglist.nth_tag_name(i)	
-			if taglist.get_string(tag_name)[0]:
-				tags[tag_name] = taglist.get_string(tag_name)[1]
-			
-				'''(success, value) = taglist.get_int(tag_name)
-				
-				if success:
-					tags[tag_name] = value
-				'''
-		print(tags)
+		song = self.model().item(self.playingId, 0).data()
+		(emptiedStr, tagNames) = Song.getTagName(self.radioConfig['prefered_informations'])
+		
+		tagliststringarray = taglist.to_string()[:-1].split(',')[1:]
+		for tagstring in tagliststringarray:
+			(tagName, value) = tagstring.lstrip().split('=', 1)
+			if tagName in tagNames:
+				if 'string' in value:
+					value = value.replace('(string)', '').replace('"', '')
+				elif 'uint' in value:
+					value = value.replace('(uint)', '')
+				song.tags[tagName] = value.replace("\\", '')
+		
+		#self.model().columnCount()
+		attribs = song.getOptionalValuesDebug(self.radioConfig['prefered_informations'])
+		
+		self.model().item(self.playingId, 2).setText(attribs[0])
+		
 
 	def __init__(self, parent, radioConfig):
 		super(QtGui.QTableView, self).__init__(parent)
@@ -70,14 +77,12 @@ class TableRadio(TableMother):
 		self.setEditTriggers(QAbstractItemView.NoEditTriggers)	#Cellules pas editables
 		self.setWordWrap(False)		#Pas de retour a la ligne
 		
-		#Creer une ligne bidon pour afficher les headers
-		#self.addRow(self.radioConfig['column_order'].split('|'))
-		#self.addRow( dict(zip(['name','file'], self.radioConfig['column_order'].split('|') )))
-		self.addRow(Song({'FILE': '', 'LENGTH': '','CHANNELS': '', 'SAMPLERATE': '','BITRATE': ''}, self.radioConfig['column_order'].split('|')))
+		#Dummy line to display headers
+		self.addRow(Song({'FILE': '', 'LENGTH': '','CHANNELS': '', 'SAMPLERATE': '','BITRATE': None, 'NAME':''}, '%name%'+self.radioConfig['prefered_informations']))
 		self.model().removeRow(0)
 
-		#Remplis le titre des headers, avec des majuscules (title())
-		headers = self.radioConfig['column_order'].title().replace('%','').split('|')
+		#Fill in the header, with capital for the first letter(title())
+		headers = ['Name','Informations']
 		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
 		for i,h in enumerate(headers):
 			model.setHeaderData(i+1,QtCore.Qt.Horizontal,h)
@@ -98,7 +103,7 @@ class TableRadio(TableMother):
 			tags['SAMPLERATE']=''
 			tags['BITRATE']=''
 			 
-			self.addRow(Song(tags, self.radioConfig['column_order']))
+			self.addRow(Song(tags, '%name%'+self.radioConfig['prefered_informations']))
 		
 		self.resizeColumnsToContents()
 		self.resizeRowsToContents()
@@ -117,7 +122,7 @@ class TableRadio(TableMother):
 
 		
 	def getStatus(self):
-		print(self.model().item(self.playingId, 0).data().toString())
+		#print(self.model().item(self.playingId, 0).data().toString())
 		radioName = self.model().item(self.playingId, 0).data().tags['name']
 		status = 'Radio '+ radioName +' - Playing'
 		return status

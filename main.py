@@ -39,7 +39,7 @@ class Foo(QtGui.QMainWindow):
 	def initUI(self):
 		config = Foo.readConfig()
 		self.timeOut = -1
-		self.radio = False
+		self.radio = True
 		self.statusBar().showMessage('Ready')
 		self.createMenu()
 		self.setWindowTitle("Foo.cd")
@@ -47,7 +47,7 @@ class Foo(QtGui.QMainWindow):
 		self.player = Player()
 		self.player.bus.connect('message::eos', self.stop)
 		self.player.bus.connect('message::duration-changed', self.onDurationChanged)
-		self.player.playbin.connect("about-to-finish", self.onAboutToFinish)      
+		#self.player.playbin.connect("about-to-finish", self.onAboutToFinish)      
         
 		
 		
@@ -76,7 +76,7 @@ class Foo(QtGui.QMainWindow):
         
 		self.pixmap = Image(self)
 		self.searchArea = SearchArea(self)
-        
+		
 		
 		self.playbackButtons.addWidget(self.volumeSlider)
 		self.playbackButtons.addWidget(self.scrollSlider)	
@@ -94,6 +94,7 @@ class Foo(QtGui.QMainWindow):
 			configRadio = Foo.readConfigRadios()
 			self.table=TableRadio( self.tree, configRadio)
 			self.table.runAction.connect(self.tableAction)
+			self.player.bus.connect('message::tag', self.table.onTag)
 		
 		
 		splitterLeftRight = QtGui.QSplitter()
@@ -201,13 +202,14 @@ class Foo(QtGui.QMainWindow):
 	#triggered by player when a song starts
 	def onDurationChanged(self, bus, msg):
 		self.table.displayNext()
+		print('Duration changed signal !')
 		#status = self.table.getStatus()
 		#self.setStatusEmission(status)
 
 	#triggered by player at the end of a song
 	def onAboutToFinish(self, bus):
 		if self.table.model().rowCount()-1 > self.table.playingId:
-			#print('finish',self.playingId)
+			print('About to finish !')
 			self.table.playingId+=1
 			#print('finish',self.playingId)
 			self.player.add(self.table.model().item(self.table.playingId,0).data().tags['file'])

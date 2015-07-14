@@ -36,9 +36,9 @@ class TableMother(QtGui.QTableView):
 		self.selectionModel().select(QItemSelection(currentIndex,currentIndex2),QItemSelectionModel.Select)
 
 
-	#met a jour les signes '[ ]' et '>'
-	#est forcement appellé par la touche entré venant de l'arbre ou 
-	# d'une ligne de la table
+	#Update signs '[ ]' and '>'
+	#Is called by enter key from the tree
+	# or a line of the table
 	def displayStopToPlay(self, indice):
 		if self.playingId > -1:
 			self.model().item(self.playingId,0).setText('')
@@ -53,9 +53,9 @@ class TableMother(QtGui.QTableView):
 		self.playingId = indice
 
 	
-	#met a jour les signes '||' et '>'
-	#différent du précédent car peut etre appelé par shortcut
-	#et donc ne pas avoir d'indice 
+	#Update signs '[ ]' and '>'
+	#Different than stoptoplay because can be called by a shortcut
+	#Thus not having a positive indice 
 	def displayPauseToPlay(self, indice):
 		if self.playingId > -1:
 			self.model().item(self.playingId,0).setText('')
@@ -70,7 +70,7 @@ class TableMother(QtGui.QTableView):
 			self.model().item(oldPlayingId,0).setText('>')
 			self.playingId = oldPlayingId
 
-	#met a jour les signes '[ ]' et '>'
+	#Update signs '[ ]' and '>'
 	def displayNext(self):
 		if self.playingId > 0:
 			print(self.playingId)
@@ -84,13 +84,13 @@ class TableMother(QtGui.QTableView):
 			
 
 	
-	#met a jour les signes '[ ]' et '>'
+	#Update signs '[ ]' and '>'
 	def displayPlayToStop(self):
 		if self.playingId > -1:
 			self.model().item(self.playingId,0).setText('[ ]')
 			self.playingId = -1
 	
-	#met a jour les signes '||' et '>'
+	#Update signs '||' and '>'
 	def displayPlayToPause(self):
 		if self.playingId > -1:
 			self.model().item(self.playingId,0).setText('||')

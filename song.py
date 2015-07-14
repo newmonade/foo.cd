@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#TODO REMOVE COMMENTED CODE AND USELESS PARAMETERS LIKE sort
+#TODO REMOVE COMMENTED CODE AND USELESS PARAMETERS LIKE sort (if some are left)
 class Song:
 	
 	#add tag names included in 'str' into 'tags'
@@ -70,47 +70,14 @@ class Song:
 		        '''
 		return values
 	
-	'''
-	#return the list of values for tag names tagNameList
-	def getValuesSort(self, tagNameList):
-	#print('called')
-	values = []
-	for name in tagNameList:
-	    if name == 'tracknumber':
-	        try: 
-	            int(self.tags['tracknumber'])
-	            isInt = True
-	        except ValueError:
-	            isInt = False
-	        if isInt:
-	            #Some kind of padding
-	            values.append("%05d" % int(self.tags['tracknumber']))
-	    elif name in self.tags:
-	        values.append(self.tags[name])
-	    else:
-	        values.append("fucked up getValuesSort func from Song")
-	        #if attr == 'albumartist' and 'artist' in self.tag:
-	         #   attribs.append(self.tags['artist'])
-	        #else:
-	        #    attribs.append("error getValues func from Song")
-	        
-	    
-	return values
-	'''
-	
-	
 	#return tag values customized with string around
 	# '[%date%] | -%artist%' will give ['[1998]', '-DaftPunk']
-	def getFormatedValues(self, treeOrder, sort=False):
+	def getFormatedValues(self, treeOrder):
 		treeLevels = [x.strip() for x in treeOrder.split('|')]
 		formatedValues = []
 		for level in treeLevels:
 		    (emptiedLevel, tagNames) = Song.getTagName(level)
-		    '''if sort:
-		        attribs = self.getAttribsSort(tags)
-		    else:
-		        attribs = self.getAttribs(tags)
-		    '''
+		   
 		    values = self.getValues(tagNames)
 		    for val in values:
 		        emptiedLevel = emptiedLevel.replace('%%', str(val), 1)
@@ -118,7 +85,7 @@ class Song:
 		return formatedValues  
 	
 	#Add support for optional formating using '$ ... $'
-	def getOptionalValues(self, treeOrder, sort=False):
+	def getOptionalValues(self, treeOrder):
 		(emptiedTreeOrder, optionalParts) = Song.getTagName(treeOrder, True)
 		optionalValues = []
 		for part in optionalParts:
@@ -174,24 +141,45 @@ class Song:
 	
 	
 	
-tree_order = '%albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title% $- %trackartist%$'
-dict_db = {"TRACKNUMBER": "9/10",
-	"DATE": "2007",
-	"CHANNELS": 2,
-	"BITRATE": 320,
-	"GENRE": "Rock",
+#----Debug--------------------------------
+	def getOptionalValuesDebug(self, treeOrder):
+		(emptiedTreeOrder, optionalParts) = Song.getTagName(treeOrder, True)
+		#TODO Rewrite
+		
+		
+		
+		optionalValues1 = []
+		for part in optionalParts:
+		    (emptiedPart, optionalTagNames) = Song.getTagName(part)
+		    
+		    optionalValues = self.getValues(optionalTagNames)
+		    print('optional values:', optionalValues)
+		    for val in optionalValues:
+		        emptiedPart = emptiedPart.replace('%%', str(val), 1)
+		        print('empt:', emptiedPart)
+		    optionalValues1.append(emptiedPart)
+		    print(optionalValues)
+		print('first step finished', optionalValues)
+		
+		for val in optionalValues1:
+		    if '???' not in val:
+		        emptiedTreeOrder = emptiedTreeOrder.replace('$$', str(val), 1)
+		    else :
+		        emptiedTreeOrder = emptiedTreeOrder.replace('$$', '', 1)
+		return self.getFormatedValues(emptiedTreeOrder)	
+	
+tree_order = '%name%|%title%$ - %artist%$$ %genre%$$ %bitrate% bps$'
+dict_db = {
+	"BITRATE": '320',
+	"NAME": "TESTRADIO",
 	"FILE": "/mnt/Data/Documents/Boogie Bones/A/09 Brothers in arms.mp3",
-	"ALBUM": "Berlin, Meistersaal",
-	"ARTIST": "Mark Knopfler",
-	"SAMPLERATE": 44100,
+	"SAMPLERATE": '44100',
+	'CHANNELS': 'fuck',
 	"TITLE": "Brothers in arms",
-	"LENGTH": 489}
+	"LENGTH": '489'}
 	
-'''
-	song = Song(dict_db, tree_order)
-	(emptiedString, tagNames) = song.getTagName(tree_order)
-	print(tagNames)
-	print(song.getValues(tagNames))
+
+song = Song(dict_db, tree_order)
+
 	
-	print(song.getOptionalValues(tree_order))
-'''
+print(song.getOptionalValuesDebug(tree_order))

@@ -55,7 +55,6 @@ class VolumeSlider(QtGui.QSlider):
 		self.setValue(100)
 		
 	def incr(self):
-		#incrVol = self.playbin.get_property('volume')*100+10
 		position = self.value()
 		if position < 210:
 			self.setValue(position+10)
@@ -63,7 +62,6 @@ class VolumeSlider(QtGui.QSlider):
 			
 	
 	def decr(self):
-		#decrVol = self.playbin.get_property('volume')*100-10
 		position = self.value()
 		if position > 0:
 			self.setValue(position-10)
@@ -82,23 +80,13 @@ def createScrollSlider(parent):
 class Image(QtGui.QLabel):
 
 	def __init__(self, parent):
-		#super(QtGui.QLabel, self).__init__(parent)
-		#self.initUI()
 		QtGui.QLabel.__init__(self)
 		self._pixmap = QtGui.QPixmap(1,1)
 		self.initUI()
         
 	def initUI(self):
-		
-		#myPixmap = QtGui.QPixmap(self.size())
-		#label = QtGui.QLabel()
-
 		self._pixmap.fill(Qt.darkGray)
-		#myPixmap.fill(Qt.darkGray)
-		#myScaledPixmap = myPixmap.scaled(self.size(), Qt.KeepAspectRatio)
 
-		#self.setPixmap(myScaledPixmap)
-		#return label
 
 	def resizeEvent(self, event):
 		self.setPixmap(self._pixmap.scaled(
@@ -109,7 +97,7 @@ class Image(QtGui.QLabel):
 class SearchArea(QtGui.QGridLayout):
 
 	def __init__(self, parent):
-		super(QtGui.QGridLayout, self).__init__(parent)
+		QtGui.QGridLayout.__init__(self)
 		self.initUI()
         
 	def initUI(self):

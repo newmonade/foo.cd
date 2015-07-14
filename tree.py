@@ -13,7 +13,7 @@ import thread
 
 class Tree(QTreeView):
 	def sortFunc(self,chanson):
-		return chanson.getOptionalValues(self.comm, True)
+		return chanson.getOptionalValues(self.comm)
 
 	
 	def populateTree(self,disco):
@@ -40,16 +40,16 @@ class Tree(QTreeView):
 			self.model().appendRow(nodes[0])
 		else:
 			#Create corresponding nodes
-			nodes = [QStandardItem('nOTHING')]
-			nodes[0].setData('tttttt')
+			nodes = [QStandardItem('Nothing')]
+			nodes[0].setData('nothing')
 			self.model().appendRow(nodes[0])
 
 		
 		#Pour la tail de la liste
 		for s in disco[1:]:
 			attr = s.getOptionalValues(self.comm)
-			length=len(attr) #Ajout, indice foireux?...!!!Il semble pas...
-			#Premier attribut a part car attache a mod
+			length=len(attr)
+			#First attribut separated because attached to node
 			if attr[0] != attribs[0]:
 				node=QStandardItem(attr[0])
 				#self.model().appendRow(node)
