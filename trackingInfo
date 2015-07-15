@@ -1,55 +1,45 @@
 
-Pour les tags : pytaglib
-Pour l'interface : pyqt
-Pour l'audio ? : GStreamerAudio
-		C'est a dire : le paquet gst-python  dans Community,
-			 python-gobject dans Extra
-			... ouf
-			...et gst-libav pour lire les mp3 et flac
+For tags : pytaglib
+for GUI : pyqt
+For playback : GStreamerAudio
+		i.e. :  gst-python  in Community,
+			 python-gobject in Extra
+			... ooof
+			...and gst-libav to read mp3 and flac
 
 Done
-	fichier conf -> done
+	conf file -> done
 	sort function -> done
-	ajout d'un noeud non feuille a la playlist -> done
-	gapeless playback -> Implemeted ???
-	si suppression de l'élément joué, arreter la lecture -> done
-	ajout d'un sous dossier a la database -> done
-	Commande par interface distance (raccourcis globaux et ssh) -> Done
+	Add a not leaf node from tree to playlist -> done
+	gapeless playback -> done
+	if remove playing element from playlist, stop playback -> done
+	add subfolder to database -> done
+	Pipe interface (raccourcis globaux et ssh) -> Done
 	search tabs-> Done
-	fuzy search dans la librairie -> Done
-	Gestion des covers ->Done
-	Gestion des raccourcis parametrables -> Done
-	- Ajouter à la suite dans une playlist -> Done
-	- Ecrire un readme en markdown pour github -> Done
-	- Reminder des shortcuts -> Done
-		* Soit tous définit dans le fichier de conf donc l'utilisateur
-		les connais => à supprimer
-		* Soit foo.cd est gentil et doit afficher les raccourcis définis
-		dans le fichier de conf -> Done
-	- Bug: log erreur de gst dans console quand joue une chanson depuis le tree, 
-		fait stop puis play sans etre entré dans la table
-		Meme si on garde ce message d'erreur, définir un comportement
-		lorsque l'on stop puis que l'on fait play : 
-		* reprise du début de la playlist, 
-		* du début de la derniere chanson jouée ?->Done
+	fuzy search in librairie -> Done
+	Artwork ->Done
+	Custom shortcuts -> Done
+	- Add to playlist, w/wo playing -> Done
+	- write readme in markdown for github -> Done
+	- shortcuts reminder-> Done
+	- When playback stoped and toggle play pause : play last song played ->Done
+	- Search functions in librairy -> Done
+	
+	
 Primary
 
-	- refactoriser le code : class player a part, séparer aussi search bar et boutons et l'image de la classe table
-	-deleteLater quand ferme widget
+	- refactorize code : separate class player, search bar and boutons and artwork from table class
+	- deleteLater when closing widget
 	
 	- Boutons play pause stop next previous -> Done
-
-	- gestion des dossiers de la librairie 
-		* ajout d'un dossier ->Done
-		* suppression -> inutile ?
 		
 	- Replay Gain ->TBD
-	- Search functions dans la librairie ->TBD
-	- Politique artwork :
-		* Fixe sur la chanson en train de jouer
-		* Variable sur la chanson selectionée dans la playlist
-		* Variable dans la chanson selectionnée dans l'arbre
-		* Variable sur les deux
+	
+	- Artwork behavior :
+		* Fixed on song playing
+		* Following playlist selection
+		* Following librairy selection
+		* Following playlist and librairy
 	- Tagging functionalities
 		- retagging a song
 		- updateing the database with only that song
@@ -59,7 +49,7 @@ Primary
 	
 	
 Secondary
-	- Histogramme display
+	- Histogram display
 	- volume bar style (stylesheet)
 	- Web radio -> Done
 	- Randomize playlist/Shuffle
