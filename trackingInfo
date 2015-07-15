@@ -53,7 +53,11 @@ Primary
 	- Tagging functionalities
 		- retagging a song
 		- updateing the database with only that song
-		
+	- Update shortcut list in menu
+	- Add support for up and down in pipe in radio mode, and disable left and right
+	- Connect/disconnect on about to finish if radio or playlist mode : myButton.clicked.disconnect(function_B)
+	
+	
 Secondary
 	- Histogramme display
 	- volume bar style (stylesheet)
