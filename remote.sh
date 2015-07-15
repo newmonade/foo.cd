@@ -4,7 +4,7 @@ i="0"
 
 # Absolute path this script is in
 SCRIPTPATH=$(dirname $(readlink -f "$0"))
-PIPE="pipe_test"
+PIPE="pipe"
 
 echo -e \\033c
 	
