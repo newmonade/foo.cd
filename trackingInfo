@@ -50,13 +50,16 @@ Primary
 		* Variable sur la chanson selectionée dans la playlist
 		* Variable dans la chanson selectionnée dans l'arbre
 		* Variable sur les deux
-
+	- Tagging functionalities
+		- retagging a song
+		- updateing the database with only that song
+		
 Secondary
 	- Histogramme display
-	- style de la barre de volume (stylesheet)
+	- volume bar style (stylesheet)
 	- Web radio -> Done
 	- Randomize playlist/Shuffle
-	- Option pour activer ou desactiver remote interface 
+	- Option to activate or deactivaate remote interface 
 	- Webradio tags -> Dirty but yes
 	- webradio images -> API usable but tags from radio very inconcistent
 ---------------------------------------------------------------------
