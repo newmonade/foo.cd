@@ -20,7 +20,7 @@ from table_playlist import Table
 
 from player import Player
 import widget
-from widget import PlaybackButtons, SearchArea, VolumeSlider, Image
+from widget import PlaybackButtons, SearchArea, VolumeSlider, Image, Equalizer
 
 from table_radio import TableRadio
 
@@ -37,9 +37,9 @@ class Foo(QtGui.QMainWindow):
 		self.initUI()
         
 	def initUI(self):
-		config = Foo.readConfig()
+		config = Foo.readConfig('options')
 		self.timeOut = -1
-		self.radio = True
+		self.radio = False
 		self.statusBar().showMessage('Ready')
 		self.createMenu()
 		self.setWindowTitle("Foo.cd")
@@ -48,14 +48,13 @@ class Foo(QtGui.QMainWindow):
 		self.player.bus.connect('message::eos', self.stop)
 		self.player.bus.connect('message::duration-changed', self.onDurationChanged)
 		   
-        
 		
 		
 		
 		
 		
 		self.tree = Tree(self, config['tree_order'])
-		
+		self.tree.customContextMenuRequested.connect(self.tmpTag)
 		
 		
 		self.playbackButtons = PlaybackButtons(None)
@@ -87,7 +86,7 @@ class Foo(QtGui.QMainWindow):
 			self.table=Table( self.tree, config)
 			self.tree.addSongs.connect(self.addSongsFromTree)
 			
-			self.player.playbin.connect("about-to-finish", self.onAboutToFinish)   
+			self.handlerATF = self.player.playbin.connect("about-to-finish", self.onAboutToFinish)   
 			self.searchArea.searchLine.returnPressed.connect(self.startSearch)
 			
 			self.table.runAction.connect(self.tableAction)
@@ -95,7 +94,7 @@ class Foo(QtGui.QMainWindow):
 			configRadio = Foo.readConfigRadios()
 			self.table=TableRadio( self.tree, configRadio)
 			self.table.runAction.connect(self.tableAction)
-			self.player.bus.connect('message::tag', self.table.onTag)
+			self.handlerT = self.player.bus.connect('message::tag', self.table.onTag)
 		
 		
 		splitterLeftRight = QtGui.QSplitter()
@@ -137,7 +136,7 @@ class Foo(QtGui.QMainWindow):
 		self.setCentralWidget(dummyWidget)
 
 
-		dictShortcuts = self.readConfigShortcuts()
+		dictShortcuts = self.readConfig('shortcuts')
 		
 		modifier = dictShortcuts['modifier']+'+'
 		
@@ -284,7 +283,13 @@ class Foo(QtGui.QMainWindow):
 			self.table.displayStopToPlay(index.row())
 			status = self.table.getStatus()
 			self.setStatusEmission(status)
-
+	@staticmethod
+	def readConfig(section):
+		from configparser import RawConfigParser
+		parser = RawConfigParser()
+		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
+		return dict(parser.items(section))
+	'''
 	@staticmethod
 	def readConfig():
 		from configparser import RawConfigParser
@@ -305,8 +310,14 @@ class Foo(QtGui.QMainWindow):
 		parser = RawConfigParser()
 		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
 		return dict(parser.items('radios'))
-
-
+	
+	@staticmethod
+	def readConfigEqualizer():
+		from configparser import RawConfigParser
+		parser = RawConfigParser()
+		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
+		return dict(parser.items('equalizer'))
+	'''
 
 	#Create menu bar
 	def createMenu(self):
@@ -335,12 +346,12 @@ class Foo(QtGui.QMainWindow):
 		
 	# Menu Action 1
 	def scanMusicFolder(self):
-		self.thread = WorkThread(Foo.readConfig()['music_folder'], False)
+		self.thread = WorkThread(Foo.readConfig('options')['music_folder'], False)
 		self.thread.start()
 	
 	# Menu Action 2
 	def showShortcut(self):
-		dictSC = Foo.readConfigShortcuts()
+		dictSC = Foo.readConfig('shortcuts')
 		message = '''<b>'''+dictSC['modifier']+'''+'''+dictSC['stop']+'''</b> : Stop<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['quit']+'''</b> : Quit<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['play_pause']+'''</b> : Play/Pause    <br/>''' + '''
@@ -361,7 +372,7 @@ class Foo(QtGui.QMainWindow):
 	def addFolderToLibrary(self):
 		dir = QFileDialog.getExistingDirectory(None,
 				"Open Directory",
-				Foo.readConfig()['music_folder'],
+				Foo.readConfig('options')['music_folder'],
 				QFileDialog.ShowDirsOnly
 				| QFileDialog.DontResolveSymlinks)
 		self.thread = WorkThread(dir, True)
@@ -373,18 +384,19 @@ class Foo(QtGui.QMainWindow):
 		self.table.deleteLater()
 		self.table.close()
 		if not self.radio:
-			self.player.playbin.disconnect()
-			configRadio = Foo.readConfigRadios()
+			configRadio = Foo.readConfig('radios')
 			self.table=TableRadio( self.tree, configRadio)
-			self.player.bus.connect('message::tag', self.table.onTag)
 			self.toggleRadioAction.setText('Switch to Library mode')
 			self.radio=True
+			self.player.playbin.disconnect(self.handlerATF)
+			self.handlerT = self.player.bus.connect('message::tag', self.table.onTag)
 		else:
-			self.player.playbin.connect("about-to-finish", self.onAboutToFinish)
-			config = Foo.readConfig()
+			config = Foo.readConfig('options')
 			self.table=Table( self.tree, config)
 			self.toggleRadioAction.setText('Switch to Radio mode')
 			self.radio=False
+			self.handlerATF = self.player.playbin.connect("about-to-finish",self.onAboutToFinish)
+			self.player.bus.disconnect(self.handlerT)
 
 		self.splitterTopBottom.addWidget(self.table)
 		# Since the frame is already attached to the splitter, 
@@ -450,7 +462,163 @@ class Foo(QtGui.QMainWindow):
 			self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Return, Qt.KeyboardModifier(QtCore.Qt.ShiftModifier), ''))
 		if key == 'radio_mode':
 			self.shortRadioMode.activated.emit()
+
+
+
+	def tmpTag(self):
+		index = self.tree.selectedIndexes()[0]
+		crawler = index.model().itemFromIndex(index)
+		children=[]
+		self.tree.getChildren(crawler,children)
+		#[7:] to drop the 'file://' appended for gstreamer
 		
+		
+		res = Equalizer(Foo.readConfig('equalizer')).exec_()
+		#retag = Retagging([x.tags['file'][7:] for x in children])
+		#res = retag.exec_()
+		
+		print(res)
+		
+
+
+class Retagging(QtGui.QDialog):
+    def __init__(self, fileList):#should receive only the file tag, and go get the tags from file using taglib
+        QtGui.QDialog.__init__(self)
+        self.fileList = fileList
+            
+      
+        allRepr = thread.getRepresentationAllTags(fileList)
+        
+        self.layout = QtGui.QGridLayout()
+        i = 0
+        maxWidthLine = 0
+        maxWidthLabel = 0
+        for (key, value) in allRepr.items():
+            iLabel = QtGui.QLabel(key, self)
+            iLineEdit = QtGui.QLineEdit(self)
+            iLineEdit.setText(value)
+            self.layout.addWidget(iLabel, i , 0)
+            self.layout.addWidget(iLineEdit, i , 1)
+            i+=1
+            if iLabel.sizeHint().width() > maxWidthLabel:
+            	maxWidthLabel = iLabel.sizeHint().width()
+            if iLineEdit.sizeHint().width() > maxWidthLine:
+            	maxWidthLine = iLineEdit.sizeHint().width()
+        self.buttonOk = QtGui.QPushButton('Ok')
+        self.buttonCancel = QtGui.QPushButton('Cancel')
+       	self.layout.addWidget(self.buttonOk, i, 1)
+       	self.layout.addWidget(self.buttonCancel, i, 0)
+        self.setLayout(self.layout)
+        self.buttonOk.clicked.connect(self.saveChanges)
+        self.buttonCancel.clicked.connect(self.refuse)
+        self.resize(maxWidthLine+maxWidthLabel+500, self.sizeHint().height())
+    
+    
+    def saveChanges(self):
+        import taglib
+        
+        tags = {}
+        windowTags = {}
+        
+        # Get all tags in window
+        for i in range(self.layout.rowCount()-1):
+            key = self.layout.itemAtPosition(i,0).widget().text()
+            value = self.layout.itemAtPosition(i, 1).widget().text()
+            windowTags[key] = value
+	# Get what we displayed just before
+        allRepr = thread.getRepresentationAllTags(self.fileList)
+	
+	# If we modified something
+        if windowTags != allRepr:
+            for key, value in windowTags.items():
+                if value != 'Multiple Values':
+                    tags[key] = value.strip()
+            
+            listDictNew = []
+            
+            # Modify the file tags first
+            for f in self.fileList:
+                file = taglib.File(f)
+                for (k, v) in tags.items():
+                    if v == '':
+                        file.tags.pop(k, None)
+                    else:
+                        file.tags[k] = [v]
+                #file.save()
+                
+                # Read tag again and modify database
+                dico = file.tags
+                for key, value in dico.items():
+                    #if it's a list, concatenate, otherwise, take the value
+                    if len(dico[key]) == 1:
+                        dico[key]=value[0]
+                    else :
+                        dico[key]=', '.join(value)
+                dico['FILE'] = 'file://'+f
+                dico['LENGTH'] = file.length
+                dico['SAMPLERATE'] = file.sampleRate
+                dico['CHANNELS'] = file.channels
+                dico['BITRATE'] = file.bitrate
+                
+                listDictNew.append(dico)
+            thread.updateDB(listDictNew)
+            print('Modified everything')
+        else:
+            print('Nothing to do')
+        self.accept()
+    
+    
+    
+    
+    '''
+    def saveChanges(self):
+        import taglib
+        
+        tags = {}
+        for i in range(self.layout.rowCount()-1):
+            key = self.layout.itemAtPosition(i,0).widget().text()
+            value = self.layout.itemAtPosition(i, 1).widget().text()
+            if value != 'Multiple Values':
+                tags[key] = value.strip()
+        listDictNew = []
+        for f in self.fileList:
+            #modify the tags
+            file = taglib.File(f)
+            for (k, v) in tags.items():
+                if v == '':
+                    file.tags.pop(k, None)
+                else:
+                    file.tags[k] = [v]
+            #file.save()
+            #get them again and keep them to be saved in the database
+            dico = file.tags
+            for key, value in dico.items():
+                #if it's a list, concatenate, otherwise, take the value
+                if len(dico[key]) == 1:
+                    dico[key]=value[0]
+                else :
+                    dico[key]=', '.join(value)
+            dico['FILE'] = 'file://'+f
+            dico['LENGTH'] = file.length
+            dico['SAMPLERATE'] = file.sampleRate
+            dico['CHANNELS'] = file.channels
+            dico['BITRATE'] = file.bitrate
+                
+            listDictNew.append(dico)
+        thread.updateDB(listDictNew)
+        self.accept()
+        '''
+
+    def refuse(self):
+        self.close()
+
+    def exec_(self):
+        if QtGui.QDialog.exec_(self) == QtGui.QDialog.Accepted:
+            return  1
+        else:
+            return 0
+
+
 
 def main():
 

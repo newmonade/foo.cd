@@ -5,6 +5,29 @@ from PyQt4 import QtCore
 import taglib
 import json
 
+def getAllTags(fileList):
+    allTags = {}
+    for file in fileList:
+        for (key, value) in taglib.File(file).tags.items():
+            if key in allTags:
+                allTags[key].append(', '.join(value))
+            else:
+                allTags[key] = [', '.join(value)]
+    return allTags
+
+
+def getRepresentationAllTags(fileList):
+    allTags = getAllTags(fileList)
+    allRepr = {}
+    for (key, value) in allTags.items():
+        if len(value) != len(fileList):
+            allRepr[key] = 'Multiple Values'
+        elif value.count(value[0]) == len(value): #All items are equal
+            allRepr[key] = value[0]
+        else:
+            allRepr[key] = 'Multiple Values'
+    return allRepr       
+
 
 
 
@@ -68,6 +91,15 @@ def sanitize(database):
 			if isInt:
 				dico['TRACKNUMBER']=str(int(dico['TRACKNUMBER']))
 
+#Update the database, replacing all dicts in listDictTags
+def updateDB(listDictTags):
+    database = load()
+    for i in range(len(database)):
+        for j in range(len(listDictTags)):
+            if database[i]['FILE'] == listDictTags[j]['FILE']:
+                print('found')
+                database[i] = listDictTags[j]
+    save(database)
 
 class WorkThread(QtCore.QThread):
 	def __init__(self, musicFolder, append):

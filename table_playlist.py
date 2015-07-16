@@ -56,7 +56,7 @@ class Table(TableMother):
 		self.setWordWrap(False)
 		
 		# Dummy line to display headers
-		self.addRow(Song({'FILE': '', 'LENGTH': '','CHANNELS': '', 'SAMPLERATE': '','BITRATE': ''}, self.playlistOrder))
+		self.addRow(Song({}, self.playlistOrder))
 		self.model().removeRow(0)
 
         	#Fill headers, with first capital letter using title()

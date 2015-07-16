@@ -27,12 +27,14 @@ class Song:
 	
 	def __init__(self, tagDict, treeOrder):
 		self.tags={}
-		self.tags['file'] = tagDict['FILE']
-		self.tags['length'] = tagDict['LENGTH']
-		self.tags['samplerate'] = tagDict['SAMPLERATE']
-		self.tags['channels'] = tagDict['CHANNELS']
-		self.tags['bitrate'] = tagDict['BITRATE']
+		#self.tags['file'] = tagDict['FILE']
+		#self.tags['length'] = tagDict['LENGTH']
+		#self.tags['samplerate'] = tagDict['SAMPLERATE']
+		#self.tags['channels'] = tagDict['CHANNELS']
+		#self.tags['bitrate'] = tagDict['BITRATE']
 		(str, fields) = Song.getTagName(treeOrder)
+		
+		fields.extend(['file', 'length', 'samplerate', 'channels', 'bitrate'])
 		
 		for f in fields:
 		    if f.upper() in tagDict:
@@ -57,17 +59,20 @@ class Song:
 	def getValues(self, tagNameList):
 		values = []
 		for name in tagNameList:
-		    if name in self.tags:
-		        values.append(self.tags[name])
-		    else:
-		        values.append("error getValues func from Song")
-		        '''
-		        if attr == 'artist' and 'albumartist' in self.tags:
-		            attribs.append(self.tags['albumartist'])
-		        else:
-		            attribs.append("error getValues func from Song")
-		            print(self.tags)
-		        '''
+			if name in self.tags:
+				values.append(self.tags[name])
+			else:
+				if name == 'artist' and 'albumartist' in self.tags:
+					values.append(self.tags['albumartist'])
+				else:
+					values.append("error getValues func from Song")
+				'''
+			        if attr == 'artist' and 'albumartist' in self.tags:
+			            attribs.append(self.tags['albumartist'])
+			        else:
+			            attribs.append("error getValues func from Song")
+			            print(self.tags)
+				'''
 		return values
 	
 	#return tag values customized with string around

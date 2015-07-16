@@ -82,6 +82,12 @@ class Tree(QTreeView):
 		self.initUI()
         
 	def initUI(self):
+		self.setContextMenuPolicy(Qt.CustomContextMenu)
+		
+	
+	
+	
+	
 		self.setModel(QStandardItemModel())
 
 		self.setUniformRowHeights(True)

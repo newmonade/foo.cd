@@ -77,7 +77,7 @@ class TableRadio(TableMother):
 		self.setWordWrap(False)		#Pas de retour a la ligne
 		
 		#Dummy line to display headers
-		self.addRow(Song({'FILE': '', 'LENGTH': '','CHANNELS': '', 'SAMPLERATE': '','BITRATE': None, 'NAME':''}, '%name%'+self.radioConfig['prefered_informations']))
+		self.addRow(Song({}, '%name%'+self.radioConfig['prefered_informations']))
 		self.model().removeRow(0)
 
 		#Fill in the header, with capital for the first letter(title())
@@ -97,10 +97,10 @@ class TableRadio(TableMother):
 		stations = self.radioConfig['stations'].split('|')
 		for station in stations:
 			tags = dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')]))
-			tags['LENGTH']=''
-			tags['CHANNELS']=''
-			tags['SAMPLERATE']=''
-			tags['BITRATE']=''
+			#tags['LENGTH']=''
+			#tags['CHANNELS']=''
+			#tags['SAMPLERATE']=''
+			#tags['BITRATE']=''
 			 
 			self.addRow(Song(tags, '%name%'+self.radioConfig['prefered_informations']))
 		
