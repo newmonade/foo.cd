@@ -413,10 +413,12 @@ class Foo(QtGui.QMainWindow):
 		input = self.searchArea.searchLine.text()
 		
 		db = thread.load()
-
+		'''
 		songList = []
 		for dict in db:
 			songList.append(Song(dict,self.tree.comm))
+		'''
+		songList = [Song(dict,self.tree.comm) for dict in db]
 		
 		self.tree.model().removeRows(0, self.tree.model().rowCount())
 		
