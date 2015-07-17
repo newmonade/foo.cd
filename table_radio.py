@@ -85,7 +85,8 @@ class TableRadio(TableMother):
 		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
 		for i,h in enumerate(headers):
 			model.setHeaderData(i+1,QtCore.Qt.Horizontal,h)
-
+		# One liner generator expression
+		#(model.model.setHeaderData(i+1,QtCore.Qt.Horizontal,h) for (i,h) in enumerate(headers))
 				
 		#Don't bold header when get focus
 		self.horizontalHeader().setHighlightSections(False)
@@ -103,7 +104,11 @@ class TableRadio(TableMother):
 			#tags['BITRATE']=''
 			 
 			self.addRow(Song(tags, '%name%'+self.radioConfig['prefered_informations']))
-		
+		''' # Comprehension version should be faster
+		(self.addRow(Song(tags, '%name%'+self.radioConfig['prefered_informations'])) 
+    			for tags in dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')])) 
+        			for station in stations)
+		'''
 		self.resizeColumnsToContents()
 		self.resizeRowsToContents()
 
