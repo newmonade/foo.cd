@@ -105,9 +105,8 @@ class TableRadio(TableMother):
 			 
 			self.addRow(Song(tags, '%name%'+self.radioConfig['prefered_informations']))
 		''' # Comprehension version should be faster
-		(self.addRow(Song(tags, '%name%'+self.radioConfig['prefered_informations'])) 
-    			for tags in dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')])) 
-        			for station in stations)
+		stationTags = [dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')])) for station in stations]
+		map(lambda t: self.addRow(Song(t, '%name%'+self.radioConfig['prefered_informations'])), stationTags)
 		'''
 		self.resizeColumnsToContents()
 		self.resizeRowsToContents()
