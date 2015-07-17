@@ -43,18 +43,18 @@ Primary
 	- Tagging functionalities
 		- retagging a song
 		- updateing the database with only that song
-	- Update shortcut list in menu
-	- Add support for up and down in pipe in radio mode, and disable left and right
-	- Connect/disconnect on about to finish if radio or playlist mode : myButton.clicked.disconnect(function_B)
-	
+	- Update shortcut list in menu -> Done
+	- Add support for up and down in pipe in radio mode, and disable left and right -> Done
+	- Connect/disconnect on about to finish if radio or playlist mode -> Done
+	- PLaying history / stats
 	
 Secondary
-	- Histogram display
+	- Histogram display, vu meter, spectrogram, ...
 	- volume bar style (stylesheet)
 	- Web radio -> Done
 	- Randomize playlist/Shuffle
 	- Option to activate or deactivaate remote interface 
-	- Webradio tags -> Dirty but yes
+	- Webradio tags -> Dirty but Done
 	- webradio images -> API usable but tags from radio very inconcistent
 ---------------------------------------------------------------------
 

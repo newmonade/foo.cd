@@ -13,9 +13,11 @@ def getAllTags(fileList):
                 allTags[key].append(', '.join(value))
             else:
                 allTags[key] = [', '.join(value)]
+            # One liner to replace the if statement
+            #allTags.setdefault(key,[]).append(', '.join(value))
     return allTags
 
-
+'''
 def getRepresentationAllTags(fileList):
     allTags = getAllTags(fileList)
     allRepr = {}
@@ -26,9 +28,12 @@ def getRepresentationAllTags(fileList):
             allRepr[key] = value[0]
         else:
             allRepr[key] = 'Multiple Values'
-    return allRepr       
+    return allRepr
+'''
 
-
+def getRepresentationAllTags(fileList):
+    allTags = getAllTags(fileList)
+    return {key; value[0] if value.count(value[0]) == len(value) else 'Multiple Values' for (key, value) in allTags.item()}
 
 
 
@@ -46,6 +51,8 @@ def exploreMusicFolder(musicFolder, append):
 						dico[key]=value[0]
 					else :
 						dico[key]=', '.join(value)
+				# Dict comprehension 1 liner
+				# dico = {key: value[0] if len(file.tag[key]) == 1 else key: ', '.join(value) for (key, value) in file.tags.items()}
 				dico['FILE'] = os.path.join('file://'+root, name)
 				dico['LENGTH'] = file.length
 				dico['SAMPLERATE'] = file.sampleRate

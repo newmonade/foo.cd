@@ -129,7 +129,6 @@ class Equalizer(QtGui.QDialog):
         
         self.layout = QtGui.QGridLayout()
         
-        
         self.configList = QtGui.QComboBox()
         self.configList.addItems([x for x in self.config.keys()])
         self.configList.activated[str].connect(self.listActivated)    
@@ -137,17 +136,20 @@ class Equalizer(QtGui.QDialog):
         self.addButton = QtGui.QPushButton('Add preset')
         self.addButton.clicked.connect(self.addPreset)
         
-        self.closeButton = QtGui.QPushButton('Quit')
-        self.closeButton.setMaximumWidth(40)
-        self.closeButton.clicked.connect(self.close)
+        self.saveButton = QtGui.QPushButton('Remove')
+        self.saveButton.setMaximumWidth(40)
+        self.saveButton.clicked.connect(self.removePreset)
         
         self.saveButton = QtGui.QPushButton('Save')
         self.saveButton.setMaximumWidth(40)
         self.saveButton.clicked.connect(self.savePreset)
         
+        self.closeButton = QtGui.QPushButton('Quit')
+        self.closeButton.setMaximumWidth(40)
+        self.closeButton.clicked.connect(self.close)
+        
         self.layout.addWidget(self.configList, 0, 0, 1, 3)
         self.layout.addWidget(self.addButton, 0, 3, 1, 2, QtCore.Qt.AlignCenter)
-        #self.layout.addWidget(self.closeButton, 0, 8, 1, 2)
         self.layout.addWidget(self.closeButton, 0, 9, 1, 1, QtCore.Qt.AlignCenter)
         self.layout.addWidget(self.saveButton, 0, 8, 1, 1, QtCore.Qt.AlignCenter)
         
@@ -191,12 +193,15 @@ class Equalizer(QtGui.QDialog):
                 # To save the presets to config file when closing the dialog
                 self.modified = True
                 print(name, newConf)
+    
     def savePreset(self):
         newConf = [self.layout.itemAtPosition(2, index).widget().value() for index in range(0,10)]
         self.config[self.configList.currentText()] = newConf
         self.modified = True
     
-    
+    def removePreset(self):
+        self.config.pop(self.configList.currentText())
+    	self.modified = True
     
     def exec_(self):
         QtGui.QDialog.exec_(self)

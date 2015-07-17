@@ -14,8 +14,7 @@ from song import Song
 from tree import Tree
 
 import thread
-from thread import WorkThread
-from thread import WorkThreadPipe
+from thread import WorkThread, WorkThreadPipe
 from table_playlist import Table
 
 from player import Player
@@ -361,7 +360,8 @@ class Foo(QtGui.QMainWindow):
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['previous']+'''</b> : Previous<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['next']+'''</b> : Next<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['volume_down']+'''</b> : Volume down<br/>''' + '''
-		<b>'''+dictSC['modifier']+'''+'''+dictSC['volume_up']+'''</b> : Volume up<br/>'''
+		<b>'''+dictSC['modifier']+'''+'''+dictSC['volume_up']+'''</b> : Volume up<br/>''' + '''
+		<b>'''+dictSC['modifier']+'''+'''+dictSC['radio_mode']+'''</b> : Volume up<br/>'''
 		print(len(self.findChildren(QtCore.QObject)))
 		for ittt in self.findChildren(QtCore.QObject):
 			print(ittt)
@@ -416,10 +416,12 @@ class Foo(QtGui.QMainWindow):
 		input = self.searchArea.searchLine.text()
 		
 		db = thread.load()
-
+		'''
 		songList = []
 		for dict in db:
 			songList.append(Song(dict,self.tree.comm))
+		'''
+		songList = [Song(dict,self.tree.comm) for dict in db]
 		
 		self.tree.model().removeRows(0, self.tree.model().rowCount())
 		
@@ -452,17 +454,35 @@ class Foo(QtGui.QMainWindow):
 		if key == 'song_prev':
 			self.shortSongPrev.activated.emit()
 		if key == 'tree_up':
-			self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Up, Qt.KeyboardModifier(), ''))
+			if self.radio:
+				self.table.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Up, Qt.KeyboardModifier(), ''))
+			else:
+				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Up, Qt.KeyboardModifier(), ''))
 		if key == 'tree_down':
-			self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Down, Qt.KeyboardModifier(), ''))
+			if self.radio:
+				self.table.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Down, Qt.KeyboardModifier(), ''))
+			else:
+				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Down, Qt.KeyboardModifier(), ''))
 		if key == 'tree_left':
-			self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Left, Qt.KeyboardModifier(), ''))
+			if self.radio:
+				pass
+			else:
+				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Left, Qt.KeyboardModifier(), ''))
 		if key == 'tree_right':
-			self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Right, Qt.KeyboardModifier(), ''))
+			if self.radio:
+				pass
+			else:
+				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Right, Qt.KeyboardModifier(), ''))
 		if key == 'tree_validate':
-			self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Return, Qt.KeyboardModifier(), ''))
+			if self.radio:
+				self.table.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Return, Qt.KeyboardModifier(), ''))
+			else:
+				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Return, Qt.KeyboardModifier(), ''))
 		if key == 'tree_append':
-			self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Return, Qt.KeyboardModifier(QtCore.Qt.ShiftModifier), ''))
+			if self.radio:
+				pass
+			else:
+				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Return, Qt.KeyboardModifier(QtCore.Qt.ShiftModifier), ''))
 		if key == 'radio_mode':
 			self.shortRadioMode.activated.emit()
 
@@ -493,28 +513,38 @@ class Retagging(QtGui.QDialog):
         allRepr = thread.getRepresentationAllTags(fileList)
         
         self.layout = QtGui.QGridLayout()
-        i = 0
+        
+        self.buttonAdd = QtGui.QPushButton('Add')
+        self.buttonOk = QtGui.QPushButton('Ok')
+        self.buttonCancel = QtGui.QPushButton('Cancel')
+        
+        self.layout.addWidget(self.buttonAdd, 0, 0)
+        self.layout.addWidget(self.buttonCancel, 0, 1)
+       	self.layout.addWidget(self.buttonOk, 0, 2)
+       	
+        
+        
         maxWidthLine = 0
         maxWidthLabel = 0
-        for (key, value) in allRepr.items():
+        for (i, key, value) in enumerate(allRepr.items()):
             iLabel = QtGui.QLabel(key, self)
             iLineEdit = QtGui.QLineEdit(self)
             iLineEdit.setText(value)
-            self.layout.addWidget(iLabel, i , 0)
-            self.layout.addWidget(iLineEdit, i , 1)
-            i+=1
+            self.layout.addWidget(iLabel, i+1 , 0)
+            self.layout.addWidget(iLineEdit, i+1 , 1, 1, 2)
             if iLabel.sizeHint().width() > maxWidthLabel:
             	maxWidthLabel = iLabel.sizeHint().width()
             if iLineEdit.sizeHint().width() > maxWidthLine:
             	maxWidthLine = iLineEdit.sizeHint().width()
+        self.buttonAdd = QtGui.QPushButton('Add')
         self.buttonOk = QtGui.QPushButton('Ok')
         self.buttonCancel = QtGui.QPushButton('Cancel')
-       	self.layout.addWidget(self.buttonOk, i, 1)
-       	self.layout.addWidget(self.buttonCancel, i, 0)
+        
         self.setLayout(self.layout)
         self.buttonOk.clicked.connect(self.saveChanges)
         self.buttonCancel.clicked.connect(self.refuse)
-        self.resize(maxWidthLine+maxWidthLabel+500, self.sizeHint().height())
+        self.buttonAdd.clicked.connect(self.add)
+        self.resize(maxWidthLine+maxWidthLabel+20, self.sizeHint().height())
     
     
     def saveChanges(self):
@@ -524,7 +554,7 @@ class Retagging(QtGui.QDialog):
         windowTags = {}
         
         # Get all tags in window
-        for i in range(self.layout.rowCount()-1):
+        for i in range(1, self.layout.rowCount()):
             key = self.layout.itemAtPosition(i,0).widget().text()
             value = self.layout.itemAtPosition(i, 1).widget().text()
             windowTags[key] = value
@@ -614,6 +644,12 @@ class Retagging(QtGui.QDialog):
 
     def refuse(self):
         self.close()
+        
+    def add(self):
+        iLineEdit = QtGui.QLineEdit(self)
+        iLineEdit2 = QtGui.QLineEdit(self)
+        self.layout.addWidget(iLineEdit, self.layout.rowCount(), 0 )
+        self.layout.addWidget(iLineEdit2, self.layout.rowCount(), 1, 1, 2 )
 
     def exec_(self):
         if QtGui.QDialog.exec_(self) == QtGui.QDialog.Accepted:
