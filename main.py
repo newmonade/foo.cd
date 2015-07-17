@@ -56,6 +56,21 @@ class Foo(QtGui.QMainWindow):
 		self.tree = Tree(self, config['tree_order'])
 		self.tree.customContextMenuRequested.connect(self.tmpTag)
 		
+		if not self.radio:
+			self.table=Table( self.tree, config)
+			self.tree.addSongs.connect(self.addSongsFromTree)
+			
+			self.handlerATF = self.player.playbin.connect("about-to-finish", self.onAboutToFinish)   
+			
+			
+			self.table.runAction.connect(self.tableAction)
+		else:
+			configRadio = Foo.readConfigRadios()
+			self.table=TableRadio( self.tree, configRadio)
+			self.table.runAction.connect(self.tableAction)
+			self.handlerT = self.player.bus.connect('message::tag', self.table.onTag)
+		
+		
 		
 		self.playbackButtons = PlaybackButtons(None)
 		
@@ -75,26 +90,14 @@ class Foo(QtGui.QMainWindow):
         
 		self.pixmap = Image(self)
 		self.searchArea = SearchArea(self)
-		
+		self.searchArea.searchLine.returnPressed.connect(self.startSearch)
 		
 		self.playbackButtons.addWidget(self.volumeSlider)
 		self.playbackButtons.addWidget(self.scrollSlider)	
 		
 		
 
-		if not self.radio:
-			self.table=Table( self.tree, config)
-			self.tree.addSongs.connect(self.addSongsFromTree)
-			
-			self.handlerATF = self.player.playbin.connect("about-to-finish", self.onAboutToFinish)   
-			self.searchArea.searchLine.returnPressed.connect(self.startSearch)
-			
-			self.table.runAction.connect(self.tableAction)
-		else:
-			configRadio = Foo.readConfigRadios()
-			self.table=TableRadio( self.tree, configRadio)
-			self.table.runAction.connect(self.tableAction)
-			self.handlerT = self.player.bus.connect('message::tag', self.table.onTag)
+	
 		
 		
 		splitterLeftRight = QtGui.QSplitter()
