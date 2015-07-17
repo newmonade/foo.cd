@@ -509,28 +509,38 @@ class Retagging(QtGui.QDialog):
         allRepr = thread.getRepresentationAllTags(fileList)
         
         self.layout = QtGui.QGridLayout()
-        i = 0
+        
+        self.buttonAdd = QtGui.QPushButton('Add')
+        self.buttonOk = QtGui.QPushButton('Ok')
+        self.buttonCancel = QtGui.QPushButton('Cancel')
+        
+        self.layout.addWidget(self.buttonAdd, 0, 0)
+        self.layout.addWidget(self.buttonCancel, 0, 1)
+       	self.layout.addWidget(self.buttonOk, 0, 2)
+       	
+        
+        
         maxWidthLine = 0
         maxWidthLabel = 0
-        for (key, value) in allRepr.items():
+        for (i, key, value) in enumerate(allRepr.items()):
             iLabel = QtGui.QLabel(key, self)
             iLineEdit = QtGui.QLineEdit(self)
             iLineEdit.setText(value)
-            self.layout.addWidget(iLabel, i , 0)
-            self.layout.addWidget(iLineEdit, i , 1)
-            i+=1
+            self.layout.addWidget(iLabel, i+1 , 0)
+            self.layout.addWidget(iLineEdit, i+1 , 1, 1, 2)
             if iLabel.sizeHint().width() > maxWidthLabel:
             	maxWidthLabel = iLabel.sizeHint().width()
             if iLineEdit.sizeHint().width() > maxWidthLine:
             	maxWidthLine = iLineEdit.sizeHint().width()
+        self.buttonAdd = QtGui.QPushButton('Add')
         self.buttonOk = QtGui.QPushButton('Ok')
         self.buttonCancel = QtGui.QPushButton('Cancel')
-       	self.layout.addWidget(self.buttonOk, i, 1)
-       	self.layout.addWidget(self.buttonCancel, i, 0)
+        
         self.setLayout(self.layout)
         self.buttonOk.clicked.connect(self.saveChanges)
         self.buttonCancel.clicked.connect(self.refuse)
-        self.resize(maxWidthLine+maxWidthLabel+500, self.sizeHint().height())
+        self.buttonAdd.clicked.connect(self.add)
+        self.resize(maxWidthLine+maxWidthLabel+20, self.sizeHint().height())
     
     
     def saveChanges(self):
@@ -540,7 +550,7 @@ class Retagging(QtGui.QDialog):
         windowTags = {}
         
         # Get all tags in window
-        for i in range(self.layout.rowCount()-1):
+        for i in range(1, self.layout.rowCount()):
             key = self.layout.itemAtPosition(i,0).widget().text()
             value = self.layout.itemAtPosition(i, 1).widget().text()
             windowTags[key] = value
@@ -630,6 +640,12 @@ class Retagging(QtGui.QDialog):
 
     def refuse(self):
         self.close()
+        
+    def add(self):
+        iLineEdit = QtGui.QLineEdit(self)
+        iLineEdit2 = QtGui.QLineEdit(self)
+        self.layout.addWidget(iLineEdit, self.layout.rowCount(), 0 )
+        self.layout.addWidget(iLineEdit2, self.layout.rowCount(), 1, 1, 2 )
 
     def exec_(self):
         if QtGui.QDialog.exec_(self) == QtGui.QDialog.Accepted:
