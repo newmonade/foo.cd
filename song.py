@@ -9,19 +9,19 @@ class Song:
 	#e.g. optionalTags True : ' %tracknumber%. %title% $- %trackartist%$ 
 	#                    -> (' %tracknumber%. %title% $$', ['- %trackartist%'])
 	@staticmethod
-	def getTagName(str, optionalTags=False): #(str,tags):
+	def getTagName(strOrder, optionalTags=False): #(str,tags):
 		if optionalTags == True:
 			separator="$"
 		else:
 			separator="%"
-		indices = [i for i, x in enumerate(str) if x == separator]
+		indices = [i for i, x in enumerate(strOrder) if x == separator]
 		length = len(indices)//2
 		tags = []
 		for i in range(0, length):
-			tags.append(str[indices[2*i]+1:indices[2*i+1]])
+			tags.append(strOrder[indices[2*i]+1:indices[2*i+1]])
 		for t in tags:
-			str = str.replace(t, '')    
-		return (str, tags)
+			strOrder = strOrder.replace(t, '')
+		return (strOrder, tags)
 	
 	
 	
