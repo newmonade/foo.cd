@@ -13,9 +13,11 @@ def getAllTags(fileList):
                 allTags[key].append(', '.join(value))
             else:
                 allTags[key] = [', '.join(value)]
+            # One liner to replace the if statement
+            #allTags.setdefault(key,[]).append(', '.join(value))
     return allTags
 
-
+'''
 def getRepresentationAllTags(fileList):
     allTags = getAllTags(fileList)
     allRepr = {}
@@ -26,9 +28,10 @@ def getRepresentationAllTags(fileList):
             allRepr[key] = value[0]
         else:
             allRepr[key] = 'Multiple Values'
-    return allRepr       
+    return allRepr
+'''
 
-def getRepresentationAllTags2(fileList):
+def getRepresentationAllTags(fileList):
     allTags = getAllTags(fileList)
     return {key; value[0] if value.count(value[0]) == len(value) else 'Multiple Values' for (key, value) in allTags.item()}
 
