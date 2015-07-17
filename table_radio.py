@@ -86,7 +86,7 @@ class TableRadio(TableMother):
 		for i,h in enumerate(headers):
 			model.setHeaderData(i+1,QtCore.Qt.Horizontal,h)
 		# One liner generator expression
-		#(model.model.setHeaderData(i+1,QtCore.Qt.Horizontal,h) for (i,h) in enumerate(headers))
+		#map(lambda (i, h): model.setHeaderData(i+1,QtCore.Qt.Horizontal,h), enumerate(headers))
 				
 		#Don't bold header when get focus
 		self.horizontalHeader().setHighlightSections(False)
