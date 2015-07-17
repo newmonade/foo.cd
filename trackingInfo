@@ -46,7 +46,7 @@ Primary
 	- Update shortcut list in menu
 	- Add support for up and down in pipe in radio mode, and disable left and right
 	- Connect/disconnect on about to finish if radio or playlist mode : myButton.clicked.disconnect(function_B)
-	
+	- PLaying history / stats
 	
 Secondary
 	- Histogram display
