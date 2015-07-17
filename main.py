@@ -14,8 +14,7 @@ from song import Song
 from tree import Tree
 
 import thread
-from thread import WorkThread
-from thread import WorkThreadPipe
+from thread import WorkThread, WorkThreadPipe
 from table_playlist import Table
 
 from player import Player
