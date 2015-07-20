@@ -1,13 +1,12 @@
 [options]
 tree_order = %albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title% $- %trackartist%$
 playlist_order = %date% | %tracknumber%. %title% | %artist% - %album%
-#music_folder = /mnt/Torrenting/My Music
 music_folder = /mnt/Data/Documents/Boogie Bones
 cover_names = cover | Cover | folder | Folder
 extensions = png | jpg | jpeg
 
 [shortcuts]
-modifier=Meta
+modifier = Meta
 quit = Q
 play_pause = Space
 stop = A
@@ -16,13 +15,13 @@ volume_down = Left
 previous = Up
 next = Down
 radio_mode = R
-
+equalizer = E
 
 [radios]
 prefered_informations = $%title%$$ - %artist%$$ %genre%$$ %bitrate% bps$
 stations = TSF Jazz ! http://broadcast.infomaniak.net/tsfjazz-high.mp3 | Divergence FM ! http://stream.divergence-fm.org/divergence.ogg | Acik Radyo ! http://stream.34bit.net/ar64.ogg
 
-
 [equalizer]
-settings = {'default':[0,0,0,0,0,0,0,0,0,0], 'custom':[0,0,10,10,10,10,10,0,0,10]}
+settings = {'default': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+default = default
 

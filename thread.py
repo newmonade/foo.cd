@@ -4,61 +4,45 @@ import os, sys
 from PyQt4 import QtCore
 import taglib
 import json
+from collections import defaultdict
 
+# Return the list of all single tag present in all the files
+def getAllKeys(fileList):
+	return list({key for file in fileList for key in taglib.File(file).tags 
+		 if key not in ['artist', 'album', 'date', 'genre']})
+
+# Return a dict with a single key for every tag among the file list
+# values are list with one element for every file, might be empty if tag doesnt
+#exist in a file
 def getAllTags(fileList):
-    allTags = {}
-    for file in fileList:
-        for (key, value) in taglib.File(file).tags.items():
-            if key in allTags:
-                allTags[key].append(', '.join(value))
-            else:
-                allTags[key] = [', '.join(value)]
-            # One liner to replace the if statement
-            #allTags.setdefault(key,[]).append(', '.join(value))
-    return allTags
+	allKeys = {key for file in fileList for key in taglib.File(file).tags}
 
-'''
-def getRepresentationAllTags(fileList):
-    allTags = getAllTags(fileList)
-    allRepr = {}
-    for (key, value) in allTags.items():
-        if len(value) != len(fileList):
-            allRepr[key] = 'Multiple Values'
-        elif value.count(value[0]) == len(value): #All items are equal
-            allRepr[key] = value[0]
-        else:
-            allRepr[key] = 'Multiple Values'
-    return allRepr
-'''
+	allTags = defaultdict(list)
+	for file in fileList:
+		for key in allKeys:
+			allTags[key].append(', '.join(taglib.File(file).tags.get(key, '')))
+
+	return allTags
+
+
 
 def getRepresentationAllTags(fileList):
     allTags = getAllTags(fileList)
-    return {key; value[0] if value.count(value[0]) == len(value) else 'Multiple Values' for (key, value) in allTags.item()}
+    return {key: value[0] if value.count(value[0]) == len(value) else 'Multiple Values' for (key, value) in allTags.items()}
 
 
 
 def exploreMusicFolder(musicFolder, append):
+	allFiles = ((taglib.File(os.path.join(root, name)), os.path.join('file://'+root, name) )
+for root,dirs,files in os.walk(musicFolder, topdown=True) 
+		for name in files 
+		if name.lower().endswith(".flac") or name.lower().endswith(".mp3"))
+			
 	database =[]
-	for root, dirs, files in os.walk(musicFolder, topdown=True):
-		for name in files:
-			if name.lower().endswith(".flac") or name.lower().endswith(".mp3"):
-				path=os.path.join(root, name)
-				file = taglib.File(path)
-				dico = file.tags
-				for key, value in dico.items():
-					#if it's a list, concatenate, otherwise, take the value
-					if len(dico[key]) == 1:
-						dico[key]=value[0]
-					else :
-						dico[key]=', '.join(value)
-				# Dict comprehension 1 liner
-				# dico = {key: value[0] if len(file.tag[key]) == 1 else key: ', '.join(value) for (key, value) in file.tags.items()}
-				dico['FILE'] = os.path.join('file://'+root, name)
-				dico['LENGTH'] = file.length
-				dico['SAMPLERATE'] = file.sampleRate
-				dico['CHANNELS'] = file.channels
-				dico['BITRATE'] = file.bitrate
-				database.append(dico)
+	for (f, p) in allFiles:
+		tags = {key:', '.join(value) for (key, value) in f.tags.items() }
+		tags.update({'FILE':p, 'LENGTH':f.length, 'SAMPLERATE': f.sampleRate, 'CHANNELS':f.channels, 'BITRATE':f.bitrate})
+		database.append(tags)
 
 	sanitize(database)
 	if append:

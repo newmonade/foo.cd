@@ -24,8 +24,7 @@ class Tree(QTreeView):
 		else:
 			attribs = disco[0].getOptionalValues(self.comm)
 		length=len(attribs)
-		
-		
+			
 		if length >0:
 			#Create corresponding nodes
 			nodes = []
@@ -43,8 +42,7 @@ class Tree(QTreeView):
 			nodes = [QStandardItem('Nothing')]
 			nodes[0].setData('nothing')
 			self.model().appendRow(nodes[0])
-
-		
+	
 		#Pour la tail de la liste
 		for s in disco[1:]:
 			attr = s.getOptionalValues(self.comm)
@@ -70,9 +68,64 @@ class Tree(QTreeView):
 			node = QStandardItem(attr[length-1])
 			nodes[length-2].appendRow(node)
 			node.setData(s)
+			
+	#should be checked on big librairy before using this version
+	'''
+	def populateTree(self,disco):
+		#get all attributes from first song
+		if len(disco) < 1:
+			attribs = {}
+		else:
+			attribs = disco[0].getOptionalValues(self.comm)
+		length=len(attribs)
+		
+		if length >0:
+			#Create corresponding nodes
+			nodes = [QStandardItem(x) for x in attribs]
+			#Add them to each other
+			for i in range(1, length):
+				nodes[i-1].appendRow(nodes[i])
+			#Add data to the last one
+			nodes[length-1].setData(disco[0])
+			#Append to tree
+			self.model().appendRow(nodes[0])
+		else:
+			#Create corresponding nodes
+			nodes = [QStandardItem('Nothing')]
+			nodes[0].setData('nothing')
+			self.model().appendRow(nodes[0])
 
-
-
+		
+		#Pour la tail de la liste
+		#for s in disco[1:]:
+		#	attr = s.getOptionalValues(self.comm)
+		#	length=len(attr)
+		for attr in (s.getOptionalValues(self.comm) for s in disco[1:]):
+			length=len(attr)
+			#First attribut separated because attached to node
+			if attr[0] != attribs[0]:
+				node=QStandardItem(attr[0])
+				#self.model().appendRow(node)
+				nodes[0]=node
+				self.model().appendRow(nodes[0])
+				attribs[0]=attr[0]		
+			
+			for i in range(1, length-1):
+				if (attr[i] != attribs[i]):# or differ:
+					node=QStandardItem(attr[i])
+					nodes[i-1].appendRow(node)
+					if i<len(nodes):
+						nodes[i]=node
+					else:
+						nodes.append(node)
+					attribs[i]=attr[i]
+			#Dernier attribut
+			node = QStandardItem(attr[length-1])
+			nodes[length-2].appendRow(node)
+			node.setData(s)
+	'''
+	
+	
 	addSongs = QtCore.pyqtSignal(list,bool)
 	
 
@@ -82,24 +135,15 @@ class Tree(QTreeView):
 		self.initUI()
         
 	def initUI(self):
-		self.setContextMenuPolicy(Qt.CustomContextMenu)
-		
-	
-	
-	
-	
 		self.setModel(QStandardItemModel())
-
+		self.setContextMenuPolicy(Qt.CustomContextMenu)
 		self.setUniformRowHeights(True)
-		self.setEditTriggers(QAbstractItemView.NoEditTriggers)	#Cellules pas editables
+		self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 		self.setSelectionBehavior(QAbstractItemView.SelectRows)
 		self.setHeaderHidden(True)
 
 		db = thread.load()
-
-		songList = []
-		for dict in db:
-			songList.append(Song(dict,self.comm))
+		songList = [Song(dict,self.comm) for dict in db]
 		
 		songList.sort(key=self.sortFunc)
 		self.populateTree(songList)

@@ -19,7 +19,7 @@ from table_playlist import Table
 
 from player import Player
 import widget
-from widget import PlaybackButtons, SearchArea, VolumeSlider, Image, Equalizer
+from widget import PlaybackButtons, SearchArea, VolumeSlider, Image, Equalizer, Retagging
 
 from table_radio import TableRadio
 
@@ -43,7 +43,7 @@ class Foo(QtGui.QMainWindow):
 		self.createMenu()
 		self.setWindowTitle("Foo.cd")
         
-		self.player = Player()
+		self.player = Player(Foo.readConfig('equalizer'))
 		self.player.bus.connect('message::eos', self.stop)
 		self.player.bus.connect('message::duration-changed', self.onDurationChanged)
 		   
@@ -78,14 +78,12 @@ class Foo(QtGui.QMainWindow):
 		self.playbackButtons.buttonPrev.clicked.connect(self.previous)
 		self.playbackButtons.buttonNext.clicked.connect(self.next)
 		
-		
 		self.volumeSlider = VolumeSlider(self)
 		self.scrollSlider = widget.createScrollSlider(self)
 		self.scrollSlider.sliderMoved.connect(self.player.seek)
 		self.scrollSlider.sliderPressed.connect(self.player.toggle)
 		self.scrollSlider.sliderReleased.connect(self.player.toggle)
 		self.volumeSlider.sliderMoved.connect(self.player.setVolume)
-        
         
 		self.pixmap = Image(self)
 		self.searchArea = SearchArea(self)
@@ -94,11 +92,7 @@ class Foo(QtGui.QMainWindow):
 		self.playbackButtons.addWidget(self.volumeSlider)
 		self.playbackButtons.addWidget(self.scrollSlider)	
 		
-		
 
-	
-		
-		
 		splitterLeftRight = QtGui.QSplitter()
 		self.splitterTopBottom = QtGui.QSplitter(Qt.Vertical, self)
 		
@@ -119,15 +113,12 @@ class Foo(QtGui.QMainWindow):
 		self.splitterTopBottom.addWidget(self.frameInfo)
 		self.splitterTopBottom.setStretchFactor(0,3)
 		self.splitterTopBottom.setStretchFactor(1,1)
-		
-		
-		
-		
+
+	
 		splitterLeftRight.addWidget(self.tree)
 		splitterLeftRight.addWidget(self.splitterTopBottom)
 		splitterLeftRight.setStretchFactor(0,2)
 		splitterLeftRight.setStretchFactor(1,3)
-
 
 		mainLayout = QtGui.QGridLayout()
 		mainLayout.setContentsMargins(4, 4, 4, 4)
@@ -150,6 +141,7 @@ class Foo(QtGui.QMainWindow):
 		self.shortVolDown = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['volume_down']), self, self.volumeSlider.decr)
 		self.shortVolUp = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['volume_up']), self, self.volumeSlider.incr)
 		self.shortRadioMode = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['radio_mode']), self, self.toggleRadio)
+		self.shortEqualizer = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['equalizer']), self, self.openEqualizer)
 		
 		pipeWorker = WorkThreadPipe()   
 		pipeWorker.hotKey.connect(self.onHotKey)
@@ -187,7 +179,7 @@ class Foo(QtGui.QMainWindow):
 			self.player.play()
 	
 	def toggleSong(self):			
-		state = self.player.pipeline.get_state(Gst.State.NULL)
+		state = self.player.playbin.get_state(Gst.State.NULL)
 		if state[1] == Gst.State.PLAYING:
 			self.table.displayPlayToPause()
 			self.player.toggle()
@@ -259,14 +251,12 @@ class Foo(QtGui.QMainWindow):
 			self.statusBar().showMessage(status.replace('%',"%02d:%02d" % (m, s)))
 		except Exception as e:
 			print(e)
-			pass
-			
-		
-			
+			pass	
 		if 'Playing' in status:
 			return True
 		else:
 			return False
+
 
 	def tableAction(self, str):
 		if str == 'stop':
@@ -291,35 +281,6 @@ class Foo(QtGui.QMainWindow):
 		parser = RawConfigParser()
 		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
 		return dict(parser.items(section))
-	'''
-	@staticmethod
-	def readConfig():
-		from configparser import RawConfigParser
-		parser = RawConfigParser()
-		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
-		return dict(parser.items('options'))
-	
-	@staticmethod
-	def readConfigShortcuts():
-		from configparser import RawConfigParser
-		parser = RawConfigParser()
-		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
-		return dict(parser.items('shortcuts'))
-
-	@staticmethod
-	def readConfigRadios():
-		from configparser import RawConfigParser
-		parser = RawConfigParser()
-		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
-		return dict(parser.items('radios'))
-	
-	@staticmethod
-	def readConfigEqualizer():
-		from configparser import RawConfigParser
-		parser = RawConfigParser()
-		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
-		return dict(parser.items('equalizer'))
-	'''
 
 	#Create menu bar
 	def createMenu(self):
@@ -416,25 +377,22 @@ class Foo(QtGui.QMainWindow):
 		input = self.searchArea.searchLine.text()
 		
 		db = thread.load()
-		'''
 		songList = []
-		for dict in db:
-			songList.append(Song(dict,self.tree.comm))
-		'''
-		songList = [Song(dict,self.tree.comm) for dict in db]
-		
+		songGenerator = (Song(dict,self.tree.comm) for dict in db)
 		self.tree.model().removeRows(0, self.tree.model().rowCount())
 		
 		if self.searchArea.searchExact.isChecked():
-			songList = [ e for e in songList if e.exactMatch(input) ]
+			songList = [ e for e in songGenerator if e.exactMatch(input) ]
 		elif self.searchArea.searchPrecise.isChecked():
-			songList = [ e for e in songList if e.preciseMatch(input) ]
+			songList = [ e for e in songGenerator if e.preciseMatch(input) ]
 		else:
-			songList = [ e for e in songList if e.fuzzyMatch(input) ]	
-
+			songList = [ e for e in songGenerator if e.fuzzyMatch(input) ]	
+		
+		del db[:]
 		songList.sort(key=self.tree.sortFunc)
 		self.tree.populateTree(songList)
-
+		
+		
 
 	@QtCore.pyqtSlot(str)
 	def onHotKey(self, key):
@@ -496,166 +454,32 @@ class Foo(QtGui.QMainWindow):
 		#[7:] to drop the 'file://' appended for gstreamer
 		
 		
-		res = Equalizer(Foo.readConfig('equalizer')).exec_()
-		#retag = Retagging([x.tags['file'][7:] for x in children])
-		#res = retag.exec_()
+		#equa = Equalizer(Foo.readConfig('equalizer'))
+		#equa.equalize.connect(self.applyEqua)
+		#res = equa.exec_()
+		retag = Retagging([x.tags['file'][7:] for x in children])
+		res = retag.exec_()
 		
 		print(res)
-		
-
-
-class Retagging(QtGui.QDialog):
-    def __init__(self, fileList):#should receive only the file tag, and go get the tags from file using taglib
-        QtGui.QDialog.__init__(self)
-        self.fileList = fileList
-            
-      
-        allRepr = thread.getRepresentationAllTags(fileList)
-        
-        self.layout = QtGui.QGridLayout()
-        
-        self.buttonAdd = QtGui.QPushButton('Add')
-        self.buttonOk = QtGui.QPushButton('Ok')
-        self.buttonCancel = QtGui.QPushButton('Cancel')
-        
-        self.layout.addWidget(self.buttonAdd, 0, 0)
-        self.layout.addWidget(self.buttonCancel, 0, 1)
-       	self.layout.addWidget(self.buttonOk, 0, 2)
-       	
-        
-        
-        maxWidthLine = 0
-        maxWidthLabel = 0
-        for (i, key, value) in enumerate(allRepr.items()):
-            iLabel = QtGui.QLabel(key, self)
-            iLineEdit = QtGui.QLineEdit(self)
-            iLineEdit.setText(value)
-            self.layout.addWidget(iLabel, i+1 , 0)
-            self.layout.addWidget(iLineEdit, i+1 , 1, 1, 2)
-            if iLabel.sizeHint().width() > maxWidthLabel:
-            	maxWidthLabel = iLabel.sizeHint().width()
-            if iLineEdit.sizeHint().width() > maxWidthLine:
-            	maxWidthLine = iLineEdit.sizeHint().width()
-        self.buttonAdd = QtGui.QPushButton('Add')
-        self.buttonOk = QtGui.QPushButton('Ok')
-        self.buttonCancel = QtGui.QPushButton('Cancel')
-        
-        self.setLayout(self.layout)
-        self.buttonOk.clicked.connect(self.saveChanges)
-        self.buttonCancel.clicked.connect(self.refuse)
-        self.buttonAdd.clicked.connect(self.add)
-        self.resize(maxWidthLine+maxWidthLabel+20, self.sizeHint().height())
-    
-    
-    def saveChanges(self):
-        import taglib
-        
-        tags = {}
-        windowTags = {}
-        
-        # Get all tags in window
-        for i in range(1, self.layout.rowCount()):
-            key = self.layout.itemAtPosition(i,0).widget().text()
-            value = self.layout.itemAtPosition(i, 1).widget().text()
-            windowTags[key] = value
-	# Get what we displayed just before
-        allRepr = thread.getRepresentationAllTags(self.fileList)
 	
-	# If we modified something
-        if windowTags != allRepr:
-            for key, value in windowTags.items():
-                if value != 'Multiple Values':
-                    tags[key] = value.strip()
-            
-            listDictNew = []
-            
-            # Modify the file tags first
-            for f in self.fileList:
-                file = taglib.File(f)
-                for (k, v) in tags.items():
-                    if v == '':
-                        file.tags.pop(k, None)
-                    else:
-                        file.tags[k] = [v]
-                #file.save()
-                
-                # Read tag again and modify database
-                dico = file.tags
-                for key, value in dico.items():
-                    #if it's a list, concatenate, otherwise, take the value
-                    if len(dico[key]) == 1:
-                        dico[key]=value[0]
-                    else :
-                        dico[key]=', '.join(value)
-                dico['FILE'] = 'file://'+f
-                dico['LENGTH'] = file.length
-                dico['SAMPLERATE'] = file.sampleRate
-                dico['CHANNELS'] = file.channels
-                dico['BITRATE'] = file.bitrate
-                
-                listDictNew.append(dico)
-            thread.updateDB(listDictNew)
-            print('Modified everything')
-        else:
-            print('Nothing to do')
-        self.accept()
-    
-    
-    
-    
-    '''
-    def saveChanges(self):
-        import taglib
-        
-        tags = {}
-        for i in range(self.layout.rowCount()-1):
-            key = self.layout.itemAtPosition(i,0).widget().text()
-            value = self.layout.itemAtPosition(i, 1).widget().text()
-            if value != 'Multiple Values':
-                tags[key] = value.strip()
-        listDictNew = []
-        for f in self.fileList:
-            #modify the tags
-            file = taglib.File(f)
-            for (k, v) in tags.items():
-                if v == '':
-                    file.tags.pop(k, None)
-                else:
-                    file.tags[k] = [v]
-            #file.save()
-            #get them again and keep them to be saved in the database
-            dico = file.tags
-            for key, value in dico.items():
-                #if it's a list, concatenate, otherwise, take the value
-                if len(dico[key]) == 1:
-                    dico[key]=value[0]
-                else :
-                    dico[key]=', '.join(value)
-            dico['FILE'] = 'file://'+f
-            dico['LENGTH'] = file.length
-            dico['SAMPLERATE'] = file.sampleRate
-            dico['CHANNELS'] = file.channels
-            dico['BITRATE'] = file.bitrate
-                
-            listDictNew.append(dico)
-        thread.updateDB(listDictNew)
-        self.accept()
-        '''
+	def openEqualizer(self):
+		from configparser import RawConfigParser
+		equa = Equalizer(Foo.readConfig('equalizer'))
+		equa.equalize.connect(self.applyEqua)
 
-    def refuse(self):
-        self.close()
-        
-    def add(self):
-        iLineEdit = QtGui.QLineEdit(self)
-        iLineEdit2 = QtGui.QLineEdit(self)
-        self.layout.addWidget(iLineEdit, self.layout.rowCount(), 0 )
-        self.layout.addWidget(iLineEdit2, self.layout.rowCount(), 1, 1, 2 )
-
-    def exec_(self):
-        if QtGui.QDialog.exec_(self) == QtGui.QDialog.Accepted:
-            return  1
-        else:
-            return 0
+		if equa.exec_():
+			parser = RawConfigParser()
+			parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
+			print(equa.config)
+			print(parser)
+			parser['equalizer']['settings']= str(equa.config)
+			with open(os.path.dirname(os.path.realpath(__file__))+'/config', 'w') as configfile:
+				parser.write(configfile)
+		
+		
+	def applyEqua(self,band, value):
+		print('receiving equa', str(band), value)
+		self.player.equalizer.set_property(str(band), value)
 
 
 

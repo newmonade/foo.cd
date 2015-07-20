@@ -2,6 +2,8 @@
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
+import thread
+
 class PlaybackButtons(QtGui.QHBoxLayout):
 
 	def __init__(self, parent):
@@ -118,12 +120,13 @@ class SearchArea(QtGui.QGridLayout):
 
 
 class Equalizer(QtGui.QDialog):
+    equalize = QtCore.pyqtSignal(str, int) 
     def __init__(self, config):
     
         QtGui.QDialog.__init__(self)
         self.config = eval(config['settings'])
         self.modified = False
-        bandValues = self.config['default']
+        bandValues = self.config[config['default']]
         frequencies = [ "29Hz", "59Hz", "119Hz", "237Hz", 
             "474Hz", "947Hz", "1.8kHz", "3.7kHz", "7.5kHz", "15kHz"]
         
@@ -131,14 +134,15 @@ class Equalizer(QtGui.QDialog):
         
         self.configList = QtGui.QComboBox()
         self.configList.addItems([x for x in self.config.keys()])
+        self.configList.setCurrentIndex(list(self.config.keys()).index(config['default']))
         self.configList.activated[str].connect(self.listActivated)    
  
-        self.addButton = QtGui.QPushButton('Add preset')
+        self.addButton = QtGui.QPushButton('Add')
         self.addButton.clicked.connect(self.addPreset)
         
-        self.saveButton = QtGui.QPushButton('Remove')
-        self.saveButton.setMaximumWidth(40)
-        self.saveButton.clicked.connect(self.removePreset)
+        self.removeButton = QtGui.QPushButton('Remove')
+        #self.removeButton.setMaximumWidth(40)
+        self.removeButton.clicked.connect(self.removePreset)
         
         self.saveButton = QtGui.QPushButton('Save')
         self.saveButton.setMaximumWidth(40)
@@ -150,30 +154,36 @@ class Equalizer(QtGui.QDialog):
         
         self.layout.addWidget(self.configList, 0, 0, 1, 3)
         self.layout.addWidget(self.addButton, 0, 3, 1, 2, QtCore.Qt.AlignCenter)
-        self.layout.addWidget(self.closeButton, 0, 9, 1, 1, QtCore.Qt.AlignCenter)
+        self.layout.addWidget(self.removeButton, 0, 5, 1, 2, QtCore.Qt.AlignCenter)
         self.layout.addWidget(self.saveButton, 0, 8, 1, 1, QtCore.Qt.AlignCenter)
+        self.layout.addWidget(self.closeButton, 0, 9, 1, 1, QtCore.Qt.AlignCenter)
         
+        print(bandValues)
         for index, val in enumerate(bandValues):
             band = QtGui.QLabel(frequencies[index], self)
             slider = QtGui.QSlider(QtCore.Qt.Vertical, self)
             slider.setMinimum(-24)
             slider.setMaximum(12)
             slider.setSliderPosition(val)
-            #slider.valueChanged.connect() # Connect to the gstreamer & to the label
             slider.valueChanged.connect(self.updateLabel)
-            labelValue = QtGui.QLabel(str(val).rjust(3, ' ')+"dB", self)
-            
+            # Make that work...
+            #labelValue = QtGui.QLabel(str(val).rjust(3, ' ')+"dB", self)
+            labelValue = QtGui.QLabel('', self)
+   
             self.layout.addWidget(band, 1 , index, 1, 1, QtCore.Qt.AlignCenter)
             self.layout.addWidget(slider, 2 , index, 1, 1, QtCore.Qt.AlignCenter)
-            
             self.layout.addWidget(labelValue, 3 , index, 1, 1, QtCore.Qt.AlignCenter)
             band.setAlignment(QtCore.Qt.AlignCenter)
+            
+            slider.valueChanged.emit(val)
         
         self.setLayout(self.layout)
 
     def updateLabel(self, val):
         position = self.layout.getItemPosition(self.layout.indexOf(self.sender()))[1]
         self.layout.itemAtPosition(3, position).widget().setText(str(val) + 'dB')
+        print('emiting equa')
+        self.equalize.emit('band'+str(position), val)
 
     def listActivated(self, confName):
         bandValues = self.config[confName]
@@ -190,9 +200,9 @@ class Equalizer(QtGui.QDialog):
                 newConf = [self.layout.itemAtPosition(2, index).widget().value() for index in range(0,10)]
                 self.config[name] = newConf
                 self.configList.addItem(name)
+                self.configList.setCurrentIndex(self.configList.count()-1)
                 # To save the presets to config file when closing the dialog
                 self.modified = True
-                print(name, newConf)
     
     def savePreset(self):
         newConf = [self.layout.itemAtPosition(2, index).widget().value() for index in range(0,10)]
@@ -201,8 +211,153 @@ class Equalizer(QtGui.QDialog):
     
     def removePreset(self):
         self.config.pop(self.configList.currentText())
-    	self.modified = True
+        self.configList.removeItem(self.configList.currentIndex())
+        self.listActivated(self.configList.currentText())
+        self.modified = True
     
     def exec_(self):
         QtGui.QDialog.exec_(self)
         return self.modified
+        
+        
+        
+class Retagging(QtGui.QDialog):
+	def __init__(self, fileList):#should receive only the file tag, and go get the tags from file using taglib
+		QtGui.QDialog.__init__(self)
+		self.fileList = fileList
+			
+	  
+		allRepr = thread.getRepresentationAllTags(fileList)
+		
+		self.layout = QtGui.QGridLayout()
+		
+		self.buttonAdd = QtGui.QPushButton('Add')
+		self.buttonOk = QtGui.QPushButton('Ok')
+		self.buttonCancel = QtGui.QPushButton('Cancel')
+		self.layout.addWidget(self.buttonAdd, 0, 0)
+		self.layout.addWidget(self.buttonCancel, 0, 1)
+		self.layout.addWidget(self.buttonOk, 0, 2)
+
+		formLayout = QtGui.QFormLayout()
+		artistLine = QtGui.QLineEdit(self)
+		artistLine.setText(allRepr.get('ARTIST', 'None'))
+		albumLine = QtGui.QLineEdit(self)
+		albumLine.setText(allRepr.get('ALBUM', 'None'))
+		yearLine = QtGui.QLineEdit(self)
+		yearLine.setText(allRepr.get('DATE', 'None'))
+		genreLine = QtGui.QLineEdit(self)
+		genreLine.setText(allRepr.get('GENRE', 'None'))
+		
+		formLayout.addRow('Artist', artistLine)
+		formLayout.addRow('Album', albumLine)
+		formLayout.addRow('Year', yearLine)
+		formLayout.addRow('Genre', genreLine)
+		
+		self.layout.addLayout(formLayout, 1, 0, 1, 3)
+		
+		self.tagTable = QtGui.QTableView()
+		model = QtGui.QStandardItemModel()
+		self.tagTable.setModel(model)
+		self.tagTable.setAlternatingRowColors(True)
+
+		# Add rows
+		listKeys = [ x for x in thread.getAllKeys(fileList) 
+				if x not in  ['ARTIST', 'ALBUM', 'DATE', 'GENRE'] ]
+		allTags = thread.getAllTags(fileList)	
+		attribs = [ [allTags[key][file] for key in listKeys] 
+				for file in range(len(fileList))]
+		nodes = [[QtGui.QStandardItem(x) for x in attrList]
+				for attrList in attribs ]
+		
+		for (n, a) in zip(nodes, attribs):
+			map(lambda x,y : x.setData(y), zip(n, a))
+			self.tagTable.model().appendRow(n)
+		
+		# Fill headers
+		for i,h in enumerate(listKeys):
+			model.setHeaderData(i,QtCore.Qt.Horizontal,h.title())
+			
+		self.layout.addWidget(self.tagTable, 2, 0, 1, 3)
+		
+		
+		self.setLayout(self.layout)
+		self.buttonOk.clicked.connect(self.saveChanges)
+		self.buttonCancel.clicked.connect(self.refuse)
+		self.buttonAdd.clicked.connect(self.add)
+		
+		self.resize(self.tagTable.sizeHint().width()+100, self.sizeHint().height())
+		
+		
+	
+	
+	def saveChanges(self):
+		import taglib
+		
+		tags = {}
+		windowTags = {}
+		
+		# Get all tags in window
+		for i in range(1, self.layout.rowCount()):
+			key = self.layout.itemAtPosition(i,0).widget().text()
+			value = self.layout.itemAtPosition(i, 1).widget().text()
+			windowTags[key] = value
+	# Get what we displayed just before
+		allRepr = thread.getRepresentationAllTags(self.fileList)
+	
+	# If we modified something
+		if windowTags != allRepr:
+			for key, value in windowTags.items():
+				if value != 'Multiple Values':
+					tags[key] = value.strip()
+			
+			listDictNew = []
+			
+			# Modify the file tags first
+			for f in self.fileList:
+				file = taglib.File(f)
+				for (k, v) in tags.items():
+					if v == '':
+						file.tags.pop(k, None)
+					else:
+						file.tags[k] = [v]
+				#file.save()
+				
+				# Read tag again and modify database
+				
+				dico = file.tags
+				for key, value in dico.items():
+					#if it's a list, concatenate, otherwise, take the value
+					if len(dico[key]) == 1:
+						dico[key]=value[0]
+					else :
+						dico[key]=', '.join(value)
+				dico['FILE'] = 'file://'+f
+				dico['LENGTH'] = file.length
+				dico['SAMPLERATE'] = file.sampleRate
+				dico['CHANNELS'] = file.channels
+				dico['BITRATE'] = file.bitrate
+				
+				listDictNew.append(dico)
+			thread.updateDB(listDictNew)
+			print('Modified everything')
+		else:
+			print('Nothing to do')
+		self.accept()
+	
+	
+
+	def refuse(self):
+		self.close()
+		
+	def add(self):
+		iLineEdit = QtGui.QLineEdit(self)
+		iLineEdit2 = QtGui.QLineEdit(self)
+		self.layout.addWidget(iLineEdit, self.layout.rowCount(), 0 )
+		self.layout.addWidget(iLineEdit2, self.layout.rowCount(), 1, 1, 2 )
+
+	def exec_(self):
+		if QtGui.QDialog.exec_(self) == QtGui.QDialog.Accepted:
+			return  1
+		else:
+			return 0
+			

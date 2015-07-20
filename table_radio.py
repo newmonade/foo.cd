@@ -21,14 +21,13 @@ class TableRadio(TableMother):
 
 	def addRow(self, song):
 		attribs = song.getOptionalValues('%name%|'+self.radioConfig['prefered_informations'])
+		nodes = [QStandardItem(x) for x in attribs]
+		map(lambda x : x.setData(song), nodes)
 		
-		
-		nodes = [QStandardItem('')]
-		nodes[-1].setData(song) #[-1] is last element
-		for i in attribs:
-			nodes.append(QStandardItem(i))
-			nodes[-1].setData(song) #[-1] is last element
-		self.model().appendRow(nodes) 
+		n = QStandardItem('')
+		n.setData(song)
+		nodes.insert(0, n)
+		self.model().appendRow(nodes)
 
 	def onTag(self, bus, msg):
 		taglist = msg.parse_tag()
