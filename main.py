@@ -450,11 +450,6 @@ class Foo(QtGui.QMainWindow):
 		children=[]
 		self.tree.getChildren(crawler,children)
 		#[7:] to drop the 'file://' appended for gstreamer
-		
-		
-		#equa = Equalizer(Foo.readConfig('equalizer'))
-		#equa.equalize.connect(self.applyEqua)
-		#res = equa.exec_()
 		retag = Retagging([x.tags['file'][7:] for x in children])
 		res = retag.exec_()
 		
@@ -464,12 +459,9 @@ class Foo(QtGui.QMainWindow):
 		from configparser import RawConfigParser
 		equa = Equalizer(Foo.readConfig('equalizer'))
 		equa.equalize.connect(self.applyEqua)
-
 		if equa.exec_():
 			parser = RawConfigParser()
 			parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
-			print(equa.config)
-			print(parser)
 			parser['equalizer']['settings']= str(equa.config)
 			with open(os.path.dirname(os.path.realpath(__file__))+'/config', 'w') as configfile:
 				parser.write(configfile)

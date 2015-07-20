@@ -124,6 +124,7 @@ class Equalizer(QtGui.QDialog):
     def __init__(self, config):
     
         QtGui.QDialog.__init__(self)
+        self.setWindowModality(QtCore.Qt.NonModal)
         self.config = eval(config['settings'])
         self.modified = False
         bandValues = self.config[config['default']]
@@ -210,10 +211,11 @@ class Equalizer(QtGui.QDialog):
         self.modified = True
     
     def removePreset(self):
-        self.config.pop(self.configList.currentText())
-        self.configList.removeItem(self.configList.currentIndex())
-        self.listActivated(self.configList.currentText())
-        self.modified = True
+    	if len(self.config) > 1:
+            self.config.pop(self.configList.currentText())
+            self.configList.removeItem(self.configList.currentIndex())
+            self.listActivated(self.configList.currentText())
+            self.modified = True
     
     def exec_(self):
         QtGui.QDialog.exec_(self)
@@ -225,7 +227,7 @@ class Retagging(QtGui.QDialog):
 	def __init__(self, fileList):#should receive only the file tag, and go get the tags from file using taglib
 		QtGui.QDialog.__init__(self)
 		self.fileList = fileList
-			
+		self.setSizeGripEnabled(True)
 	  
 		allRepr = thread.getRepresentationAllTags(fileList)
 		
@@ -256,8 +258,8 @@ class Retagging(QtGui.QDialog):
 		self.layout.addLayout(formLayout, 1, 0, 1, 3)
 		
 		self.tagTable = QtGui.QTableView()
-		model = QtGui.QStandardItemModel()
-		self.tagTable.setModel(model)
+		self.model = QtGui.QStandardItemModel()
+		self.tagTable.setModel(self.model)
 		self.tagTable.setAlternatingRowColors(True)
 
 		# Add rows
@@ -271,11 +273,11 @@ class Retagging(QtGui.QDialog):
 		
 		for (n, a) in zip(nodes, attribs):
 			map(lambda x,y : x.setData(y), zip(n, a))
-			self.tagTable.model().appendRow(n)
+			self.model.appendRow(n)
 		
 		# Fill headers
 		for i,h in enumerate(listKeys):
-			model.setHeaderData(i,QtCore.Qt.Horizontal,h.title())
+			self.model.setHeaderData(i,QtCore.Qt.Horizontal,h.title())
 			
 		self.layout.addWidget(self.tagTable, 2, 0, 1, 3)
 		
@@ -283,11 +285,21 @@ class Retagging(QtGui.QDialog):
 		self.setLayout(self.layout)
 		self.buttonOk.clicked.connect(self.saveChanges)
 		self.buttonCancel.clicked.connect(self.refuse)
-		self.buttonAdd.clicked.connect(self.add)
+		self.buttonAdd.clicked.connect(self.addColumn)
 		
 		self.resize(self.tagTable.sizeHint().width()+100, self.sizeHint().height())
 		
-		
+	def addColumn(self):
+		name, ok = QtGui.QInputDialog.getText(self, 'Input Dialog', 
+            			'Name of this new tag:')
+		if ok:
+			name = name.upper()
+			headers = [self.model.horizontalHeaderItem(x).text().upper() for x in range(self.model.columnCount())]
+			
+			if name not in headers:
+				self.model.appendColumn([])
+				self.model.setHeaderData(self.model.columnCount()-1,QtCore.Qt.Horizontal,name.title())
+				
 	
 	
 	def saveChanges(self):
@@ -348,12 +360,7 @@ class Retagging(QtGui.QDialog):
 
 	def refuse(self):
 		self.close()
-		
-	def add(self):
-		iLineEdit = QtGui.QLineEdit(self)
-		iLineEdit2 = QtGui.QLineEdit(self)
-		self.layout.addWidget(iLineEdit, self.layout.rowCount(), 0 )
-		self.layout.addWidget(iLineEdit2, self.layout.rowCount(), 1, 1, 2 )
+
 
 	def exec_(self):
 		if QtGui.QDialog.exec_(self) == QtGui.QDialog.Accepted:

@@ -22,6 +22,6 @@ prefered_informations = $%title%$$ - %artist%$$ %genre%$$ %bitrate% bps$
 stations = TSF Jazz ! http://broadcast.infomaniak.net/tsfjazz-high.mp3 | Divergence FM ! http://stream.divergence-fm.org/divergence.ogg | Acik Radyo ! http://stream.34bit.net/ar64.ogg
 
 [equalizer]
-settings = {'default': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+settings = {'default': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'metal': [10, 10, 10, 3, -10, -10, -10, 0, 10, 7]}
 default = default
 
