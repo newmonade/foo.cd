@@ -10,6 +10,9 @@ import os
 from song import Song
 from table_mother import TableMother
 
+#temporarily
+import time
+
 class Table(TableMother):
 
 	#runAction = QtCore.pyqtSignal(str)
@@ -62,9 +65,10 @@ class Table(TableMother):
         	#Fill headers, with first capital letter using title()
 		headers = self.playlistOrder.title().replace('%','').split('|')
 		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
+		
 		for i,h in enumerate(headers):
 			model.setHeaderData(i+1,QtCore.Qt.Horizontal,h)
-		# One liner
+		# One liner which is slower start1 = time.perf_counter()
 		#map(lambda (i, h): model.setHeaderData(i+1,QtCore.Qt.Horizontal,h), enumerate(headers))
 				
 		#Don't bold header when get focus

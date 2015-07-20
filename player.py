@@ -33,7 +33,7 @@ class Player():
         bandValues = eval(configEqua['settings'])[configEqua['default']]
         self.playbin = Gst.ElementFactory.make('playbin', 'player')
           
-        # No video, is it neede ?
+        # No video, is it needed ?
         self.playbin.set_property('video-sink', Gst.ElementFactory.make('fakesink', 'fakesink'))
 
         # Change the audio sink to our own bin, so that an equalizer/replay gain element can be added later on if needed
@@ -53,10 +53,8 @@ class Player():
         # Somehow equalizer needs to have a band set to not null
         # otherwise doesnt respond afterwards
         if bandValues == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]:
-            print('null', bandValues)
             self.equalizer.set_property('band0', 0.01)
         else:
-            print('not null', bandValues)
             for i, v in enumerate(bandValues):
                 self.equalizer.set_property('band'+str(i), v)
 

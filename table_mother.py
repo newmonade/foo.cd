@@ -37,8 +37,7 @@ class TableMother(QtGui.QTableView):
 
 
 	#Update signs '[ ]' and '>'
-	#Is called by enter key from the tree
-	# or a line of the table
+	#Is called by enter key from the tree or a line of the table
 	def displayStopToPlay(self, indice):
 		if self.playingId > -1:
 			self.model().item(self.playingId,0).setText('')

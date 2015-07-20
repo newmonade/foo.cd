@@ -5,6 +5,8 @@ from PyQt4 import QtCore
 import taglib
 import json
 from collections import defaultdict
+#temp
+import time
 
 # Return the list of all single tag present in all the files
 def getAllKeys(fileList):
@@ -52,8 +54,40 @@ for root,dirs,files in os.walk(musicFolder, topdown=True)
 	save(database)
 	print('Finished scanning music folder')
 	return database
+	
+''' Try with more music in folders
+def exploreMusicFolder(musicFolder, append):
+	database =[]
+	for root, dirs, files in os.walk(musicFolder, topdown=True):
+		for name in files:
+			if name.lower().endswith(".flac") or name.lower().endswith(".mp3"):
+				path=os.path.join(root, name)
+				file = taglib.File(path)
+				dico = file.tags
+				for key, value in dico.items():
+					#if it's a list, concatenate, otherwise, take the value
+					if len(dico[key]) == 1:
+						dico[key]=value[0]
+					else :
+						dico[key]=', '.join(value)
+				# Dict comprehension 1 liner
+				# dico = {key: value[0] if len(file.tag[key]) == 1 else key: ', '.join(value) for (key, value) in file.tags.items()}
+				dico['FILE'] = os.path.join('file://'+root, name)
+				dico['LENGTH'] = file.length
+				dico['SAMPLERATE'] = file.sampleRate
+				dico['CHANNELS'] = file.channels
+				dico['BITRATE'] = file.bitrate
+				database.append(dico)
 
-
+	sanitize(database)
+	if append:
+		db = load()
+		database.extend(db)
+		
+	save(database)
+	print('Finished scanning music folder')
+	return database
+'''
 
 def save(database):
 	localFolder=os.path.dirname(os.path.realpath(__file__))
@@ -99,7 +133,11 @@ class WorkThread(QtCore.QThread):
 		self.append = append
 		
 	def run(self):
+		start1 = time.perf_counter()
 		exploreMusicFolder(self.musicFolder, self.append)
+		start2 = time.perf_counter()
+		print('time', start2-start1)
+		
 
 
 

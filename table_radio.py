@@ -9,6 +9,10 @@ import song
 from song import Song
 from table_mother import TableMother
 
+
+#temporarily
+import time
+
 '''
 Table interface
 signal runAction(str) connected to Foo.tableAction
@@ -59,34 +63,21 @@ class TableRadio(TableMother):
 	def initUI(self):
 		
 		self.playingId = -1
-
 		model = QStandardItemModel()
 		self.setModel(model)
 		
 		#self.selectionModel().selectionChanged.connect(self.selectionChangedCustom)
 		
 
-
 		self.setSelectionBehavior(QAbstractItemView.SelectRows)
 		self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-		self.setTabKeyNavigation(False)		#Pas de changement de cellules avec tab
-		self.setShowGrid(False)			#pas de traits entre les celules
-		self.setAlternatingRowColors(True)	#Alternance des couleurs de lignes
-		self.setEditTriggers(QAbstractItemView.NoEditTriggers)	#Cellules pas editables
-		self.setWordWrap(False)		#Pas de retour a la ligne
-		
-		#Dummy line to display headers
-		self.addRow(Song({}, '%name%'+self.radioConfig['prefered_informations']))
-		self.model().removeRow(0)
+		self.setTabKeyNavigation(False)	
+		self.setShowGrid(False)
+		self.setAlternatingRowColors(True)
+		self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+		self.setWordWrap(False)	
 
-		#Fill in the header, with capital for the first letter(title())
-		headers = ['Name','Informations']
-		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
-		for i,h in enumerate(headers):
-			model.setHeaderData(i+1,QtCore.Qt.Horizontal,h)
-		# One liner generator expression
-		#map(lambda (i, h): model.setHeaderData(i+1,QtCore.Qt.Horizontal,h), enumerate(headers))
-				
+		
 		#Don't bold header when get focus
 		self.horizontalHeader().setHighlightSections(False)
 		self.verticalHeader().hide()
@@ -96,17 +87,18 @@ class TableRadio(TableMother):
 		
 		stations = self.radioConfig['stations'].split('|')
 		for station in stations:
-			tags = dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')]))
-			#tags['LENGTH']=''
-			#tags['CHANNELS']=''
-			#tags['SAMPLERATE']=''
-			#tags['BITRATE']=''
-			 
+			tags = dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')]))	 
 			self.addRow(Song(tags, '%name%'+self.radioConfig['prefered_informations']))
-		''' # Comprehension version should be faster
-		stationTags = [dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')])) for station in stations]
-		map(lambda t: self.addRow(Song(t, '%name%'+self.radioConfig['prefered_informations'])), stationTags)
-		'''
+
+		
+		#Fill in the header, with capital for the first letter(title())
+		headers = ['Name','Informations']
+		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
+		for i,h in enumerate(headers):
+			model.setHeaderData(i+1,QtCore.Qt.Horizontal,h)
+		# One liner generator expression which is actually slower
+		#map(lambda (i, h): model.setHeaderData(i+1,QtCore.Qt.Horizontal,h), enumerate(headers))
+
 		self.resizeColumnsToContents()
 		self.resizeRowsToContents()
 
@@ -115,16 +107,13 @@ class TableRadio(TableMother):
 		
 
 	def keyPressEvent(self, event):
-		
 		if event.key() == Qt.Key_Return:
 			self.runAction.emit('play')
 		QTableView.keyPressEvent(self, event)
 
 
-
 		
 	def getStatus(self):
-		#print(self.model().item(self.playingId, 0).data().toString())
 		radioName = self.model().item(self.playingId, 0).data().tags['name']
 		status = 'Radio '+ radioName +' - Playing'
 		return status

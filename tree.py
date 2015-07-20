@@ -10,6 +10,8 @@ from PyQt4 import QtGui
 from song import Song
 import thread
 
+#temporaly
+import time
 
 class Tree(QTreeView):
 	def sortFunc(self,chanson):
@@ -122,7 +124,7 @@ class Tree(QTreeView):
 			#Dernier attribut
 			node = QStandardItem(attr[length-1])
 			nodes[length-2].appendRow(node)
-			node.setData(s)
+			node.setData(attr)
 	'''
 	
 	
@@ -146,8 +148,12 @@ class Tree(QTreeView):
 		songList = [Song(dict,self.comm) for dict in db]
 		
 		songList.sort(key=self.sortFunc)
+		
+		#start1 = time.perf_counter()
 		self.populateTree(songList)
-
+		#start2 = time.perf_counter()
+		#print('time', start2-start1)
+		
 		self.show()
 	
 

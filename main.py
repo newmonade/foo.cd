@@ -114,7 +114,6 @@ class Foo(QtGui.QMainWindow):
 		self.splitterTopBottom.setStretchFactor(0,3)
 		self.splitterTopBottom.setStretchFactor(1,1)
 
-	
 		splitterLeftRight.addWidget(self.tree)
 		splitterLeftRight.addWidget(self.splitterTopBottom)
 		splitterLeftRight.setStretchFactor(0,2)
@@ -127,7 +126,6 @@ class Foo(QtGui.QMainWindow):
 		dummyWidget = QtGui.QWidget()
 		dummyWidget.setLayout(mainLayout)  
 		self.setCentralWidget(dummyWidget)
-
 
 		dictShortcuts = self.readConfig('shortcuts')
 		
