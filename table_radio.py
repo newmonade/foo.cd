@@ -50,24 +50,20 @@ class TableRadio(TableMother):
 				song.tags[tagName] = value.replace("\\", '')
 		
 		attribs = song.getOptionalValues(self.radioConfig['prefered_informations'])
-		
 		self.model().item(self.playingId, 2).setText(attribs[0])
 		
 
 	def __init__(self, parent, radioConfig):
 		super(QtGui.QTableView, self).__init__(parent)
 		self.radioConfig = radioConfig
-		
 		self.initUI()
         
 	def initUI(self):
-		
 		self.playingId = -1
 		model = QStandardItemModel()
 		self.setModel(model)
 		
 		#self.selectionModel().selectionChanged.connect(self.selectionChangedCustom)
-		
 
 		self.setSelectionBehavior(QAbstractItemView.SelectRows)
 		self.setSelectionMode(QAbstractItemView.ExtendedSelection)
@@ -77,20 +73,17 @@ class TableRadio(TableMother):
 		self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 		self.setWordWrap(False)	
 
-		
 		#Don't bold header when get focus
 		self.horizontalHeader().setHighlightSections(False)
 		self.verticalHeader().hide()
 		self.horizontalHeader().setStretchLastSection(True)
 		self.horizontalHeader().setResizeMode(QtGui.QHeaderView.Interactive) #Interactive, ResizeToContents, Stretch
 		
-		
 		stations = self.radioConfig['stations'].split('|')
 		for station in stations:
 			tags = dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')]))	 
 			self.addRow(Song(tags, '%name%'+self.radioConfig['prefered_informations']))
 
-		
 		#Fill in the header, with capital for the first letter(title())
 		headers = ['Name','Informations']
 		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
@@ -101,18 +94,13 @@ class TableRadio(TableMother):
 
 		self.resizeColumnsToContents()
 		self.resizeRowsToContents()
-
 		self.show()
 		
-		
-
 	def keyPressEvent(self, event):
 		if event.key() == Qt.Key_Return:
 			self.runAction.emit('play')
 		QTableView.keyPressEvent(self, event)
 
-
-		
 	def getStatus(self):
 		radioName = self.model().item(self.playingId, 0).data().tags['name']
 		status = 'Radio '+ radioName +' - Playing'
