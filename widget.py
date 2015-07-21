@@ -71,11 +71,11 @@ class VolumeSlider(QtGui.QSlider):
 
 def createScrollSlider(parent):
     
-		slider = QtGui.QSlider(QtCore.Qt.Horizontal, parent)
-		slider.setFocusPolicy(QtCore.Qt.NoFocus)
-		slider.setPageStep(1)
-		slider.setTracking(False)
-		return slider
+	slider = QtGui.QSlider(QtCore.Qt.Horizontal, parent)
+	slider.setFocusPolicy(QtCore.Qt.NoFocus)
+	slider.setPageStep(1)
+	slider.setTracking(False)
+	return slider
 
 
 
@@ -120,117 +120,116 @@ class SearchArea(QtGui.QGridLayout):
 
 
 class Equalizer(QtGui.QDialog):
-    equalize = QtCore.pyqtSignal(str, int) 
-    def __init__(self, config):
+	equalize = QtCore.pyqtSignal(str, int) 
+
+	def __init__(self, config):
     
-        QtGui.QDialog.__init__(self)
-        self.setWindowModality(QtCore.Qt.NonModal)
-        self.config = eval(config['settings'])
-        self.modified = False
-        bandValues = self.config[config['default']]
-        frequencies = [ "29Hz", "59Hz", "119Hz", "237Hz", 
-            "474Hz", "947Hz", "1.8kHz", "3.7kHz", "7.5kHz", "15kHz"]
+		QtGui.QDialog.__init__(self)
+		self.setWindowModality(QtCore.Qt.NonModal)
+		self.config = eval(config['settings'])
+		self.modified = False
+		bandValues = self.config[config['default']]
+		frequencies = [ "29Hz", "59Hz", "119Hz", "237Hz", "474Hz", 
+			"947Hz", "1.8kHz", "3.7kHz", "7.5kHz", "15kHz"]
         
-        self.layout = QtGui.QGridLayout()
+		self.layout = QtGui.QGridLayout()
         
-        self.configList = QtGui.QComboBox()
-        self.configList.addItems([x for x in self.config.keys()])
-        self.configList.setCurrentIndex(list(self.config.keys()).index(config['default']))
-        self.configList.activated[str].connect(self.listActivated)    
+		self.configList = QtGui.QComboBox()
+		self.configList.addItems([x for x in self.config.keys()])
+		self.configList.setCurrentIndex(list(self.config.keys()).index(config['default']))
+		self.configList.activated[str].connect(self.listActivated)    
  
-        self.addButton = QtGui.QPushButton('Add')
-        self.addButton.clicked.connect(self.addPreset)
+		self.addButton = QtGui.QPushButton('Add')
+		self.addButton.clicked.connect(self.addPreset)
         
-        self.removeButton = QtGui.QPushButton('Remove')
-        #self.removeButton.setMaximumWidth(40)
-        self.removeButton.clicked.connect(self.removePreset)
+		self.removeButton = QtGui.QPushButton('Remove')
+		#self.removeButton.setMaximumWidth(40)
+		self.removeButton.clicked.connect(self.removePreset)
         
-        self.saveButton = QtGui.QPushButton('Save')
-        self.saveButton.setMaximumWidth(40)
-        self.saveButton.clicked.connect(self.savePreset)
+		self.saveButton = QtGui.QPushButton('Save')
+		self.saveButton.setMaximumWidth(40)
+		self.saveButton.clicked.connect(self.savePreset)
         
-        self.closeButton = QtGui.QPushButton('Quit')
-        self.closeButton.setMaximumWidth(40)
-        self.closeButton.clicked.connect(self.close)
+		self.closeButton = QtGui.QPushButton('Quit')
+		self.closeButton.setMaximumWidth(40)
+		self.closeButton.clicked.connect(self.close)
         
-        self.layout.addWidget(self.configList, 0, 0, 1, 3)
-        self.layout.addWidget(self.addButton, 0, 3, 1, 2, QtCore.Qt.AlignCenter)
-        self.layout.addWidget(self.removeButton, 0, 5, 1, 2, QtCore.Qt.AlignCenter)
-        self.layout.addWidget(self.saveButton, 0, 8, 1, 1, QtCore.Qt.AlignCenter)
-        self.layout.addWidget(self.closeButton, 0, 9, 1, 1, QtCore.Qt.AlignCenter)
+		self.layout.addWidget(self.configList, 0, 0, 1, 3)
+		self.layout.addWidget(self.addButton, 0, 3, 1, 2, QtCore.Qt.AlignCenter)
+		self.layout.addWidget(self.removeButton, 0, 5, 1, 2, QtCore.Qt.AlignCenter)
+		self.layout.addWidget(self.saveButton, 0, 8, 1, 1, QtCore.Qt.AlignCenter)
+		self.layout.addWidget(self.closeButton, 0, 9, 1, 1, QtCore.Qt.AlignCenter)
         
-        print(bandValues)
-        for index, val in enumerate(bandValues):
-            band = QtGui.QLabel(frequencies[index], self)
-            slider = QtGui.QSlider(QtCore.Qt.Vertical, self)
-            slider.setMinimum(-24)
-            slider.setMaximum(12)
-            slider.setSliderPosition(val)
-            slider.valueChanged.connect(self.updateLabel)
-            # Make that work...
-            #labelValue = QtGui.QLabel(str(val).rjust(3, ' ')+"dB", self)
-            labelValue = QtGui.QLabel('', self)
+		for index, val in enumerate(bandValues):
+			band = QtGui.QLabel(frequencies[index], self)
+			slider = QtGui.QSlider(QtCore.Qt.Vertical, self)
+			slider.setMinimum(-24)
+			slider.setMaximum(12)
+			slider.setSliderPosition(val)
+			slider.valueChanged.connect(self.updateLabel)
+			# Make that work...
+			#labelValue = QtGui.QLabel(str(val).rjust(3, ' ')+"dB", self)
+			labelValue = QtGui.QLabel('', self)
    
-            self.layout.addWidget(band, 1 , index, 1, 1, QtCore.Qt.AlignCenter)
-            self.layout.addWidget(slider, 2 , index, 1, 1, QtCore.Qt.AlignCenter)
-            self.layout.addWidget(labelValue, 3 , index, 1, 1, QtCore.Qt.AlignCenter)
-            band.setAlignment(QtCore.Qt.AlignCenter)
+			self.layout.addWidget(band, 1 , index, 1, 1, QtCore.Qt.AlignCenter)
+			self.layout.addWidget(slider, 2 , index, 1, 1, QtCore.Qt.AlignCenter)
+			self.layout.addWidget(labelValue, 3 , index, 1, 1, QtCore.Qt.AlignCenter)
+			band.setAlignment(QtCore.Qt.AlignCenter)
             
-            slider.valueChanged.emit(val)
+			slider.valueChanged.emit(val)
         
-        self.setLayout(self.layout)
+		self.setLayout(self.layout)
 
-    def updateLabel(self, val):
-        position = self.layout.getItemPosition(self.layout.indexOf(self.sender()))[1]
-        self.layout.itemAtPosition(3, position).widget().setText(str(val) + 'dB')
-        print('emiting equa')
-        self.equalize.emit('band'+str(position), val)
+	def updateLabel(self, val):
+		position = self.layout.getItemPosition(self.layout.indexOf(self.sender()))[1]
+		self.layout.itemAtPosition(3, position).widget().setText(str(val) + 'dB')
+		print('emiting equa')
+		self.equalize.emit('band'+str(position), val)
 
-    def listActivated(self, confName):
-        bandValues = self.config[confName]
-        for index, val in enumerate(bandValues):
-            self.layout.itemAtPosition(2, index).widget().setValue(val)
+	def listActivated(self, confName):
+		bandValues = self.config[confName]
+		for index, val in enumerate(bandValues):
+			self.layout.itemAtPosition(2, index).widget().setValue(val)
     
-    def addPreset(self):
-        name, ok = QtGui.QInputDialog.getText(self, 'Input Dialog', 
-            'Name of this new preset:')
-        if ok:
-            if name in self.config.keys():
-            	box = QtGui.QMessageBox.about(self, 'About Message', 'Already exist')
-            else:
-                newConf = [self.layout.itemAtPosition(2, index).widget().value() for index in range(0,10)]
-                self.config[name] = newConf
-                self.configList.addItem(name)
-                self.configList.setCurrentIndex(self.configList.count()-1)
-                # To save the presets to config file when closing the dialog
-                self.modified = True
+	def addPreset(self):
+		name, ok = QtGui.QInputDialog.getText(self, 'Input Dialog', 
+			'Name of this new preset:')
+		if ok:
+			if name in self.config.keys():
+				box = QtGui.QMessageBox.about(self, 'About Message', 'Already exist')
+			else:
+				newConf = [self.layout.itemAtPosition(2, index).widget().value() for index in range(0,10)]
+				self.config[name] = newConf
+				self.configList.addItem(name)
+				self.configList.setCurrentIndex(self.configList.count()-1)
+				# To save the presets to config file when closing the dialog
+				self.modified = True
     
-    def savePreset(self):
-        newConf = [self.layout.itemAtPosition(2, index).widget().value() for index in range(0,10)]
-        self.config[self.configList.currentText()] = newConf
-        self.modified = True
+	def savePreset(self):
+		newConf = [self.layout.itemAtPosition(2, index).widget().value() for index in range(0,10)]
+		self.config[self.configList.currentText()] = newConf
+		self.modified = True
     
-    def removePreset(self):
-    	if len(self.config) > 1:
-            self.config.pop(self.configList.currentText())
-            self.configList.removeItem(self.configList.currentIndex())
-            self.listActivated(self.configList.currentText())
-            self.modified = True
+	def removePreset(self):
+		if len(self.config) > 1:
+			self.config.pop(self.configList.currentText())
+			self.configList.removeItem(self.configList.currentIndex())
+			self.listActivated(self.configList.currentText())
+			self.modified = True
     
-    def exec_(self):
-        QtGui.QDialog.exec_(self)
-        return self.modified
+	def exec_(self):
+		QtGui.QDialog.exec_(self)
+		return self.modified
         
         
         
 class Retagging(QtGui.QDialog):
-	def __init__(self, fileList):#should receive only the file tag, and go get the tags from file using taglib
+	def __init__(self, fileList):
 		QtGui.QDialog.__init__(self)
 		self.fileList = fileList
 		self.setSizeGripEnabled(True)
 	  
 		allRepr = thread.getRepresentationAllTags(fileList)
-		
 		self.layout = QtGui.QGridLayout()
 		
 		self.buttonAdd = QtGui.QPushButton('Add')
@@ -266,7 +265,7 @@ class Retagging(QtGui.QDialog):
 		listKeys = [ x for x in thread.getAllKeys(fileList) 
 				if x not in  ['ARTIST', 'ALBUM', 'DATE', 'GENRE'] ]
 		allTags = thread.getAllTags(fileList)	
-		attribs = [ [allTags[key][file] for key in listKeys] 
+		attribs = [[allTags[key][file] for key in listKeys] 
 				for file in range(len(fileList))]
 		nodes = [[QtGui.QStandardItem(x) for x in attrList]
 				for attrList in attribs ]
@@ -313,10 +312,10 @@ class Retagging(QtGui.QDialog):
 			key = self.layout.itemAtPosition(i,0).widget().text()
 			value = self.layout.itemAtPosition(i, 1).widget().text()
 			windowTags[key] = value
-	# Get what we displayed just before
+		# Get what we displayed just before
 		allRepr = thread.getRepresentationAllTags(self.fileList)
 	
-	# If we modified something
+		# If we modified something
 		if windowTags != allRepr:
 			for key, value in windowTags.items():
 				if value != 'Multiple Values':
