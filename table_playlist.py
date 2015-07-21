@@ -15,8 +15,6 @@ import time
 
 class Table(TableMother):
 
-	#runAction = QtCore.pyqtSignal(str)
-
 	def addRow(self, song):
 		attribs = song.getFormatedValues(self.playlistOrder)
 		nodes = [QStandardItem('')]
@@ -34,20 +32,11 @@ class Table(TableMother):
 		self.initUI()
         
 	def initUI(self):
-
-		
 		self.playingId = -1
-		
-
-
-
 		model = QStandardItemModel()
 		self.setModel(model)
 		
 		self.selectionModel().selectionChanged.connect(self.selectionChanged)
-		
-
-
 		self.setSelectionBehavior(QAbstractItemView.SelectRows)
 		self.setSelectionMode(QAbstractItemView.ExtendedSelection)
 		self.setTabKeyNavigation(False)
@@ -65,7 +54,6 @@ class Table(TableMother):
         	#Fill headers, with first capital letter using title()
 		headers = self.playlistOrder.title().replace('%','').split('|')
 		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
-		
 		for i,h in enumerate(headers):
 			model.setHeaderData(i+1,QtCore.Qt.Horizontal,h)
 		# One liner which is slower start1 = time.perf_counter()
@@ -94,20 +82,12 @@ class Table(TableMother):
 			self.selectionModel().select(QItemSelection(childIndex,childIndex2), QItemSelectionModel.Select)
 			self.selectionModel().setCurrentIndex(childIndex,QItemSelectionModel.Rows)
 			if self.playingId == row:
-				#self.stop()
 				self.runAction.emit('stop')
 			self.model().removeRow(row)
 		elif event.key() == Qt.Key_Return:
-			#print(self.parent())
 			self.runAction.emit('play')
-			#self.playSongFromTable()
 		QTableView.keyPressEvent(self, event)
-  
-  
 
-
-  
-  
 	def getStatus(self):
 		song = self.model().item(self.playingId, 0).data()
 		status = str(song.tags['bitrate'])+' kbps | '+str(song.tags['samplerate'])+' Hz | '
