@@ -11,6 +11,7 @@ A simple music player based on Python, Qt, GStreamer and TagLib. Functionalities
 - web radio
 - 10 band equalizer
 - Tagging facilities
+
 All kinds of audio files are supported, provided that you installed the related gst-plugin (might already be installed on your computer). The GUI is freely - and mostly - inspired by foobar2000 default interface.
 
 
