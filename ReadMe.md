@@ -1,7 +1,17 @@
 Presentation
 =============
 
-A simple music player based on Python, Qt, GStreamer and TagLib. Functionalities include customizable library tree view, playlist view, gapeless playback, library search, global shortcuts, remote control, and web radio. All kinds of audio files are supported, provided that you installed the related gst-plugin (might already be installed on your computer). The GUI is freely - and mostly - inspired by foobar2000 default interface.
+A simple music player based on Python, Qt, GStreamer and TagLib. Functionalities include 
+- customizable library tree view
+- customizale playlist view
+- gapeless playback
+- library search
+- global shortcuts
+- remote control
+- web radio
+- 10 band equalizer
+- Tagging facilities
+All kinds of audio files are supported, provided that you installed the related gst-plugin (might already be installed on your computer). The GUI is freely - and mostly - inspired by foobar2000 default interface.
 
 
 <!---
@@ -30,7 +40,7 @@ Shortcuts
 
 Shortcuts concist of a combination of *modifier+key* to trigger an action. They can all be customized in the config file. Modifier takes value among: `Ctrl, Shift, Alt, Meta (windows key)`, and can be combined using `+` e.g. `Ctrl+Shift`.
 
-Keys are named: `A, B, ..., F1, F2, ..., Left, Right, Tab, Del, Ins, PgUp, Plus, Minus, ...,` and can be combined using `+`, e.g. `A+B, Ctrl+A, ... `
+Keys are named: `A, B, ..., F1, F2, ..., Left, Right, Tab, Del, Ins, PgUp, Plus, Minus, ...,`. They can be combined using `+`, e.g. `A+B, Ctrl+A, ... `
 
 Thus for a config file as:
 ```
@@ -42,7 +52,7 @@ stop = A
 ```
 Pressing `Ctrl+Shift+Space` will *pause* the playback, `Ctrl+A` will *stop* the playback.
 
-Actions:
+Shortcut actions:
 - play/pause
 - stop
 - next
@@ -51,11 +61,11 @@ Actions:
 - volume up
 - volume down
 - toggle radio mode
+- open equalizer
 
 
 Tree order and Playlist columns functions
 =============
-
 
 The hierarchy of the tree and the columns displayed can be customized from the config file, following a basic syntax.
 - Tags: `%tag%` e.g. `%albumartist%, %date%, %album%, %artist%, ...`
@@ -73,7 +83,7 @@ Special tags :
 
 A tree order as : `%albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title%`
 
-Would give the following tree :
+Will give the following tree :
 
 ```
 		Buena Vista Social Club (cubano)
