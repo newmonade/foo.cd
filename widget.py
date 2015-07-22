@@ -183,7 +183,6 @@ class Equalizer(QtGui.QDialog):
     def updateLabel(self, val):
         position = self.layout.getItemPosition(self.layout.indexOf(self.sender()))[1]
         self.layout.itemAtPosition(3, position).widget().setText(str(val) + 'dB')
-        print('emiting equa')
         self.equalize.emit('band'+str(position), val)
 
     def listActivated(self, confName):

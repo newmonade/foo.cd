@@ -53,11 +53,11 @@ class Foo(QtGui.QMainWindow):
 		
 		
 		self.tree = Tree(self, config['tree_order'])
+		self.tree.addSongs.connect(self.addSongsFromTree)
 		self.tree.customContextMenuRequested.connect(self.tmpTag)
 		
 		if not self.radio:
 			self.table=Table( self.tree, config)
-			self.tree.addSongs.connect(self.addSongsFromTree)
 			
 			self.handlerATF = self.player.playbin.connect("about-to-finish", self.onAboutToFinish)   
 			
@@ -210,17 +210,18 @@ class Foo(QtGui.QMainWindow):
 
 
 	def addSongsFromTree(self, list, play):
-		i = self.table.model().rowCount()
-		for l in  list:
-			self.table.addRow(l)
-		self.table.resizeRowsToContents()
-		if play:
-			self.stop()
-			self.player.add(list[0].tags['file'])
-			self.player.play()
-			self.table.displayStopToPlay(i)
-			status = self.table.getStatus()
-			self.setStatusEmission(status)
+		if not self.radio:
+			i = self.table.model().rowCount()
+			for l in  list:
+				self.table.addRow(l)
+			self.table.resizeRowsToContents()
+			if play:
+				self.stop()
+				self.player.add(list[0].tags['file'])
+				self.player.play()
+				self.table.displayStopToPlay(i)
+				status = self.table.getStatus()
+				self.setStatusEmission(status)
 	
 	
 	def setStatusEmission(self, status):
@@ -320,7 +321,8 @@ class Foo(QtGui.QMainWindow):
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['next']+'''</b> : Next<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['volume_down']+'''</b> : Volume down<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['volume_up']+'''</b> : Volume up<br/>''' + '''
-		<b>'''+dictSC['modifier']+'''+'''+dictSC['radio_mode']+'''</b> : Volume up<br/>'''
+		<b>'''+dictSC['modifier']+'''+'''+dictSC['radio_mode']+'''</b> : Toggle radio mode<br/>''' + '''
+		<b>'''+dictSC['modifier']+'''+'''+dictSC['equalizer']+'''</b> : Equalizer<br/>'''
 		print(len(self.findChildren(QtCore.QObject)))
 		for ittt in self.findChildren(QtCore.QObject):
 			print(ittt)
@@ -469,7 +471,10 @@ class Foo(QtGui.QMainWindow):
 		
 	def applyEqua(self,band, value):
 		print('receiving equa', str(band), value)
-		self.player.equalizer.set_property(str(band), value)
+		if str(band) == 'band0' and value == 0:
+			self.player.equalizer.set_property('band0', 0.01)
+		else:
+			self.player.equalizer.set_property(str(band), value)
 
 
 
