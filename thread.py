@@ -14,8 +14,7 @@ def getAllKeys(fileList):
 		 if key not in ['artist', 'album', 'date', 'genre']})
 
 # Return a dict with a single key for every tag among the file list
-# values are list with one element for every file, might be empty if tag doesnt
-#exist in a file
+# values are list with one element for every file, might be empty if tag doesnt exist in a file
 def getAllTags(fileList):
 	allKeys = {key for file in fileList for key in taglib.File(file).tags}
 

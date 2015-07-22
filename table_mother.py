@@ -6,9 +6,6 @@ from PyQt4.QtGui import (QStandardItemModel, QAbstractItemView, QStandardItem,
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-#import os
-#from song2 import Song
-
 class TableMother(QtGui.QTableView):
 
 	runAction = QtCore.pyqtSignal(str)
@@ -35,7 +32,6 @@ class TableMother(QtGui.QTableView):
 			self.selectionModel().setCurrentIndex(currentIndex,QItemSelectionModel.Rows)
 		self.selectionModel().select(QItemSelection(currentIndex,currentIndex2),QItemSelectionModel.Select)
 
-
 	#Update signs '[ ]' and '>'
 	#Is called by enter key from the tree or a line of the table
 	def displayStopToPlay(self, indice):
@@ -51,7 +47,6 @@ class TableMother(QtGui.QTableView):
 		self.model().item(indice,0).setText('>')
 		self.playingId = indice
 
-	
 	#Update signs '[ ]' and '>'
 	#Different than stoptoplay because can be called by a shortcut
 	#Thus not having a positive indice 
@@ -82,7 +77,6 @@ class TableMother(QtGui.QTableView):
 			self.model().item(self.playingId,0).setText('>')
 			
 
-	
 	#Update signs '[ ]' and '>'
 	def displayPlayToStop(self):
 		if self.playingId > -1:
@@ -95,11 +89,9 @@ class TableMother(QtGui.QTableView):
 			self.model().item(self.playingId,0).setText('||')
 			#self.playingId = -1
 
-  
 	def getStatus(self):
 		raise NotImplementedError( "Should have implemented this" )
 	
 	
 	
 	
-  		

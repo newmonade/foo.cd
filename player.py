@@ -39,7 +39,6 @@ class Player():
         # Change the audio sink to our own bin, so that an equalizer/replay gain element can be added later on if needed
         self.audiobin  = Gst.Bin('audiobin')
         self.audiosink = Gst.ElementFactory.make('autoaudiosink', 'audiosink')
-
         self.audiobin.add(self.audiosink)
         self.audiobin.add_pad(Gst.GhostPad.new('sink', self.audiosink.get_static_pad('sink')))
         self.playbin.set_property('audio-sink', self.audiobin)
