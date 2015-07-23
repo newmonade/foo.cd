@@ -8,10 +8,15 @@ from collections import defaultdict
 #temp
 import time
 
+'''
 # Return the list of all single tag present in all the files
 def getAllKeys(fileList):
 	return list({key for file in fileList for key in taglib.File(file).tags 
 		 if key not in ['artist', 'album', 'date', 'genre']})
+'''
+# Return the list of all single tag present in all the files
+def getAllKeys(fileList):
+	return list({key for file in fileList for key in taglib.File(file).tags }) + ['FILE']
 
 # Return a dict with a single key for every tag among the file list
 # values are list with one element for every file, might be empty if tag doesnt exist in a file
@@ -20,6 +25,7 @@ def getAllTags(fileList):
 
 	allTags = defaultdict(list)
 	for file in fileList:
+		allTags['FILE'].append(file)
 		for key in allKeys:
 			allTags[key].append(', '.join(taglib.File(file).tags.get(key, '')))
 
@@ -31,7 +37,18 @@ def getRepresentationAllTags(fileList):
     allTags = getAllTags(fileList)
     return {key: value[0] if value.count(value[0]) == len(value) else 'Multiple Values' for (key, value) in allTags.items()}
 
-
+# Modify the file tags 
+def modifyTags(tags):
+	file = taglib.File(tags['FILE'])
+	for (k, v) in tags.items():
+		if v == '':
+			if file.tags.get(k, None) != None:
+				del file.tags[k]
+		elif k == 'FILE':
+			pass
+		else:
+			file.tags[k] = [v]
+	file.save()
 
 def exploreMusicFolder(musicFolder, append):
 	allFiles = ((taglib.File(os.path.join(root, name)), os.path.join('file://'+root, name) )

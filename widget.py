@@ -228,7 +228,7 @@ class Equalizer(QtGui.QDialog):
 class Retagging(QtGui.QDialog):
 	def __init__(self, fileList):
 		QtGui.QDialog.__init__(self)
-		self.fileList = fileList
+		#self.fileList = fileList
 		self.setSizeGripEnabled(True)
 	  
 		allRepr = thread.getRepresentationAllTags(fileList)
@@ -242,44 +242,54 @@ class Retagging(QtGui.QDialog):
 		self.layout.addWidget(self.buttonOk, 0, 2)
 
 		formLayout = QtGui.QFormLayout()
-		artistLine = QtGui.QLineEdit(self)
-		artistLine.setText(allRepr.get('ARTIST', 'None'))
-		albumLine = QtGui.QLineEdit(self)
-		albumLine.setText(allRepr.get('ALBUM', 'None'))
-		yearLine = QtGui.QLineEdit(self)
-		yearLine.setText(allRepr.get('DATE', 'None'))
-		genreLine = QtGui.QLineEdit(self)
-		genreLine.setText(allRepr.get('GENRE', 'None'))
+		self.artistLine = QtGui.QLineEdit(self)
+		self.artistLine.setText(allRepr.get('ARTIST', ''))
+		self.albumLine = QtGui.QLineEdit(self)
+		self.albumLine.setText(allRepr.get('ALBUM', ''))
+		self.yearLine = QtGui.QLineEdit(self)
+		self.yearLine.setText(allRepr.get('DATE', ''))
+		self.genreLine = QtGui.QLineEdit(self)
+		self.genreLine.setText(allRepr.get('GENRE', ''))
 		
-		formLayout.addRow('Artist', artistLine)
-		formLayout.addRow('Album', albumLine)
-		formLayout.addRow('Year', yearLine)
-		formLayout.addRow('Genre', genreLine)
+		formLayout.addRow('Artist', self.artistLine)
+		formLayout.addRow('Album', self.albumLine)
+		formLayout.addRow('Year', self.yearLine)
+		formLayout.addRow('Genre', self.genreLine)
 		
 		self.layout.addLayout(formLayout, 1, 0, 1, 3)
 		
 		self.tagTable = QtGui.QTableView()
 		self.model = QtGui.QStandardItemModel()
 		self.tagTable.setModel(self.model)
-		self.tagTable.setAlternatingRowColors(True)
-
+		
 		# Add rows
 		listKeys = [ x for x in thread.getAllKeys(fileList) 
 				if x not in  ['ARTIST', 'ALBUM', 'DATE', 'GENRE'] ]
-		allTags = thread.getAllTags(fileList)	
+		allTags = thread.getAllTags(fileList)
+		
 		attribs = [[allTags[key][file] for key in listKeys] 
 				for file in range(len(fileList))]
 		nodes = [[QtGui.QStandardItem(x) for x in attrList]
 				for attrList in attribs ]
 		
 		for (n, a) in zip(nodes, attribs):
-			map(lambda x,y : x.setData(y), zip(n, a))
+			#map(lambda x,y : x.setData(y), zip(n, a))
+			
 			self.model.appendRow(n)
 		
 		# Fill headers
 		for i,h in enumerate(listKeys):
 			self.model.setHeaderData(i,QtCore.Qt.Horizontal,h.title())
-			
+		
+		
+		
+		
+		self.tagTable.setAlternatingRowColors(True)
+		self.tagTable.setWordWrap(False)
+		self.tagTable.verticalHeader().hide()
+		self.tagTable.horizontalHeader().setHighlightSections(False)
+		self.tagTable.horizontalHeader().setResizeMode(QtGui.QHeaderView.Interactive)
+
 		self.layout.addWidget(self.tagTable, 2, 0, 1, 3)
 		
 		
@@ -295,66 +305,34 @@ class Retagging(QtGui.QDialog):
             			'Name of this new tag:')
 		if ok:
 			name = name.upper()
-			headers = [self.model.horizontalHeaderItem(x).text().upper() for x in range(self.model.columnCount())]
+			headers = [self.model.horizontalHeaderItem(x).text().upper() 
+					for x in range(self.model.columnCount())]
 			
 			if name not in headers:
-				self.model.appendColumn([])
-				self.model.setHeaderData(self.model.columnCount()-1,QtCore.Qt.Horizontal,name.title())
+				emptyColumn = [QtGui.QStandardItem('') for x in range(self.model.rowCount())]
+				self.model.appendColumn(emptyColumn)
+				self.model.setHeaderData(self.model.columnCount()-1,
+					QtCore.Qt.Horizontal,name.title())
 				
 	
 	
 	def saveChanges(self):
-		import taglib
-		
-		tags = {}
-		windowTags = {}
-		
-		# Get all tags in window
-		for i in range(1, self.layout.rowCount()):
-			key = self.layout.itemAtPosition(i,0).widget().text()
-			value = self.layout.itemAtPosition(i, 1).widget().text()
-			windowTags[key] = value
-		# Get what we displayed just before
-		allRepr = thread.getRepresentationAllTags(self.fileList)
-	
-		# If we modified something
-		if windowTags != allRepr:
-			for key, value in windowTags.items():
-				if value != 'Multiple Values':
-					tags[key] = value.strip()
+		headers = [self.model.horizontalHeaderItem(x).text().upper() 
+				for x in range(self.model.columnCount())]
+		generalTags = {'ARTIST':self.artistLine.text().strip(), 
+				'ALBUM':self.albumLine.text().strip(), 
+				'DATE':self.yearLine.text().strip(), 
+				'GENRE':self.genreLine.text().strip()}
+		for r in range(self.model.rowCount()):
+			values = [x.text().strip() for x in self.model.takeRow(0)]
+			tags = dict(zip(headers, values))
+			tags.update({k: v for k, v in generalTags.items() if v != 'Multiple Values'})
+			# This dict contains the tags to write and '' tags to be deleted
+			thread.modifyTags(tags)
 			
-			listDictNew = []
-			
-			# Modify the file tags first
-			for f in self.fileList:
-				file = taglib.File(f)
-				for (k, v) in tags.items():
-					if v == '':
-						file.tags.pop(k, None)
-					else:
-						file.tags[k] = [v]
-				#file.save()
-				
-				# Read tag again and modify database
-				
-				dico = file.tags
-				for key, value in dico.items():
-					#if it's a list, concatenate, otherwise, take the value
-					if len(dico[key]) == 1:
-						dico[key]=value[0]
-					else :
-						dico[key]=', '.join(value)
-				dico['FILE'] = 'file://'+f
-				dico['LENGTH'] = file.length
-				dico['SAMPLERATE'] = file.sampleRate
-				dico['CHANNELS'] = file.channels
-				dico['BITRATE'] = file.bitrate
-				
-				listDictNew.append(dico)
-			thread.updateDB(listDictNew)
-			print('Modified everything')
-		else:
-			print('Nothing to do')
+			# After saving changes to file should reload library
+			#tags = {key:', '.join(value) for (key, value) in f.tags.items()}
+			#tags.update({'FILE':p, 'LENGTH':f.length, 'SAMPLERATE': f.samplerate, 'CHANNELS':f.channels, 'BITRATE':f.bitrate})
 		self.accept()
 	
 	
