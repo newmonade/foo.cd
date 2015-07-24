@@ -57,7 +57,7 @@ class Foo(QtGui.QMainWindow):
 		self.tree.customContextMenuRequested.connect(self.tmpTag)
 		
 		if not self.radio:
-			self.table=Table( self.tree, config)
+			self.table=Table( self, config)
 			
 			self.handlerATF = self.player.playbin.connect("about-to-finish", self.onAboutToFinish)   
 			
@@ -65,7 +65,7 @@ class Foo(QtGui.QMainWindow):
 			self.table.runAction.connect(self.tableAction)
 		else:
 			configRadio = Foo.readConfigRadios()
-			self.table=TableRadio( self.tree, configRadio)
+			self.table=TableRadio( self, configRadio)
 			self.table.runAction.connect(self.tableAction)
 			self.handlerT = self.player.bus.connect('message::tag', self.table.onTag)
 		
@@ -90,7 +90,7 @@ class Foo(QtGui.QMainWindow):
 		self.searchArea.searchLine.returnPressed.connect(self.startSearch)
 		
 		self.playbackButtons.addWidget(self.volumeSlider)
-		self.playbackButtons.addWidget(self.scrollSlider)	
+		self.playbackButtons.addWidget(self.scrollSlider)
 		
 
 		splitterLeftRight = QtGui.QSplitter()
@@ -100,13 +100,9 @@ class Foo(QtGui.QMainWindow):
 		self.frameInfo = QtGui.QFrame()
 		tmpLayout = QtGui.QVBoxLayout()
 		tmpLayout.setContentsMargins(0,0,0,0)
-		tmpFrame = QtGui.QFrame()
-		tmpFrame.setLayout(self.playbackButtons)
-		tmpLayout.addWidget(tmpFrame)
+		tmpLayout.addLayout(self.playbackButtons)
 		tmpLayout.addWidget(self.pixmap)
-		tmpFrame2 = QtGui.QFrame()
-		tmpFrame2.setLayout(self.searchArea)
-		tmpLayout.addWidget(tmpFrame2)
+		tmpLayout.addLayout(self.searchArea)
 		self.frameInfo.setLayout(tmpLayout)
 		
 		self.splitterTopBottom.addWidget(self.table)
