@@ -323,16 +323,16 @@ class Retagging(QtGui.QDialog):
 				'ALBUM':self.albumLine.text().strip(), 
 				'DATE':self.yearLine.text().strip(), 
 				'GENRE':self.genreLine.text().strip()}
+		fileList = []
 		for r in range(self.model.rowCount()):
 			values = [x.text().strip() for x in self.model.takeRow(0)]
 			tags = dict(zip(headers, values))
 			tags.update({k: v for k, v in generalTags.items() if v != 'Multiple Values'})
 			# This dict contains the tags to write and '' tags to be deleted
-			thread.modifyTags(tags)
-			
-			# After saving changes to file should reload library
-			#tags = {key:', '.join(value) for (key, value) in f.tags.items()}
-			#tags.update({'FILE':p, 'LENGTH':f.length, 'SAMPLERATE': f.samplerate, 'CHANNELS':f.channels, 'BITRATE':f.bitrate})
+			modified = thread.modifyTags(tags)
+			if modified:
+				fileList.append(tags['FILE'])
+		thread.updateDB(fileList)
 		self.accept()
 	
 	

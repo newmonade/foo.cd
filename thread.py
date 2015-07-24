@@ -39,16 +39,21 @@ def getRepresentationAllTags(fileList):
 
 # Modify the file tags 
 def modifyTags(tags):
+	modified=False
 	file = taglib.File(tags['FILE'])
 	for (k, v) in tags.items():
 		if v == '':
 			if file.tags.get(k, None) != None:
 				del file.tags[k]
+				modified=True
 		elif k == 'FILE':
 			pass
 		else:
-			file.tags[k] = [v]
+			if file.tags.get(k,None) != [v]:
+				file.tags[k] = [v]
+				modified = True
 	file.save()
+	return modified
 
 def exploreMusicFolder(musicFolder, append):
 	allFiles = ((taglib.File(os.path.join(root, name)), os.path.join('file://'+root, name) )
@@ -133,14 +138,20 @@ def sanitize(database):
 				dico['TRACKNUMBER']=str(int(dico['TRACKNUMBER']))
 
 #Update the database, replacing all dicts in listDictTags
-def updateDB(listDictTags):
-    database = load()
-    for i in range(len(database)):
-        for j in range(len(listDictTags)):
-            if database[i]['FILE'] == listDictTags[j]['FILE']:
-                print('found')
-                database[i] = listDictTags[j]
-    save(database)
+def updateDB(fileList):
+	taglibFiles = [taglib.File(f) for f in fileList]
+	listTags = [{key:', '.join(value) for (key, value) in f.tags.items()}
+			for f in taglibFiles]
+	for index, f in enumerate(taglibFiles):
+		listTags[index].update({'FILE':'file://'+f.path, 'LENGTH':f.length, 'SAMPLERATE': f.sampleRate, 'CHANNELS':f.channels, 'BITRATE':f.bitrate})
+
+	database = load()
+	for i in range(len(database)):
+		for j in range(len(listTags)):
+			if database[i]['FILE'] == listTags[j]['FILE']:
+				print('found')
+				database[i] = listTags[j]
+	save(database)
 
 class WorkThread(QtCore.QThread):
 	def __init__(self, musicFolder, append):
