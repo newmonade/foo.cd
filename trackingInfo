@@ -29,13 +29,11 @@ Done
 	- Boutons play pause stop next previous -> Done
 	- Update shortcut list in menu -> Done
 	- Add support for up and down in pipe in radio mode, disable left and right -> Done
-	
+	- Tagging functionalities -> Done
+		- retagging a song -> Done
+		- updateing the database with only that song -> Done
 Primary
 
-	- refactorize code : separate class player, search bar and boutons and artwork from table class
-	- deleteLater when closing widget
-	
-	
 		
 	- Replay Gain ->TBD
 	
@@ -44,19 +42,19 @@ Primary
 		* Following playlist selection
 		* Following librairy selection
 		* Following playlist and librairy
-	- Tagging functionalities
-		- retagging a song
-		- updateing the database with only that song
-	
 	- PLaying history / stats
+	
+	- Webradio tags -> Dirty but Done
+	
+	- Better mapping and handling of track artist and album artist e.g. playist column for trackartist
 	
 Secondary
 	- Histogram display, vu meter, spectrogram, ...
 	- volume bar style (stylesheet)
 	- Randomize playlist/Shuffle
 	- Option to activate or deactivaate remote interface 
-	- Webradio tags -> Dirty but Done
 	- webradio images -> API usable but tags from radio very inconcistent
+	- PLaying history / stats
 ---------------------------------------------------------------------
 
 

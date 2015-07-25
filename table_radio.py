@@ -65,7 +65,6 @@ class TableRadio(TableMother):
 		
 		#self.selectionModel().selectionChanged.connect(self.selectionChangedCustom)
  
-		
 		stations = self.radioConfig['stations'].split('|')
 		for station in stations:
 			tags = dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')]))	 

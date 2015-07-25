@@ -96,12 +96,12 @@ class Foo(QtGui.QMainWindow):
 		splitterLeftRight = QtGui.QSplitter()
 		self.splitterTopBottom = QtGui.QSplitter(Qt.Vertical, self)
 		
-		
 		self.frameInfo = QtGui.QFrame()
 		tmpLayout = QtGui.QVBoxLayout()
 		tmpLayout.setContentsMargins(0,0,0,0)
 		tmpLayout.addLayout(self.playbackButtons)
 		tmpLayout.addWidget(self.pixmap)
+		tmpLayout.addStrut(10)
 		#tmpLayout.addLayout(self.searchArea)
 		self.frameInfo.setLayout(tmpLayout)
 		
@@ -461,12 +461,13 @@ class Foo(QtGui.QMainWindow):
 		retag = Retagging([x.tags['file'][7:] for x in children])
 		res = retag.exec_()
 		#self.tree.model().removeRows(0, self.tree.model().rowCount())
-		self.tree.initUI()
+		if res:
+			self.tree.initUI()
 		print(res)
 	
 	def openEqualizer(self):
 		from configparser import RawConfigParser
-		equa = Equalizer(Foo.readConfig('equalizer'))
+		equa = Equalizer(self, Foo.readConfig('equalizer'))
 		equa.equalize.connect(self.applyEqua)
 		if equa.exec_():
 			parser = RawConfigParser()

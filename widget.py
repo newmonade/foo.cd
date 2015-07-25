@@ -7,7 +7,7 @@ import thread
 class PlaybackButtons(QtGui.QHBoxLayout):
 
 	def __init__(self, parent):
-		super(QtGui.QHBoxLayout, self).__init__(parent)
+		super().__init__(parent)
 		self.initUI()
         
 	def initUI(self):
@@ -36,14 +36,14 @@ class PlaybackButtons(QtGui.QHBoxLayout):
 		self.addWidget(self.buttonPlay)
 		self.addWidget(self.buttonNext)
 
-  
+		#self.addStrut(10)
 		#self.show()
         
         
 class VolumeSlider(QtGui.QSlider):
 
 	def __init__(self, parent):
-		super(QtGui.QSlider, self).__init__(QtCore.Qt.Horizontal, parent)
+		super().__init__(QtCore.Qt.Horizontal, parent)
 		self.initUI()
         
 	def initUI(self):
@@ -82,15 +82,18 @@ def createScrollSlider(parent):
 class Image(QtGui.QLabel):
 
 	def __init__(self, parent):
-		QtGui.QLabel.__init__(self)
+		#QtGui.QLabel.__init__(self)
+		super().__init__(parent)
 		self._pixmap = None #QtGui.QPixmap(1,1)
 		self.initUI()
         
 	def initUI(self):
 		#self._pixmap.fill(Qt.darkGray)
 		self.setText('[No Cover]')
-		self.setFixedSize(200,200)
-		self.setAlignment(QtCore.Qt.AlignCenter)
+		
+		self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+		#self.setFixedSize(200,200)
+		#self.setAlignment(QtCore.Qt.AlignCenter)
 
 
 	def resizeEvent(self, event):
@@ -105,32 +108,31 @@ class SearchArea(QtGui.QGridLayout):
 
 	def __init__(self, parent):
 		QtGui.QGridLayout.__init__(self)
+		# Why does it print an error 
+		#super().__init__(parent)
 		self.initUI()
         
 	def initUI(self):
 		self.searchLine = QtGui.QLineEdit()
-		#searchExactFuzzyGroup = QtGui.QGroupBox(self)
 		self.searchExact = QtGui.QRadioButton('Exact')
 		self.searchPrecise = QtGui.QRadioButton('Precise')
 		self.searchFuzzy = QtGui.QRadioButton('Fuzzy')
 		self.searchPrecise.setChecked(True);    
     
-		#searchLayout = QtGui.QGridLayout(searchExactFuzzyGroup)
 		self.setContentsMargins(0, 0, 0, 0)
 		self.addWidget(self.searchLine,0,0,1,3)	
 		self.addWidget(self.searchFuzzy,1,0)
 		self.addWidget(self.searchPrecise,1,1)
 		self.addWidget(self.searchExact,1,2)
-		#self.show()
+		
 
 
 class Equalizer(QtGui.QDialog):
 	equalize = QtCore.pyqtSignal(str, int) 
 
-	def __init__(self, config):
-    
-		QtGui.QDialog.__init__(self)
-		self.setWindowModality(QtCore.Qt.NonModal)
+	def __init__(self, parent, config):
+		super().__init__(parent)
+		self.setWindowModality(QtCore.Qt.ApplicationModal)
 		self.config = eval(config['settings'])
 		self.modified = False
 		bandValues = self.config[config['default']]
@@ -232,8 +234,8 @@ class Equalizer(QtGui.QDialog):
         
 class Retagging(QtGui.QDialog):
 	def __init__(self, fileList):
-		QtGui.QDialog.__init__(self)
-		#self.fileList = fileList
+		super().__init__()
+		self.setWindowModality(QtCore.Qt.ApplicationModal)
 		self.setSizeGripEnabled(True)
 	  
 		allRepr = thread.getRepresentationAllTags(fileList)

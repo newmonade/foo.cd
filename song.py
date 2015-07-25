@@ -31,20 +31,22 @@ class Song:
 		fields.extend(['file', 'length', 'samplerate', 'channels', 'bitrate'])
 		
 		for f in fields:
-		    if f.upper() in tagDict:
-		        self.tags[f] = tagDict[f.upper()]
-		    else:
-		        #If albumartist is asked, it is mapped to the artist value
-		        if f == 'albumartist' and 'ARTIST' in tagDict:
-		            self.tags[f]=tagDict['ARTIST']
-		        #trackartist is thus needed in some cases (e.g. compilation),
-		        #can be mapped to artist if albumartist existed as a file tag
-		        elif (f == 'trackartist' and 'ARTIST' in tagDict and 
-		                'ALBUMARTIST' in tagDict and
-		                tagDict['ARTIST'] != tagDict['ALBUMARTIST']):
-		            self.tags[f]=tagDict['ARTIST']
-		        else:
-		            self.tags[f]='???'
+			if f.upper() in tagDict:
+				self.tags[f] = tagDict[f.upper()]
+			else:
+				#If albumartist is asked, it's mapped to the artist value
+				if f == 'albumartist' and 'ARTIST' in tagDict:
+					self.tags[f]=tagDict['ARTIST']
+				#trackartist is thus needed in some cases (e.g. compilation),
+				#can be mapped to artist if albumartist existed as a file tag
+				elif (f == 'trackartist' and 'ARTIST' in tagDict and 
+					'ALBUMARTIST' in tagDict and
+					tagDict['ARTIST'] != tagDict['ALBUMARTIST']):
+					self.tags[f]=tagDict['ARTIST']
+		    
+				else:
+					self.tags[f]='???'
+	
 	
 	def toString(self):
 		return str(self.tags)
