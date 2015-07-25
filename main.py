@@ -313,6 +313,7 @@ class Foo(QtGui.QMainWindow):
 	# Menu Action 1
 	def scanMusicFolder(self):
 		self.thread = WorkThread(Foo.readConfig('options')['music_folder'], False)
+		self.thread.finished.connect(self.tree.initUI)
 		self.thread.start()
 	
 	# Menu Action 2
@@ -345,7 +346,7 @@ class Foo(QtGui.QMainWindow):
 				| QFileDialog.DontResolveSymlinks)
 		self.thread = WorkThread(dir, True)
 		self.thread.start()
-		print(dir)
+		#print(dir)
 
 	# Menu Action4
 	def toggleRadio(self):
@@ -447,6 +448,7 @@ class Foo(QtGui.QMainWindow):
 				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Return, Qt.KeyboardModifier(QtCore.Qt.ShiftModifier), ''))
 		if key == 'radio_mode':
 			self.shortRadioMode.activated.emit()
+			
 
 
 
@@ -458,7 +460,8 @@ class Foo(QtGui.QMainWindow):
 		#[7:] to drop the 'file://' appended for gstreamer
 		retag = Retagging([x.tags['file'][7:] for x in children])
 		res = retag.exec_()
-		
+		#self.tree.model().removeRows(0, self.tree.model().rowCount())
+		self.tree.initUI()
 		print(res)
 	
 	def openEqualizer(self):

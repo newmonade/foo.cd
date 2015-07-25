@@ -125,7 +125,7 @@ def load():
    		return []
      
 
-
+'''
 def sanitize(database):
 	for dico in database:
 		if 'TRACKNUMBER' in dico:	
@@ -136,6 +136,23 @@ def sanitize(database):
 				isInt = False
 			if isInt:
 				dico['TRACKNUMBER']=str(int(dico['TRACKNUMBER']))
+'''
+
+
+def sanitize(database):
+	for dico in database:
+		track = dico.get('TRACKNUMBER', None)
+		if track != None:
+			try: 
+				track = str(int(dico['TRACKNUMBER']))
+				if len(track) == 1:
+					dico['TRACKNUMBER'] = track.rjust(2, '0')
+				else:
+					dico['TRACKNUMBER'] = track
+			except ValueError:
+				pass
+
+
 
 #Update the database, replacing all dicts in listDictTags
 def updateDB(fileList):
@@ -143,7 +160,9 @@ def updateDB(fileList):
 	listTags = [{key:', '.join(value) for (key, value) in f.tags.items()}
 			for f in taglibFiles]
 	for index, f in enumerate(taglibFiles):
-		listTags[index].update({'FILE':'file://'+f.path, 'LENGTH':f.length, 'SAMPLERATE': f.sampleRate, 'CHANNELS':f.channels, 'BITRATE':f.bitrate})
+		listTags[index].update({'FILE':'file://'+f.path, 'LENGTH':f.length,
+					'SAMPLERATE': f.sampleRate,
+					'CHANNELS':f.channels, 'BITRATE':f.bitrate})
 
 	database = load()
 	for i in range(len(database)):
@@ -164,7 +183,8 @@ class WorkThread(QtCore.QThread):
 		exploreMusicFolder(self.musicFolder, self.append)
 		start2 = time.perf_counter()
 		print('time', start2-start1)
-		
+		self.deleteLater()
+		#self.quit()
 
 
 

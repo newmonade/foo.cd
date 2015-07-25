@@ -10,13 +10,31 @@ from PyQt4 import QtGui
 from song import Song
 import thread
 
+import re
+
 #temporaly
 import time
 
 class Tree(QTreeView):
 	def sortFunc(self,chanson):
-		return chanson.getOptionalValues(self.comm)
-
+		#print(chanson.getOptionalValues(self.comm))
+		#return chanson.getOptionalValues(self.comm)
+		'''(emptiedLevel, tagNames) = Song.getTagName(self.comm)
+		values = chanson.getValues(tagNames)
+		print(values)
+		return values
+		'''
+		(emptiedLevel, tagNames) = Song.getTagName(self.comm)
+		values = ''.join(chanson.getValues(tagNames))
+		def tryint(s):
+			try:
+				return int(s)
+			except:
+				return s
+		# Split the string between numeric and literal chunks and 
+		# return a list of string and int
+		return [ tryint(c) for c in re.split('([0-9]+)', values) ]
+		
 	
 	def populateTree(self,disco):
 		
@@ -194,3 +212,5 @@ class Tree(QTreeView):
 				self.getChildren(item.child(childIndex), children)
 		else:
 			children.append(item.data())
+
+
