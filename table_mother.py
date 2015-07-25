@@ -14,10 +14,20 @@ class TableMother(QtGui.QTableView):
 		raise NotImplementedError( "Should have implemented this" )
 
 	def __init__(self, parent):
-		raise NotImplementedError( "Should have implemented this" )
-        
-	def initUI(self):
-		raise NotImplementedError( "Should have implemented this" )
+		super().__init__(parent)
+		self.setSelectionBehavior(QAbstractItemView.SelectRows)
+		self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+		self.setTabKeyNavigation(False)
+		# No lines between cells	
+		self.setShowGrid(False)
+		self.setAlternatingRowColors(True)
+		self.setEditTriggers(QAbstractItemView.NoEditTriggers)	
+		self.setWordWrap(False)
+		#Don't bold header when get focus
+		self.horizontalHeader().setHighlightSections(False)
+		self.verticalHeader().hide()
+		self.horizontalHeader().setStretchLastSection(True)
+		self.horizontalHeader().setResizeMode(QtGui.QHeaderView.Interactive) #Interactive, ResizeToContents, Stretch
 
 	def focusOutEvent(self, e):
 		self.selectionModel().clearSelection()

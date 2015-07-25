@@ -54,7 +54,7 @@ class TableRadio(TableMother):
 		
 
 	def __init__(self, parent, radioConfig):
-		super(QtGui.QTableView, self).__init__(parent)
+		super().__init__(parent)
 		self.radioConfig = radioConfig
 		self.initUI()
         
@@ -64,20 +64,7 @@ class TableRadio(TableMother):
 		self.setModel(model)
 		
 		#self.selectionModel().selectionChanged.connect(self.selectionChangedCustom)
-
-		self.setSelectionBehavior(QAbstractItemView.SelectRows)
-		self.setSelectionMode(QAbstractItemView.ExtendedSelection)
-		self.setTabKeyNavigation(False)	
-		self.setShowGrid(False)
-		self.setAlternatingRowColors(True)
-		self.setEditTriggers(QAbstractItemView.NoEditTriggers)
-		self.setWordWrap(False)	
-
-		#Don't bold header when get focus
-		self.horizontalHeader().setHighlightSections(False)
-		self.verticalHeader().hide()
-		self.horizontalHeader().setStretchLastSection(True)
-		self.horizontalHeader().setResizeMode(QtGui.QHeaderView.Interactive) #Interactive, ResizeToContents, Stretch
+ 
 		
 		stations = self.radioConfig['stations'].split('|')
 		for station in stations:
