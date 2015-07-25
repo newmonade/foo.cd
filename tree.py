@@ -17,13 +17,6 @@ import time
 
 class Tree(QTreeView):
 	def sortFunc(self,chanson):
-		#print(chanson.getOptionalValues(self.comm))
-		#return chanson.getOptionalValues(self.comm)
-		'''(emptiedLevel, tagNames) = Song.getTagName(self.comm)
-		values = chanson.getValues(tagNames)
-		print(values)
-		return values
-		'''
 		(emptiedLevel, tagNames) = Song.getTagName(self.comm)
 		values = ''.join(chanson.getValues(tagNames))
 		def tryint(s):
@@ -34,6 +27,7 @@ class Tree(QTreeView):
 		# Split the string between numeric and literal chunks and 
 		# return a list of string and int
 		return [ tryint(c) for c in re.split('([0-9]+)', values) ]
+
 		
 	
 	def populateTree(self,disco):

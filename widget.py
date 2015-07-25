@@ -83,19 +83,24 @@ class Image(QtGui.QLabel):
 
 	def __init__(self, parent):
 		QtGui.QLabel.__init__(self)
-		self._pixmap = QtGui.QPixmap(1,1)
+		self._pixmap = None #QtGui.QPixmap(1,1)
 		self.initUI()
         
 	def initUI(self):
-		self._pixmap.fill(Qt.darkGray)
+		#self._pixmap.fill(Qt.darkGray)
+		self.setText('[No Cover]')
+		self.setFixedSize(200,200)
+		self.setAlignment(QtCore.Qt.AlignCenter)
 
 
 	def resizeEvent(self, event):
-		self.setPixmap(self._pixmap.scaled(
-		self.width(), self.height(),
-		QtCore.Qt.KeepAspectRatio))
+		if self._pixmap != None:
+			self.setPixmap(self._pixmap.scaled(
+				self.width(), self.height(),
+				QtCore.Qt.KeepAspectRatio))
             
-
+		
+		
 class SearchArea(QtGui.QGridLayout):
 
 	def __init__(self, parent):
