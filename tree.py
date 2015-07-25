@@ -18,7 +18,7 @@ import time
 class Tree(QTreeView):
 	def sortFunc(self,chanson):
 		(emptiedLevel, tagNames) = Song.getTagName(self.comm)
-		values = ''.join(chanson.getValues(tagNames))
+		values = ' '.join(chanson.getValues(tagNames))
 		def tryint(s):
 			try:
 				return int(s)
