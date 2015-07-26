@@ -47,7 +47,7 @@ class TableRadio(TableMother):
 					value = value.replace('(string)', '').replace('"', '')
 				elif 'uint' in value:
 					value = value.replace('(uint)', '')
-				song.tags[tagName] = value.replace("\\", '')
+				song[tagName] = value.replace("\\", '')
 		
 		attribs = song.getOptionalValues(self.radioConfig['prefered_informations'])
 		self.model().item(self.playingId, 2).setText(attribs[0])
@@ -68,7 +68,7 @@ class TableRadio(TableMother):
 		stations = self.radioConfig['stations'].split('|')
 		for station in stations:
 			tags = dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')]))	 
-			self.addRow(Song(tags, '%name%'+self.radioConfig['prefered_informations']))
+			self.addRow(Song('%name%'+self.radioConfig['prefered_informations'], **tags))
 
 		#Fill in the header, with capital for the first letter(title())
 		headers = ['Name','Informations']
@@ -88,7 +88,7 @@ class TableRadio(TableMother):
 		QTableView.keyPressEvent(self, event)
 
 	def getStatus(self):
-		radioName = self.model().item(self.playingId, 0).data().tags['name']
+		radioName = self.model().item(self.playingId, 0).data()['name']
 		status = 'Radio '+ radioName +' - Playing'
 		return status
 

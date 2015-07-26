@@ -157,7 +157,7 @@ class Tree(QTreeView):
 		self.setHeaderHidden(True)
 
 		db = thread.load()
-		songList = [Song(dict,self.comm) for dict in db]
+		songList = [Song(self.comm, **dict) for dict in db]
 		
 		songList.sort(key=self.sortFunc)
 		

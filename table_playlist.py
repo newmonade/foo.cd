@@ -40,7 +40,7 @@ class Table(TableMother):
 		#self.selectionModel().selectionChanged.connect(self.selectionChanged)
 
 		# Dummy line to display headers
-		self.addRow(Song({}, self.playlistOrder))
+		self.addRow(Song(self.playlistOrder))
 		self.model().removeRow(0)
 
         	#Fill headers, with first capital letter using title()
@@ -76,12 +76,12 @@ class Table(TableMother):
 
 	def getStatus(self):
 		song = self.model().item(self.playingId, 0).data()
-		status = str(song.tags['bitrate'])+' kbps | '+str(song.tags['samplerate'])+' Hz | '
-		if song.tags['samplerate'] == 1:
+		status = str(song['bitrate'])+' kbps | '+str(song['samplerate'])+' Hz | '
+		if song['samplerate'] == 1:
 			status+='Mono'
 		else:
 			status+='Stereo'
-		m, s = divmod(song.tags['length'], 60)
+		m, s = divmod(song['length'], 60)
 		status+= ' | %/'+"%02d:%02d" % (m, s)+' - Playing'
 	
 		return status

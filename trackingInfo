@@ -47,6 +47,7 @@ Primary
 	- Webradio tags -> Dirty but Done
 	
 	- Better mapping and handling of track artist and album artist e.g. playist column for trackartist
+	- Tab navigation
 	
 Secondary
 	- Histogram display, vu meter, spectrogram, ...

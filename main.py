@@ -170,14 +170,14 @@ class Foo(QtGui.QMainWindow):
 		if self.table.playingId > 0:
 			self.player.stop()
 			self.table.playingId-=1
-			self.player.add(self.table.model().item(self.table.playingId,0).data().tags['file'])
+			self.player.add(self.table.model().item(self.table.playingId,0).data()['file'])
 			self.player.play()
 			
 	def next(self):
 		if self.table.model().rowCount()-1 > self.table.playingId:
 			self.player.stop()
 			self.table.playingId+=1
-			self.player.add(self.table.model().item(self.table.playingId,0).data().tags['file'])
+			self.player.add(self.table.model().item(self.table.playingId,0).data()['file'])
 			self.player.play()
 	
 	def toggleSong(self):			
@@ -208,7 +208,7 @@ class Foo(QtGui.QMainWindow):
 			print('About to finish !')
 			self.table.playingId+=1
 			#print('finish',self.playingId)
-			self.player.add(self.table.model().item(self.table.playingId,0).data().tags['file'])
+			self.player.add(self.table.model().item(self.table.playingId,0).data()['file'])
 
 
 
@@ -221,7 +221,7 @@ class Foo(QtGui.QMainWindow):
 			self.table.resizeRowsToContents()
 			if play:
 				self.stop()
-				self.player.add(list[0].tags['file'])
+				self.player.add(list[0]['file'])
 				self.player.play()
 				self.table.displayStopToPlay(i)
 				status = self.table.getStatus()
@@ -270,7 +270,7 @@ class Foo(QtGui.QMainWindow):
 			else:
 				index= self.table.model().index(self.table.selectionModel().currentIndex().row(),0)
 			#print(index.row())
-			songURI = index.model().itemFromIndex(index).data().tags['file']
+			songURI = index.model().itemFromIndex(index).data()['file']
 			
 			self.player.stop()
 			self.player.add(songURI)
@@ -383,7 +383,7 @@ class Foo(QtGui.QMainWindow):
 		
 		db = thread.load()
 		songList = []
-		songGenerator = (Song(dict,self.tree.comm) for dict in db)
+		songGenerator = (Song(self.tree.comm, **dict) for dict in db)
 		self.tree.model().removeRows(0, self.tree.model().rowCount())
 		
 		if self.searchArea.searchExact.isChecked():
@@ -458,7 +458,7 @@ class Foo(QtGui.QMainWindow):
 		children=[]
 		self.tree.getChildren(crawler,children)
 		#[7:] to drop the 'file://' appended for gstreamer
-		retag = Retagging([x.tags['file'][7:] for x in children])
+		retag = Retagging([x['file'][7:] for x in children])
 		res = retag.exec_()
 		#self.tree.model().removeRows(0, self.tree.model().rowCount())
 		if res:
