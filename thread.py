@@ -2,9 +2,15 @@
 import os, sys
 
 from PyQt4 import QtCore
+from PyQt4 import QtGui
 import taglib
 import json
 from collections import defaultdict
+
+
+from player import ReplayGain
+
+
 #temp
 import time
 
@@ -205,4 +211,17 @@ class WorkThreadPipe(QtCore.QThread):
 				self.hotKey.emit(line.replace('\n', ''))
 				#reopen because is kind of blocking and waiting for a new input
 				pipein = open(os.path.join(sys.path[0], "pipe"), 'r')
+
+class WorkThreadRG(QtCore.QThread):
+	
+	def __init__(self, files):
+		QtCore.QThread.__init__(self)
+		self.rg = ReplayGain()
+		self.files = files
+		self.rg.playbin.connect('about-to-finish', self.next)
+	
+	def run(self):
+		
+		self.rg.process(None, None)
+		#self.deleteLater()
 

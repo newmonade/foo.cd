@@ -14,7 +14,7 @@ Done
 	gapeless playback -> done
 	if remove playing element from playlist, stop playback -> done
 	add subfolder to database -> done
-	Pipe interface (raccourcis globaux et ssh) -> Done
+	Pipe interface (global shortcuts and ssh) -> Done
 	search tabs-> Done
 	fuzy search in librairie -> Done
 	Artwork ->Done
@@ -32,23 +32,29 @@ Done
 	- Tagging functionalities -> Done
 		- retagging a song -> Done
 		- updateing the database with only that song -> Done
-	- Better mapping and handling of track artist and album artist e.g. playist column for trackartist -> Done
+	- Better mapping and handling of track artist and album artist e.g. playlist column for trackartist -> Done
 	- Tab navigation -> Done
+	
 Primary
-
-		
+	
 	- Replay Gain ->TBD
+		* Autoconvert foobar tags to GST tags
+			.using tagging window
+		* Scanning + tag writting with GST
+			.album values
+			.call tagging class on received values
+		* Audio element in pipe
+			.replace rganalysis by rgvolume
 	
 	- Artwork behavior :
 		* Fixed on song playing
 		* Following playlist selection
 		* Following librairy selection
 		* Following playlist and librairy
-	- PLaying history / stats
 	
-	- Webradio tags -> Dirty but Done
-	
-	
+	- Tagging: changing column name removes old tag and write new one
+	- Tree: add a root node (for tagging and possibly playlist auto creation
+	- Webradio tags -> Dirty but Done, need better way for RG tags
 	
 Secondary
 	- Histogram display, vu meter, spectrogram, ...
@@ -57,14 +63,3 @@ Secondary
 	- Option to activate or deactivaate remote interface 
 	- webradio images -> API usable but tags from radio very inconcistent
 	- PLaying history / stats
----------------------------------------------------------------------
-
-
-	
-	
-echo # Foo.cd >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git remote add origin https://github.com/newmonade/Foo.cd.git
-git push -u origin master

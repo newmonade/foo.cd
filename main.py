@@ -14,7 +14,7 @@ from song import Song
 from tree import Tree
 
 import thread
-from thread import WorkThread, WorkThreadPipe
+from thread import WorkThread, WorkThreadPipe, WorkThreadRG
 from table_playlist import Table
 
 from player import Player
@@ -431,7 +431,40 @@ class Foo(QtGui.QMainWindow):
 
 
 
-	def tmpTag(self):
+	def tmpTag(self, position):
+		'''index = self.tree.selectedIndexes()[0]
+		crawler = index.model().itemFromIndex(index)
+		children=[]
+		self.tree.getChildren(crawler,children)
+		#[7:] to drop the 'file://' appended for gstreamer
+		retag = Retagging([x['file'][7:] for x in children])
+		res = retag.exec_()
+		if res:
+			self.tree.initUI()
+		print(res)
+		 #ANOTHER OPTION
+		index = self.tree.selectedIndexes()[0]
+		crawler = index.model().itemFromIndex(index)
+		children=[]
+		self.tree.getChildren(crawler,children)
+		
+		self.RG = WorkThreadRG(children)
+		self.RG.start()
+		'''
+		
+		menu = QtGui.QMenu()
+		tagging = QtGui.QAction('Tagging',self)
+		
+		replayGain = QtGui.QAction('ReplayGain',self)
+		
+		
+		tagging.triggered.connect(self.openTagging)
+		replayGain.triggered.connect(self.close)
+		menu.addAction(tagging)
+		menu.addAction(replayGain)
+		menu.exec_(self.tree.viewport().mapToGlobal(position))
+	
+	def openTagging(self):
 		index = self.tree.selectedIndexes()[0]
 		crawler = index.model().itemFromIndex(index)
 		children=[]
