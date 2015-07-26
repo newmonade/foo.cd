@@ -32,6 +32,8 @@ Done
 	- Tagging functionalities -> Done
 		- retagging a song -> Done
 		- updateing the database with only that song -> Done
+	- Better mapping and handling of track artist and album artist e.g. playist column for trackartist -> Done
+	- Tab navigation -> Done
 Primary
 
 		
@@ -46,8 +48,7 @@ Primary
 	
 	- Webradio tags -> Dirty but Done
 	
-	- Better mapping and handling of track artist and album artist e.g. playist column for trackartist
-	- Tab navigation
+	
 	
 Secondary
 	- Histogram display, vu meter, spectrogram, ...

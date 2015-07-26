@@ -29,8 +29,6 @@ from gi.repository import Gst
 
 class Foo(QtGui.QMainWindow):
 
-	#songUpdate = QtCore.pyqtSignal(str)
-
 	def __init__(self):
 		super(Foo, self).__init__()
 		self.initUI()
@@ -47,21 +45,13 @@ class Foo(QtGui.QMainWindow):
 		self.player.bus.connect('message::eos', self.stop)
 		self.player.bus.connect('message::duration-changed', self.onDurationChanged)
 		   
-		
-		
-		
-		
-		
 		self.tree = Tree(self, config['tree_order'])
 		self.tree.addSongs.connect(self.addSongsFromTree)
 		self.tree.customContextMenuRequested.connect(self.tmpTag)
 		
 		if not self.radio:
 			self.table=Table( self, config)
-			
 			self.handlerATF = self.player.playbin.connect("about-to-finish", self.onAboutToFinish)   
-			
-			
 			self.table.runAction.connect(self.tableAction)
 		else:
 			configRadio = Foo.readConfigRadios()
@@ -69,10 +59,7 @@ class Foo(QtGui.QMainWindow):
 			self.table.runAction.connect(self.tableAction)
 			self.handlerT = self.player.bus.connect('message::tag', self.table.onTag)
 		
-		
-		
 		self.playbackButtons = PlaybackButtons(None)
-		
 		self.playbackButtons.buttonPlay.clicked.connect(self.toggleSong)
 		self.playbackButtons.buttonStop.clicked.connect(self.stop)
 		self.playbackButtons.buttonPrev.clicked.connect(self.previous)
@@ -92,33 +79,30 @@ class Foo(QtGui.QMainWindow):
 		self.playbackButtons.addWidget(self.volumeSlider)
 		self.playbackButtons.addWidget(self.scrollSlider)
 		
-
 		splitterLeftRight = QtGui.QSplitter()
 		self.splitterTopBottom = QtGui.QSplitter(Qt.Vertical, self)
 		
-		self.frameInfo = QtGui.QFrame()
-		tmpLayout = QtGui.QVBoxLayout()
-		tmpLayout.setContentsMargins(0,0,0,0)
-		tmpLayout.addLayout(self.playbackButtons)
-		tmpLayout.addWidget(self.pixmap)
-		tmpLayout.addStrut(10)
-		#tmpLayout.addLayout(self.searchArea)
-		self.frameInfo.setLayout(tmpLayout)
+		self.infoFrame = QtGui.QFrame()
+		infoLayout = QtGui.QVBoxLayout()
+		infoLayout.setContentsMargins(0,0,0,0)
+		infoLayout.addLayout(self.playbackButtons)
+		infoLayout.addWidget(self.pixmap)
+		self.infoFrame.setLayout(infoLayout)
 		
-		tmpLayout2 = QtGui.QVBoxLayout()
-		tmpLayout2.setContentsMargins(0,0,0,0)
-		tmpLayout2.addWidget(self.tree)
-		tmpLayout2.addLayout(self.searchArea)
-		tmpFrame = QtGui.QFrame()
-		tmpFrame.setLayout(tmpLayout2)
+		libLayout = QtGui.QVBoxLayout()
+		libLayout.setContentsMargins(0,0,0,0)
+		libLayout.addWidget(self.tree)
+		libLayout.addLayout(self.searchArea)
+		libFrame = QtGui.QFrame()
+		libFrame.setLayout(libLayout)
 		
 		self.splitterTopBottom.addWidget(self.table)
-		self.splitterTopBottom.addWidget(self.frameInfo)
+		self.splitterTopBottom.addWidget(self.infoFrame)
 		self.splitterTopBottom.setStretchFactor(0,3)
 		self.splitterTopBottom.setStretchFactor(1,1)
 
 		#splitterLeftRight.addWidget(self.tree)
-		splitterLeftRight.addWidget(tmpFrame)
+		splitterLeftRight.addWidget(libFrame)
 		splitterLeftRight.addWidget(self.splitterTopBottom)
 		splitterLeftRight.setStretchFactor(0,2)
 		splitterLeftRight.setStretchFactor(1,3)
@@ -130,11 +114,11 @@ class Foo(QtGui.QMainWindow):
 		dummyWidget = QtGui.QWidget()
 		dummyWidget.setLayout(mainLayout)  
 		self.setCentralWidget(dummyWidget)
+		
+		self.setTabOrder(self.tree, self.table)
 
 		dictShortcuts = self.readConfig('shortcuts')
-		
 		modifier = dictShortcuts['modifier']+'+'
-		
 		self.shortQuit = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['quit']), self, self.close)
 		self.shortStop = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['stop']), self, self.stop)
 		self.shortPlayPause = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['play_pause']), self, self.toggleSong)
@@ -195,14 +179,14 @@ class Foo(QtGui.QMainWindow):
 			status = self.table.getStatus()
 			self.setStatusEmission(status)
 			
-	#triggered by player when a song starts
+	# Triggered by player when a song starts
 	def onDurationChanged(self, bus, msg):
 		self.table.displayNext()
 		print('Duration changed signal !')
 		#status = self.table.getStatus()
 		#self.setStatusEmission(status)
 
-	#triggered by player at the end of a song
+	# Triggered by player at the end of a song
 	def onAboutToFinish(self, bus):
 		if self.table.model().rowCount()-1 > self.table.playingId:
 			print('About to finish !')
@@ -278,6 +262,7 @@ class Foo(QtGui.QMainWindow):
 			self.table.displayStopToPlay(index.row())
 			status = self.table.getStatus()
 			self.setStatusEmission(status)
+			
 	@staticmethod
 	def readConfig(section):
 		from configparser import RawConfigParser
@@ -337,7 +322,7 @@ class Foo(QtGui.QMainWindow):
 		print('must delete')
 
 	# Menu Action3
-	#Must be subdirectory of music folder otherwise wont be rescanned
+	# Must be subdirectory of music folder otherwise wont be rescanned
 	def addFolderToLibrary(self):
 		dir = QFileDialog.getExistingDirectory(None,
 				"Open Directory",
@@ -345,8 +330,8 @@ class Foo(QtGui.QMainWindow):
 				QFileDialog.ShowDirsOnly
 				| QFileDialog.DontResolveSymlinks)
 		self.thread = WorkThread(dir, True)
+		self.thread.finished.connect(self.tree.initUI)
 		self.thread.start()
-		#print(dir)
 
 	# Menu Action4
 	def toggleRadio(self):
@@ -370,7 +355,7 @@ class Foo(QtGui.QMainWindow):
 		self.splitterTopBottom.addWidget(self.table)
 		# Since the frame is already attached to the splitter, 
 		# it only moves it to the new position
-		self.splitterTopBottom.addWidget(self.frameInfo)
+		self.splitterTopBottom.addWidget(self.infoFrame)
 		self.splitterTopBottom.setStretchFactor(0,3)
 		self.splitterTopBottom.setStretchFactor(1,1)
 		self.table.runAction.connect(self.tableAction)
@@ -427,14 +412,10 @@ class Foo(QtGui.QMainWindow):
 			else:
 				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Down, Qt.KeyboardModifier(), ''))
 		if key == 'tree_left':
-			if self.radio:
-				pass
-			else:
+			if not self.radio:
 				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Left, Qt.KeyboardModifier(), ''))
 		if key == 'tree_right':
-			if self.radio:
-				pass
-			else:
+			if not self.radio:
 				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Right, Qt.KeyboardModifier(), ''))
 		if key == 'tree_validate':
 			if self.radio:
@@ -442,9 +423,7 @@ class Foo(QtGui.QMainWindow):
 			else:
 				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Return, Qt.KeyboardModifier(), ''))
 		if key == 'tree_append':
-			if self.radio:
-				pass
-			else:
+			if not self.radio:
 				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Return, Qt.KeyboardModifier(QtCore.Qt.ShiftModifier), ''))
 		if key == 'radio_mode':
 			self.shortRadioMode.activated.emit()
@@ -460,7 +439,6 @@ class Foo(QtGui.QMainWindow):
 		#[7:] to drop the 'file://' appended for gstreamer
 		retag = Retagging([x['file'][7:] for x in children])
 		res = retag.exec_()
-		#self.tree.model().removeRows(0, self.tree.model().rowCount())
 		if res:
 			self.tree.initUI()
 		print(res)
