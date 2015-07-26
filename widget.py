@@ -235,6 +235,7 @@ class Equalizer(QtGui.QDialog):
 class Retagging(QtGui.QDialog):
 	def __init__(self, fileList):
 		super().__init__()
+		self.columnsToRemove = {}
 		self.setWindowModality(QtCore.Qt.ApplicationModal)
 		self.setSizeGripEnabled(True)
 	  
@@ -305,6 +306,8 @@ class Retagging(QtGui.QDialog):
 		self.buttonCancel.clicked.connect(self.refuse)
 		self.buttonAdd.clicked.connect(self.addColumn)
 		
+		self.tagTable.horizontalHeader().sectionDoubleClicked.connect(self.changeHorizontalHeader)
+		
 		self.resize(self.tagTable.sizeHint().width()+100, self.sizeHint().height())
 		
 	def addColumn(self):
@@ -335,14 +338,32 @@ class Retagging(QtGui.QDialog):
 			values = [x.text().strip() for x in self.model.takeRow(0)]
 			tags = dict(zip(headers, values))
 			tags.update({k: v for k, v in generalTags.items() if v != 'Multiple Values'})
+			tags.update(self.columnsToRemove)
+			
 			# This dict contains the tags to write and '' tags to be deleted
 			modified = thread.modifyTags(tags)
 			if modified:
 				fileList.append(tags['FILE'])
 		thread.updateDB(fileList)
 		self.accept()
+
+	def changeHorizontalHeader(self, index):
+		oldHeader = self.tagTable.model().horizontalHeaderItem(index).text()
+		newHeader, ok = QtGui.QInputDialog.getText(self,
+						'Change tag name',
+						'New tag name:',
+						QtGui.QLineEdit.Normal,
+						oldHeader)
+		if ok:
+			self.tagTable.model().horizontalHeaderItem(index).setText(newHeader.title())
+			self.columnsToRemove[oldHeader.upper()]=''
 	
-	
+	def keyPressEvent(self, event):
+		if event.key() == Qt.Key_Delete:
+			index = self.tagTable.selectedIndexes()
+			for i in index:
+				self.tagTable.model().itemFromIndex(i).setText('')
+
 
 	def refuse(self):
 		self.close()

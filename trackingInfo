@@ -52,7 +52,10 @@ Primary
 		* Following librairy selection
 		* Following playlist and librairy
 	
-	- Tagging: changing column name removes old tag and write new one
+	- Tagging
+		* changing column name removes old tag and write new one -> Done
+		* remove multiple selection at once with del -> Done
+	
 	- Tree: add a root node (for tagging and possibly playlist auto creation
 	- Webradio tags -> Dirty but Done, need better way for RG tags
 	
