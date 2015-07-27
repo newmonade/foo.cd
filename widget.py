@@ -279,17 +279,20 @@ class Retagging(QtGui.QDialog):
 				for file in range(len(fileList))]
 		nodes = [[QtGui.QStandardItem(x) for x in attrList]
 				for attrList in attribs ]
-		
-		for (n, a) in zip(nodes, attribs):
-			#map(lambda x,y : x.setData(y), zip(n, a))
-			
+		for n in nodes:
 			self.model.appendRow(n)
 		
+		
+		
+		#Add the headers to the list of values
+		attribs.append(listKeys)
+		fontMetric = QtGui.QFontMetrics(QtGui.QFont())
+		colWidth = [[fontMetric.width(x) for x in l] for l in attribs]
+		maxWidth = [max(x) for x in zip(*colWidth)]
 		# Fill headers
 		for i,h in enumerate(listKeys):
 			self.model.setHeaderData(i,QtCore.Qt.Horizontal,h.title())
-		
-		
+			self.tagTable.horizontalHeader().resizeSection(i, maxWidth[i])
 		
 		
 		self.tagTable.setAlternatingRowColors(True)
@@ -297,7 +300,8 @@ class Retagging(QtGui.QDialog):
 		self.tagTable.verticalHeader().hide()
 		self.tagTable.horizontalHeader().setHighlightSections(False)
 		self.tagTable.horizontalHeader().setResizeMode(QtGui.QHeaderView.Interactive)
-
+		self.tagTable.horizontalHeader().setStretchLastSection(True)
+		
 		self.layout.addWidget(self.tagTable, 2, 0, 1, 3)
 		
 		
@@ -307,8 +311,8 @@ class Retagging(QtGui.QDialog):
 		self.buttonAdd.clicked.connect(self.addColumn)
 		
 		self.tagTable.horizontalHeader().sectionDoubleClicked.connect(self.changeHorizontalHeader)
-		
-		self.resize(self.tagTable.sizeHint().width()+100, self.sizeHint().height())
+		screen = QtGui.QDesktopWidget().screenGeometry()
+		self.resize(min(sum(maxWidth)+10, screen.width()-10), self.sizeHint().height())
 		
 	def addColumn(self):
 		name, ok = QtGui.QInputDialog.getText(self, 'Input Dialog', 

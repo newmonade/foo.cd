@@ -17,7 +17,7 @@ import thread
 from thread import WorkThread, WorkThreadPipe, WorkThreadRG
 from table_playlist import Table
 
-from player import Player
+from player import Player, ReplayGain
 import widget
 from widget import PlaybackButtons, SearchArea, VolumeSlider, Image, Equalizer, Retagging
 
@@ -459,10 +459,21 @@ class Foo(QtGui.QMainWindow):
 		
 		
 		tagging.triggered.connect(self.openTagging)
-		replayGain.triggered.connect(self.close)
+		replayGain.triggered.connect(self.startReplayGain)
 		menu.addAction(tagging)
 		menu.addAction(replayGain)
 		menu.exec_(self.tree.viewport().mapToGlobal(position))
+
+	def startReplayGain(self):
+		index = self.tree.selectedIndexes()[0]
+		crawler = index.model().itemFromIndex(index)
+		children=[]
+		self.tree.getChildren(crawler,children)
+		
+		self.RG = ReplayGain([x['file'] for x in children])
+		self.RG.exec_()
+		#self.RG = WorkThreadRG(children)
+		#self.RG.start()
 	
 	def openTagging(self):
 		index = self.tree.selectedIndexes()[0]

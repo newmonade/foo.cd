@@ -216,12 +216,20 @@ class WorkThreadRG(QtCore.QThread):
 	
 	def __init__(self, files):
 		QtCore.QThread.__init__(self)
-		self.rg = ReplayGain()
+		
 		self.files = files
-		self.rg.playbin.connect('about-to-finish', self.next)
+		
 	
 	def run(self):
-		
-		self.rg.process(None, None)
+		dummy = ''
+		fs = [x['file'][7:] for x in self.files]
+		self.rg = ReplayGain(fs)
+		self.rg.process( None, None)
+		newHeader, ok = QtGui.QInputDialog.getText(None,
+						'Change tag name',
+						'New tag name:',
+						QtGui.QLineEdit.Normal,
+						dummy)
+		#self.rg.calculate()
 		#self.deleteLater()
 
