@@ -51,6 +51,7 @@ class TableRadio(TableMother):
 		
 		attribs = song.getOptionalValues(self.radioConfig['prefered_informations'])
 		self.model().item(self.playingId, 2).setText(attribs[0])
+		
 		print(taglist.to_string())
 		def handle_tag(tagslist, tag, userdata):
 			funcs = ['get_string', 'get_uint', 'get_float', 'get_double']

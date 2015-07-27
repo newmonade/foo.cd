@@ -359,6 +359,7 @@ class Foo(QtGui.QMainWindow):
 		self.splitterTopBottom.setStretchFactor(0,3)
 		self.splitterTopBottom.setStretchFactor(1,1)
 		self.table.runAction.connect(self.tableAction)
+		self.setTabOrder(self.tree, self.table)
 		
 
 
