@@ -36,8 +36,14 @@ class Player():
         else:
             for i, v in enumerate(bandValues):
                 self.equalizer.set_property('band'+str(i), v)
-
-    
+        '''
+        '''
+    	# Add ReplayGain
+        self.replayGain = Gst.ElementFactory.make('rgvolume', 'rgvolume')
+        self.audiobin.add(self.replayGain)
+        self.audiobin.get_static_pad('sink').set_target(self.replayGain.get_static_pad('sink'))
+        self.replayGain.link(self.equalizer)
+        
         self.bus = self.playbin.get_bus()
         self.bus.add_signal_watch()
         self.bus.connect('message::error', self.on_error)
