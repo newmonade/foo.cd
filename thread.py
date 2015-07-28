@@ -8,9 +8,6 @@ import json
 from collections import defaultdict
 
 
-from player import ReplayGain
-
-
 #temp
 import time
 
@@ -212,24 +209,4 @@ class WorkThreadPipe(QtCore.QThread):
 				#reopen because is kind of blocking and waiting for a new input
 				pipein = open(os.path.join(sys.path[0], "pipe"), 'r')
 
-class WorkThreadRG(QtCore.QThread):
-	
-	def __init__(self, files):
-		QtCore.QThread.__init__(self)
-		
-		self.files = files
-		
-	
-	def run(self):
-		dummy = ''
-		fs = [x['file'][7:] for x in self.files]
-		self.rg = ReplayGain(fs)
-		self.rg.process( None, None)
-		newHeader, ok = QtGui.QInputDialog.getText(None,
-						'Change tag name',
-						'New tag name:',
-						QtGui.QLineEdit.Normal,
-						dummy)
-		#self.rg.calculate()
-		#self.deleteLater()
 

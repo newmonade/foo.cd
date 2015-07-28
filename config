@@ -18,7 +18,7 @@ radio_mode = R
 equalizer = E
 
 [radios]
-prefered_informations = $%title%$$ - %artist%$$ %genre%$$ %bitrate% bps$
+prefered_informations = $%title%$$ - %artist%$$ %genre%$$ %bitrate% kbps$
 stations = TSF Jazz ! http://broadcast.infomaniak.net/tsfjazz-high.mp3 | Divergence FM ! http://stream.divergence-fm.org/divergence.ogg | Acik Radyo ! http://stream.34bit.net/ar64.ogg
 
 [equalizer]

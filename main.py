@@ -14,7 +14,7 @@ from song import Song
 from tree import Tree
 
 import thread
-from thread import WorkThread, WorkThreadPipe, WorkThreadRG
+from thread import WorkThread, WorkThreadPipe
 from table_playlist import Table
 
 from player import Player, ReplayGain
@@ -344,6 +344,7 @@ class Foo(QtGui.QMainWindow):
 			self.radio=True
 			self.player.playbin.disconnect(self.handlerATF)
 			self.handlerT = self.player.bus.connect('message::tag', self.table.onTag)
+			
 		else:
 			config = Foo.readConfig('options')
 			self.table=Table( self.tree, config)
