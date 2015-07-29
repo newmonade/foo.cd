@@ -20,34 +20,34 @@ class Player():
 		# No video, is it needed ?
 		self.playbin.set_property('video-sink', Gst.ElementFactory.make('fakesink', 'fakesink'))
 
-        # Change the audio sink to our own bin, so that an equalizer/replay gain element can be added later on if needed
+		# Change the audio sink to our own bin, 
+		# so that an equalizer/replay gain element can be added later on if needed
 		self.audiobin  = Gst.Bin('audiobin')
 		self.audiosink = Gst.ElementFactory.make('autoaudiosink', 'audiosink')
 		self.audiobin.add(self.audiosink)
 		self.audiobin.add_pad(Gst.GhostPad.new('sink', self.audiosink.get_static_pad('sink')))
 		self.playbin.set_property('audio-sink', self.audiobin)
 
-        # Add equalizer
+		# Add equalizer
 		self.equalizer = Gst.ElementFactory.make('equalizer-10bands', 'equalizer')
 		self.audiobin.add(self.equalizer)
 		self.audiobin.get_static_pad('sink').set_target(self.equalizer.get_static_pad('sink'))
 		self.equalizer.link(self.audiosink)
         
-        # Somehow equalizer needs to have a band set to not null
-        # otherwise doesnt respond afterwards
+		# Somehow equalizer needs to have a band set to not null
+		# otherwise doesnt respond afterwards
 		if bandValues == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]:
 			self.equalizer.set_property('band0', 0.01)
 		else:
 			for i, v in enumerate(bandValues):
 				self.equalizer.set_property('band'+str(i), v)
 	
-	
-    	# Add ReplayGain
+		# Add ReplayGain
 		self.replayGain = Gst.ElementFactory.make('rgvolume', 'rgvolume')
 		self.audiobin.add(self.replayGain)
 		self.audiobin.get_static_pad('sink').set_target(self.replayGain.get_static_pad('sink'))
 		self.replayGain.link(self.equalizer)
-		self.replayGain.set_property("album-mode", True)
+		self.replayGain.set_property("album-mode", configEqua['replay_gain_album_mode'])
         	
 		self.bus = self.playbin.get_bus()
 		self.bus.add_signal_watch()
@@ -57,7 +57,7 @@ class Player():
 	def onTag(self, bus, msg):
 		taglist = msg.parse_tag()
 		tags = {}
-		print(taglist.to_string())
+		#print(taglist.to_string())
 		if 'replaygain' in taglist.to_string():
 			print(taglist.to_string())
     

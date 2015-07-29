@@ -21,7 +21,8 @@ equalizer = E
 prefered_informations = $%title%$$ - %artist%$$ %genre%$$ %bitrate% kbps$
 stations = TSF Jazz ! http://broadcast.infomaniak.net/tsfjazz-high.mp3 | Divergence FM ! http://stream.divergence-fm.org/divergence.ogg | Acik Radyo ! http://stream.34bit.net/ar64.ogg
 
-[equalizer]
+[audio]
+replay_gain_album_mode = True
 settings = {'default': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],}
 default = default
 

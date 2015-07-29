@@ -41,7 +41,7 @@ class Foo(QtGui.QMainWindow):
 		self.createMenu()
 		self.setWindowTitle("Foo.cd")
         
-		self.player = Player(Foo.readConfig('equalizer'))
+		self.player = Player(Foo.readConfig('audio'))
 		self.player.bus.connect('message::eos', self.stop)
 		self.player.bus.connect('message::duration-changed', self.onDurationChanged)
 		   
@@ -491,12 +491,12 @@ class Foo(QtGui.QMainWindow):
 	
 	def openEqualizer(self):
 		from configparser import RawConfigParser
-		equa = Equalizer(self, Foo.readConfig('equalizer'))
+		equa = Equalizer(self, Foo.readConfig('audio'))
 		equa.equalize.connect(self.applyEqua)
 		if equa.exec_():
 			parser = RawConfigParser()
 			parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
-			parser['equalizer']['settings']= str(equa.config)
+			parser['audio']['settings']= str(equa.config)
 			with open(os.path.dirname(os.path.realpath(__file__))+'/config', 'w') as configfile:
 				parser.write(configfile)
 		
