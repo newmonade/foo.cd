@@ -1,7 +1,7 @@
 
 For tags : pytaglib
-for GUI : pyqt
-For playback : GStreamerAudio
+for GUI : pyqt (v.4)
+For playback : GStreamerAudio (v.1.0)
 		i.e. :  gst-python  in Community,
 			 python-gobject in Extra
 			... ooof
@@ -31,21 +31,24 @@ Done
 	- Add support for up and down in pipe in radio mode, disable left and right -> Done
 	- Tagging functionalities -> Done
 		- retagging a song -> Done
-		- updateing the database with only that song -> Done
+		- updating the database with only that song -> Done
 	- Better mapping and handling of track artist and album artist e.g. playlist column for trackartist -> Done
 	- Tab navigation -> Done
+	- Tagging
+		* changing column name removes old tag and write new one -> Done
+		* remove multiple selection at once with del -> Done
+	- Webradio tags -> Done
 	
 Primary
-	
 	- Replay Gain ->TBD
-		* Autoconvert foobar tags to GST tags
+		* Autoconvert foobar tags to GST tags ->they are accurate actually...
 			.using tagging window
 		* Scanning + tag writting with GST
-			.album values
-			.call tagging class on received values
+			.album values -> ??? !!!
+			.write tags -> Done
 		* Audio element in pipe
-			.replace rganalysis by rgvolume
-		* If RG tags already there, bugs : to many calls to onTag => different list size...
+			.replace rganalysis by rgvolume -> are tags really used ?
+		* If RG tags already there, bugs during recomputation : to many calls to onTag => different list size...
 	
 	- Artwork behavior :
 		* Fixed on song playing
@@ -53,17 +56,13 @@ Primary
 		* Following librairy selection
 		* Following playlist and librairy
 	
-	- Tagging
-		* changing column name removes old tag and write new one -> Done
-		* remove multiple selection at once with del -> Done
-	
 	- Tree: add a root node (for tagging and possibly playlist auto creation)
-	- Webradio tags -> Dirty but Done, need better way for RG tags
 	
 Secondary
+	- Customizable status bar
 	- Histogram display, vu meter, spectrogram, ...
 	- volume bar style (stylesheet)
 	- Randomize playlist/Shuffle
-	- Option to activate or deactivaate remote interface 
+	- Option to activate or deactivate remote interface 
 	- webradio images -> API usable but tags from radio very inconcistent
 	- PLaying history / stats

@@ -9,17 +9,9 @@ import song
 from song import Song
 from table_mother import TableMother
 
-
 #temporarily
 import time
 
-'''
-Table interface
-signal runAction(str) connected to Foo.tableAction
-playingID
-displays...
-getStatus
-'''
 
 class TableRadio(TableMother):
 
@@ -38,11 +30,10 @@ class TableRadio(TableMother):
 		(emptiedStr, tagNames) = Song.getTagName(self.radioConfig['prefered_informations'])
 
 		taglist = msg.parse_tag()
-		print(taglist.to_string())
-
+		#print(taglist.to_string())
 		def handle_tag(tagslist, tag, userdata):
-			# Look http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTagList.html
-			# for list of available tags
+			#  Look there for list of available tags
+			#http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTagList.html
 			if tag == "bitrate":
 				_, song['bitrate'] = tagslist.get_uint(tag)
 				song['bitrate'] = song['bitrate']//1000
@@ -54,14 +45,11 @@ class TableRadio(TableMother):
 			elif tag == "genre":
 				_, song['genre'] = tagslist.get_string(tag)
 			elif tag == "channel-mode":
-				_, song['channels'] = tagslist.get_string(tag)
-					
+				_, song['channels'] = tagslist.get_string(tag)	
 		taglist.foreach(handle_tag, None)
-		#print(song)
 		attribs = song.getOptionalValues(self.radioConfig['prefered_informations'])
 		self.model().item(self.playingId, 2).setText(attribs[0])
 		
-
 	def __init__(self, parent, radioConfig):
 		super().__init__(parent)
 		self.radioConfig = radioConfig
@@ -79,7 +67,7 @@ class TableRadio(TableMother):
 			tags = dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')]))	 
 			self.addRow(Song('%name%'+self.radioConfig['prefered_informations'], **tags))
 
-		#Fill in the header, with capital for the first letter(title())
+		# Fill in the header, with capital for the first letter(title())
 		headers = ['Name','Informations']
 		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
 		for i,h in enumerate(headers):
