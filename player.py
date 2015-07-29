@@ -154,8 +154,7 @@ class ReplayGain(QtGui.QDialog):
 			#head, *tail = self.files
 			#print(head, tail)
 			#self.files = tail
-			
-			
+				
 			self.playbin.set_property('uri', self.files[self.index])
 			self.playbin.set_state(Gst.State.PLAYING)
 			#pad = self.replaygain.get_static_pad("src")
@@ -166,7 +165,6 @@ class ReplayGain(QtGui.QDialog):
 		else:
 			self.playbin.set_state(Gst.State.NULL)
 			albumData = self.tags[-1]
-			
 			#print(self.files, len(self.tags), len(self.files))
 			#print(self.tags)
 			for i, t in enumerate(self.tags):

@@ -340,6 +340,7 @@ class Retagging(QtGui.QDialog):
 		fileList = []
 		for r in range(self.model.rowCount()):
 			values = [x.text().strip() for x in self.model.takeRow(0)]
+			
 			tags = dict(zip(headers, values))
 			tags.update({k: v for k, v in generalTags.items() if v != 'Multiple Values'})
 			tags.update(self.columnsToRemove)
