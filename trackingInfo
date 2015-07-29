@@ -45,6 +45,7 @@ Primary
 			.call tagging class on received values
 		* Audio element in pipe
 			.replace rganalysis by rgvolume
+		* If RG tags already there, bugs : to many calls to onTag => different list size...
 	
 	- Artwork behavior :
 		* Fixed on song playing

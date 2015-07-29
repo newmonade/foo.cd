@@ -5,12 +5,12 @@ from gi.repository import GObject
 from gi.repository import Gst
 Gst.init(None)
 
+# For ReplayGain
+import thread
+
 from PyQt4 import QtGui
 
 class Player():
-	
-	
-    
 	def __init__(self, configEqua):
 		
 		bandValues = eval(configEqua['settings'])[configEqua['default']]
@@ -47,10 +47,19 @@ class Player():
 		self.audiobin.add(self.replayGain)
 		self.audiobin.get_static_pad('sink').set_target(self.replayGain.get_static_pad('sink'))
 		self.replayGain.link(self.equalizer)
-        
+		self.replayGain.set_property("album-mode", True)
+        	
 		self.bus = self.playbin.get_bus()
 		self.bus.add_signal_watch()
 		self.bus.connect('message::error', self.on_error)
+		self.bus.connect('message::tag', self.onTag)
+		
+	def onTag(self, bus, msg):
+		taglist = msg.parse_tag()
+		tags = {}
+		print(taglist.to_string())
+		if 'replaygain' in taglist.to_string():
+			print(taglist.to_string())
     
 	def add(self, uri):
 		self.playbin.set_property('uri', uri)
@@ -116,19 +125,25 @@ class ReplayGain(QtGui.QDialog):
 		
 	def onTag(self, bus, msg):
 		taglist = msg.parse_tag()
+		#print(taglist.to_string())
 		tags = {}
+		
 		if 'replaygain' in taglist.to_string():
 			def handle_tag(tagslist, tag, userdata):
 				if tag == Gst.TAG_TRACK_GAIN:
-					_, tags['GST_TAG_TRACK_GAIN'] = tagslist.get_double(tag)
+					_, tags['REPLAYGAIN_TRACK_GAIN'] = tagslist.get_double(tag)
+					tags['REPLAYGAIN_TRACK_GAIN'] = "{:.2f}".format(tags['REPLAYGAIN_TRACK_GAIN'])  +' dB'
 				elif tag == Gst.TAG_TRACK_PEAK:
-					_, tags['GST_TAG_TRACK_PEAK'] = tagslist.get_double(tag)
+					_, tags['REPLAYGAIN_TRACK_PEAK'] = tagslist.get_double(tag)
+					tags['REPLAYGAIN_TRACK_PEAK'] = "{:.6f}".format(tags['REPLAYGAIN_TRACK_PEAK'])
 				elif tag == Gst.TAG_REFERENCE_LEVEL:
-					_, tags['trackLevel'] = tagslist.get_double(tag)
+					_, tags['REPLAYGAIN_REFERENCE_LEVEL'] = tagslist.get_double(tag)
+					tags['REPLAYGAIN_REFERENCE_LEVEL'] = str(tags['REPLAYGAIN_REFERENCE_LEVEL'])
 				elif tag == Gst.TAG_ALBUM_GAIN:
-					_, tags[' GST_TAG_ALBUM_GAIN'] = tagslist.get_double(tag)
+					_, tags['REPLAYGAIN_ALBUM_GAIN'] = tagslist.get_double(tag)
 				elif tag == Gst.TAG_ALBUM_PEAK:
-					_, tags['GST_TAG_ALBUM_PEAK'] = tagslist.get_double(tag)
+					_, tags['REPLAYGAIN_ALBUM_PEAK'] = tagslist.get_double(tag)
+					tags['REPLAYGAIN_ALBUM_PEAK'] =tags['REPLAYGAIN_ALBUM_PEAK']
         
 			taglist.foreach(handle_tag, None)
 			self.tags.append(tags)
@@ -151,12 +166,21 @@ class ReplayGain(QtGui.QDialog):
 		else:
 			self.playbin.set_state(Gst.State.NULL)
 			albumData = self.tags[-1]
-			for i, t in enumerate(self.tags):
-				t['FILE'] = self.files[i]
-				t['GST_TAG_ALBUM_PEAK'] = albumData['GST_TAG_ALBUM_PEAK']
-				t[' GST_TAG_ALBUM_GAIN'] = albumData['GST_TAG_ALBUM_GAIN']
 			
-			print(self.tags)
+			#print(self.files, len(self.tags), len(self.files))
+			#print(self.tags)
+			for i, t in enumerate(self.tags):
+				t['FILE'] = self.files[i][7:]
+				t['REPLAYGAIN_ALBUM_PEAK'] = "{:.6f}".format(albumData['REPLAYGAIN_ALBUM_PEAK'])
+				t['REPLAYGAIN_ALBUM_GAIN'] = "{:.2f}".format(albumData['REPLAYGAIN_ALBUM_GAIN']) +" dB"
+			
+			
+			fileList = []
+			for tags in self.tags:
+				modified = thread.modifyTags(tags)
+				if modified:
+					fileList.append(tags['FILE'])
+			thread.updateDB(fileList)
 			self.deleteLater()
 			self.close()
 			
