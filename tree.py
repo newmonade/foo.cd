@@ -10,12 +10,14 @@ from PyQt4 import QtGui
 from song import Song
 import thread
 
+# For natural sorting
 import re
 
 #temporaly
 import time
 
 class Tree(QTreeView):
+
 	def sortFunc(self,chanson):
 		(emptiedLevel, tagNames) = Song.getTagName(self.comm)
 		values = ' '.join(chanson.getValues(tagNames))
@@ -32,7 +34,7 @@ class Tree(QTreeView):
 	
 	def populateTree(self,disco):
 		
-		#get all attributes from first song
+		# Get all attributes from first song
 		if len(disco) < 1:
 			attribs = {}
 		else:
@@ -40,16 +42,16 @@ class Tree(QTreeView):
 		length=len(attribs)
 			
 		if length >0:
-			#Create corresponding nodes
+			# Create corresponding nodes
 			nodes = []
 			for i in attribs:
 				nodes.append(QStandardItem(i))
-			#Add them to each other
+			# Add them to each other
 			for i in range(1, length):
 				nodes[i-1].appendRow(nodes[i])
-			#Add data to the last one
+			# Add data to the last one
 			nodes[length-1].setData(disco[0])
-			#Append to tree
+			# Append to tree
 			self.model().appendRow(nodes[0])
 		else:
 			#Create corresponding nodes
@@ -139,10 +141,8 @@ class Tree(QTreeView):
 			node.setData(attr)
 	'''
 	
-	
 	addSongs = QtCore.pyqtSignal(list,bool)
 	
-
 	def __init__(self, parent, comm):
 		super(Tree, self).__init__(parent)
 		self.comm=comm
@@ -177,34 +177,55 @@ class Tree(QTreeView):
 	def focusInEvent(self, e):
 		self.selectionModel().select(self.selectionModel().currentIndex(),QItemSelectionModel.Select)
 
-
 	def keyPressEvent(self, event):
 		if event.key() == Qt.Key_Return and int(event.modifiers()) == (QtCore.Qt.ShiftModifier):
 			#Table.keyPressEvent(self.window().table, event)
-			index = self.selectedIndexes()[0]
-			crawler = index.model().itemFromIndex(index)
-			children=[]
-			self.getChildren(crawler,children)
+			#index = self.selectedIndexes()[0]
+			#crawler = self.model().itemFromIndex(index)
+			#children=[]
+			children = self.getChildren()
 			self.addSongs.emit(children, False)
 		elif event.key() == Qt.Key_Return:
-			index = self.selectedIndexes()[0]
-			crawler = index.model().itemFromIndex(index)
-			children=[]
-			self.getChildren(crawler,children)
+			#index = self.selectedIndexes()[0]
+			#crawler = self.model().itemFromIndex(index)
+			#children=[]
+			children = self.getChildren()
 			self.addSongs.emit(children, True)
 		else:
 			QTreeView.keyPressEvent(self, event)
 
-
-		
-
-
 	
-	def getChildren(self,item, children):
+	# to delete
+	def getChildrenOld(self,item, children):
 		if item.hasChildren():
 			for childIndex in range(0,item.rowCount()):
 				self.getChildren(item.child(childIndex), children)
 		else:
 			children.append(item.data())
 
-
+	# to delete
+	def getChildrenShit(self,item):
+		def getChildrenRec(self, item, children):
+			if item.hasChildren():
+				for childIndex in range(0,item.rowCount()):
+					getChildrenRec(self, item.child(childIndex), children)
+			else:
+				children.append(item.data())
+		res = []
+		getChildrenRec(self, item, res)
+		return res
+			
+	def getChildren(self):
+		def getChildrenRec(self, item, children):
+			if item.hasChildren():
+				for childIndex in range(0,item.rowCount()):
+					getChildrenRec(self, item.child(childIndex), children)
+			else:
+				children.append(item.data())
+		res = []
+		index = self.selectedIndexes()[0]
+		crawler = self.model().itemFromIndex(index)
+		getChildrenRec(self, crawler, res)
+		return res		
+			
+			

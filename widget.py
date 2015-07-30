@@ -95,14 +95,36 @@ class Image(QtGui.QLabel):
 		#self.setFixedSize(200,200)
 		#self.setAlignment(QtCore.Qt.AlignCenter)
 
-
 	def resizeEvent(self, event):
 		if self._pixmap != None:
 			self.setPixmap(self._pixmap.scaled(
 				self.width(), self.height(),
 				QtCore.Qt.KeepAspectRatio))
             
-		
+	def onSelectionChanged(self, file):
+		print("selection changed", file)
+		'''
+		import os
+		if not selected.isEmpty():
+			index = self.selectedIndexes()[0]
+			crawler = index.model().itemFromIndex(index)
+			dir = os.path.dirname(crawler.data().tags['file'])
+			
+			#fileNames = ['cover', 'Cover', 'Folder']
+			#extensions = ['jpg', 'png','jpeg']
+			allPossibilities = [(x +'.'+ y) for x in self.coverNames for y in self.extensions]
+			
+			myPixmap = QtGui.QPixmap(200,200)
+			
+			for file in allPossibilities : 
+				if os.path.isfile(dir+'/'+file):
+					myPixmap = QtGui.QPixmap(dir+'/'+file)
+					break
+
+			
+			myScaledPixmap = myPixmap.scaled(200, 200, Qt.KeepAspectRatio)
+			self.label.setPixmap(myScaledPixmap)
+		'''
 		
 class SearchArea(QtGui.QGridLayout):
 
@@ -194,7 +216,6 @@ class Equalizer(QtGui.QDialog):
 		print('emiting equa')
 		self.equalize.emit('band'+str(position), val)
 
-
 	def listActivated(self, confName):
 		bandValues = self.config[confName]
 		for index, val in enumerate(bandValues):
@@ -282,9 +303,7 @@ class Retagging(QtGui.QDialog):
 		for n in nodes:
 			self.model.appendRow(n)
 		
-		
-		
-		#Add the headers to the list of values
+		# Add the headers to the list of values
 		attribs.append(listKeys)
 		fontMetric = QtGui.QFontMetrics(QtGui.QFont())
 		colWidth = [[fontMetric.width(x) for x in l] for l in attribs]
@@ -293,8 +312,7 @@ class Retagging(QtGui.QDialog):
 		for i,h in enumerate(listKeys):
 			self.model.setHeaderData(i,QtCore.Qt.Horizontal,h.title())
 			self.tagTable.horizontalHeader().resizeSection(i, maxWidth[i])
-		
-		
+			
 		self.tagTable.setAlternatingRowColors(True)
 		self.tagTable.setWordWrap(False)
 		self.tagTable.verticalHeader().hide()
@@ -303,7 +321,6 @@ class Retagging(QtGui.QDialog):
 		self.tagTable.horizontalHeader().setStretchLastSection(True)
 		
 		self.layout.addWidget(self.tagTable, 2, 0, 1, 3)
-		
 		
 		self.setLayout(self.layout)
 		self.buttonOk.clicked.connect(self.saveChanges)
@@ -355,10 +372,8 @@ class Retagging(QtGui.QDialog):
 	def changeHorizontalHeader(self, index):
 		oldHeader = self.tagTable.model().horizontalHeaderItem(index).text()
 		newHeader, ok = QtGui.QInputDialog.getText(self,
-						'Change tag name',
-						'New tag name:',
-						QtGui.QLineEdit.Normal,
-						oldHeader)
+						'Change tag name', 'New tag name:',
+						QtGui.QLineEdit.Normal, oldHeader)
 		if ok:
 			self.tagTable.model().horizontalHeaderItem(index).setText(newHeader.title())
 			self.columnsToRemove[oldHeader.upper()]=''
@@ -369,10 +384,8 @@ class Retagging(QtGui.QDialog):
 			for i in index:
 				self.tagTable.model().itemFromIndex(i).setText('')
 
-
 	def refuse(self):
 		self.close()
-
 
 	def exec_(self):
 		if QtGui.QDialog.exec_(self) == QtGui.QDialog.Accepted:

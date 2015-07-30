@@ -73,8 +73,14 @@ class Foo(QtGui.QMainWindow):
 		self.volumeSlider.sliderMoved.connect(self.player.setVolume)
         
 		self.pixmap = Image(self)
+		
+		# Clean this up
+		self.tree.selectionModel().selectionChanged.connect(lambda: self.pixmap.onSelectionChanged(self.tree.getChildren()[0]['file']))
+		self.table.selectionModel().selectionChanged.connect(lambda:  self.pixmap.onSelectionChanged(self.table.model().itemFromIndex(self.table.selectedIndexes()[0]).data()['file']))
+		
 		self.searchArea = SearchArea(self)
 		self.searchArea.searchLine.returnPressed.connect(self.startSearch)
+		
 		
 		self.playbackButtons.addWidget(self.volumeSlider)
 		self.playbackButtons.addWidget(self.scrollSlider)
@@ -193,8 +199,6 @@ class Foo(QtGui.QMainWindow):
 			self.table.playingId+=1
 			#print('finish',self.playingId)
 			self.player.add(self.table.model().item(self.table.playingId,0).data()['file'])
-
-
 
 
 	def addSongsFromTree(self, list, play):
@@ -362,8 +366,6 @@ class Foo(QtGui.QMainWindow):
 		self.table.runAction.connect(self.tableAction)
 		self.setTabOrder(self.tree, self.table)
 		
-
-
 	@QtCore.pyqtSlot()
 	def startSearch(self):
 		input = self.searchArea.searchLine.text()
@@ -384,8 +386,6 @@ class Foo(QtGui.QMainWindow):
 		songList.sort(key=self.tree.sortFunc)
 		self.tree.populateTree(songList)
 		
-		
-
 	@QtCore.pyqtSlot(str)
 	def onHotKey(self, key):
 		print('Hotkey was pressed', key)
@@ -434,31 +434,9 @@ class Foo(QtGui.QMainWindow):
 
 
 	def tmpTag(self, position):
-		'''index = self.tree.selectedIndexes()[0]
-		crawler = index.model().itemFromIndex(index)
-		children=[]
-		self.tree.getChildren(crawler,children)
-		#[7:] to drop the 'file://' appended for gstreamer
-		retag = Retagging([x['file'][7:] for x in children])
-		res = retag.exec_()
-		if res:
-			self.tree.initUI()
-		print(res)
-		 #ANOTHER OPTION
-		index = self.tree.selectedIndexes()[0]
-		crawler = index.model().itemFromIndex(index)
-		children=[]
-		self.tree.getChildren(crawler,children)
-		
-		self.RG = WorkThreadRG(children)
-		self.RG.start()
-		'''
-		
 		menu = QtGui.QMenu()
 		tagging = QtGui.QAction('Tagging',self)
-		
 		replayGain = QtGui.QAction('ReplayGain',self)
-		
 		
 		tagging.triggered.connect(self.openTagging)
 		replayGain.triggered.connect(self.startReplayGain)
@@ -467,21 +445,12 @@ class Foo(QtGui.QMainWindow):
 		menu.exec_(self.tree.viewport().mapToGlobal(position))
 
 	def startReplayGain(self):
-		index = self.tree.selectedIndexes()[0]
-		crawler = index.model().itemFromIndex(index)
-		children=[]
-		self.tree.getChildren(crawler,children)
-		
+		children = self.tree.getChildren()
 		self.RG = ReplayGain([x['file'] for x in children])
 		self.RG.exec_()
-		#self.RG = WorkThreadRG(children)
-		#self.RG.start()
 	
 	def openTagging(self):
-		index = self.tree.selectedIndexes()[0]
-		crawler = index.model().itemFromIndex(index)
-		children=[]
-		self.tree.getChildren(crawler,children)
+		children = self.tree.getChildren()
 		#[7:] to drop the 'file://' appended for gstreamer
 		retag = Retagging([x['file'][7:] for x in children])
 		res = retag.exec_()
@@ -500,7 +469,6 @@ class Foo(QtGui.QMainWindow):
 			with open(os.path.dirname(os.path.realpath(__file__))+'/config', 'w') as configfile:
 				parser.write(configfile)
 		
-		
 	def applyEqua(self,band, value):
 		print('receiving equa', str(band), value)
 		if str(band) == 'band0' and value == 0:
@@ -516,9 +484,6 @@ def main():
 	ex = Foo()
 	sys.exit(app.exec_())
 	
-
 if __name__ == '__main__':
 	main()
-
-
 

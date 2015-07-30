@@ -56,7 +56,6 @@ class Table(TableMother):
 
 		self.show()
 
-
 	def keyPressEvent(self, event):
 		if event.key() == Qt.Key_Delete:
 			index = self.selectedIndexes()[0]
@@ -85,8 +84,3 @@ class Table(TableMother):
 		status+= ' | %/'+"%02d:%02d" % (m, s)+' - Playing'
 	
 		return status
-	
-	
-	
-	
-  		

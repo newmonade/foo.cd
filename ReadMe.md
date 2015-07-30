@@ -29,7 +29,8 @@ Default behaviour
 
 Tree	
 - Enter: append songs to playlist and play
-- Shift+Enter : append songs to playlist
+- Shift+Enter: append songs to playlist
+- Right click: context menu for tagging and ReplayGain
 
 Playlist
 - Enter: play
