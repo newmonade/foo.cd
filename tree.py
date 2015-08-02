@@ -31,7 +31,6 @@ class Tree(QTreeView):
 		return [ tryint(c) for c in re.split('([0-9]+)', values) ]
 
 	def populateTree(self,disco):
-		
 		if len(disco) >0:
 			attribs = [x+"modified" for x in  disco[0].getOptionalValues(self.comm)]
 			nodes = [QStandardItem("unmatchableStringForNonEmptyInit")]
@@ -47,11 +46,12 @@ class Tree(QTreeView):
 		for s in disco:
 			attr = s.getOptionalValues(self.comm)
 			length=len(attr)
+			
 			# First attribut separated because attached to node
 			if attr[0] != attribs[0]:
 				node=QStandardItem(attr[0])
-				#self.model().appendRow(node)
-				nodes[0]=node
+				nodes = [node]
+				attribs = [x+"modified" for x in  attr]
 				root.appendRow(nodes[0])
 				attribs[0]=attr[0]		
 			
@@ -66,7 +66,7 @@ class Tree(QTreeView):
 					attribs[i]=attr[i]
 			# Last attribut
 			node = QStandardItem(attr[length-1])
-			nodes[length-2].appendRow(node)
+			nodes[-1].appendRow(node)
 			node.setData(s)
 	
 	def populateTreeOLD(self,disco):
