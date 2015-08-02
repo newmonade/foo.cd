@@ -3,6 +3,7 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
 import thread
+import os
 
 class PlaybackButtons(QtGui.QHBoxLayout):
 
@@ -11,7 +12,6 @@ class PlaybackButtons(QtGui.QHBoxLayout):
 		self.initUI()
         
 	def initUI(self):
-		
 		self.buttonPlay = QtGui.QPushButton(">")
 		self.buttonPlay.setMaximumSize(25,25)
 		self.buttonPlay.setFocusPolicy(QtCore.Qt.NoFocus)
@@ -28,16 +28,12 @@ class PlaybackButtons(QtGui.QHBoxLayout):
 		self.buttonNext.setMaximumSize(25,25)
 		self.buttonNext.setFocusPolicy(QtCore.Qt.NoFocus)
 		self.buttonNext.setFont(QtGui.QFont('TypeWriter', 9))
-		self.setContentsMargins(0, 0, 0, 0)
-        
+		self.setContentsMargins(0, 0, 0, 0)  
 		
 		self.addWidget(self.buttonPrev)
 		self.addWidget(self.buttonStop)
 		self.addWidget(self.buttonPlay)
 		self.addWidget(self.buttonNext)
-
-		#self.addStrut(10)
-		#self.show()
         
         
 class VolumeSlider(QtGui.QSlider):
@@ -62,7 +58,6 @@ class VolumeSlider(QtGui.QSlider):
 			self.setValue(position+10)
 			self.sliderMoved.emit(position+10)
 			
-	
 	def decr(self):
 		position = self.value()
 		if position > 0:
@@ -70,30 +65,26 @@ class VolumeSlider(QtGui.QSlider):
 			self.sliderMoved.emit(position-10)
 
 def createScrollSlider(parent):
-    
 	slider = QtGui.QSlider(QtCore.Qt.Horizontal, parent)
 	slider.setFocusPolicy(QtCore.Qt.NoFocus)
 	slider.setPageStep(1)
 	slider.setTracking(False)
 	return slider
 
-
-
 class Image(QtGui.QLabel):
 
-	def __init__(self, parent):
-		#QtGui.QLabel.__init__(self)
+	def __init__(self, parent, coverNames, extensions):
 		super().__init__(parent)
-		self._pixmap = None #QtGui.QPixmap(1,1)
+		self._pixmap = None
+		self.coverNames = [n.strip() for n in coverNames.split('|')]
+		self.extensions = [e.strip() for e in extensions.split('|')]
 		self.initUI()
         
 	def initUI(self):
-		#self._pixmap.fill(Qt.darkGray)
-		self.setText('[No Cover]')
-		
+		self.setText('[No Cover]')	
 		self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
-		#self.setFixedSize(200,200)
-		#self.setAlignment(QtCore.Qt.AlignCenter)
+		self.setFixedSize(200,200)
+		self.setAlignment(QtCore.Qt.AlignCenter)
 
 	def resizeEvent(self, event):
 		if self._pixmap != None:
@@ -102,29 +93,21 @@ class Image(QtGui.QLabel):
 				QtCore.Qt.KeepAspectRatio))
             
 	def onSelectionChanged(self, file):
-		print("selection changed", file)
-		'''
-		import os
-		if not selected.isEmpty():
-			index = self.selectedIndexes()[0]
-			crawler = index.model().itemFromIndex(index)
-			dir = os.path.dirname(crawler.data().tags['file'])
-			
-			#fileNames = ['cover', 'Cover', 'Folder']
-			#extensions = ['jpg', 'png','jpeg']
+		if file:
 			allPossibilities = [(x +'.'+ y) for x in self.coverNames for y in self.extensions]
-			
-			myPixmap = QtGui.QPixmap(200,200)
-			
+			dir = os.path.dirname(file[7:])
+			found = False
 			for file in allPossibilities : 
 				if os.path.isfile(dir+'/'+file):
-					myPixmap = QtGui.QPixmap(dir+'/'+file)
+					self._pixmap = QtGui.QPixmap(dir+'/'+file)
+					found = True
 					break
+			if found:
+				self.setPixmap(self._pixmap.scaled(200, 200, Qt.KeepAspectRatio))
+			else:
+				self.setText('[No Cover]')
+				self._pixmap=None
 
-			
-			myScaledPixmap = myPixmap.scaled(200, 200, Qt.KeepAspectRatio)
-			self.label.setPixmap(myScaledPixmap)
-		'''
 		
 class SearchArea(QtGui.QGridLayout):
 

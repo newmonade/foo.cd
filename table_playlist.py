@@ -43,7 +43,7 @@ class Table(TableMother):
 		self.addRow(Song(self.playlistOrder))
 		self.model().removeRow(0)
 
-        	#Fill headers, with first capital letter using title()
+        	# Fill headers, with first capital letter using title()
 		headers = self.playlistOrder.title().replace('%','').split('|')
 		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
 		for i,h in enumerate(headers):
@@ -84,3 +84,9 @@ class Table(TableMother):
 		status+= ' | %/'+"%02d:%02d" % (m, s)+' - Playing'
 	
 		return status
+	
+	def getSelection(self):
+		try:
+			return self.model().itemFromIndex(self.selectedIndexes()[0]).data()
+		except:
+			return {}

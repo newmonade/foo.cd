@@ -223,9 +223,13 @@ class Tree(QTreeView):
 			else:
 				children.append(item.data())
 		res = []
-		index = self.selectedIndexes()[0]
-		crawler = self.model().itemFromIndex(index)
-		getChildrenRec(self, crawler, res)
-		return res		
+		# Fail if it gets deselected
+		try:
+			index = self.selectedIndexes()[0]
+			crawler = self.model().itemFromIndex(index)
+			getChildrenRec(self, crawler, res)
+			return res
+		except:
+			return [{}]
 			
 			

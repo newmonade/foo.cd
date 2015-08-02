@@ -72,15 +72,14 @@ class Foo(QtGui.QMainWindow):
 		self.scrollSlider.sliderReleased.connect(self.player.toggle)
 		self.volumeSlider.sliderMoved.connect(self.player.setVolume)
         
-		self.pixmap = Image(self)
+		self.pixmap = Image(self, config['cover_names'], config['extensions'])
 		
 		# Clean this up
-		self.tree.selectionModel().selectionChanged.connect(lambda: self.pixmap.onSelectionChanged(self.tree.getChildren()[0]['file']))
-		self.table.selectionModel().selectionChanged.connect(lambda:  self.pixmap.onSelectionChanged(self.table.model().itemFromIndex(self.table.selectedIndexes()[0]).data()['file']))
+		self.tree.selectionModel().selectionChanged.connect(lambda: self.pixmap.onSelectionChanged(self.tree.getChildren()[0].get('file', None)))
+		self.table.selectionModel().selectionChanged.connect(lambda:  self.pixmap.onSelectionChanged(self.table.getSelection().get('file', None)))
 		
 		self.searchArea = SearchArea(self)
-		self.searchArea.searchLine.returnPressed.connect(self.startSearch)
-		
+		self.searchArea.searchLine.returnPressed.connect(self.startSearch)	
 		
 		self.playbackButtons.addWidget(self.volumeSlider)
 		self.playbackButtons.addWidget(self.scrollSlider)
@@ -107,7 +106,6 @@ class Foo(QtGui.QMainWindow):
 		self.splitterTopBottom.setStretchFactor(0,3)
 		self.splitterTopBottom.setStretchFactor(1,1)
 
-		#splitterLeftRight.addWidget(self.tree)
 		splitterLeftRight.addWidget(libFrame)
 		splitterLeftRight.addWidget(self.splitterTopBottom)
 		splitterLeftRight.setStretchFactor(0,2)
