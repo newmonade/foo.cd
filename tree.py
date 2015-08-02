@@ -70,7 +70,6 @@ class Tree(QTreeView):
 			node.setData(s)
 	
 	def populateTreeOLD(self,disco):
-		
 		# Get all attributes from first song
 		if len(disco) < 1:
 			attribs = {}

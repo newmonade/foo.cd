@@ -24,22 +24,18 @@ class Song(dict):
 	#e.g. optionalTags True : ' %tracknumber%. %title% $- %trackartist%$ 
 	#                    -> (' %tracknumber%. %title% $$', ['- %trackartist%'])
 	@staticmethod
-	def getTagName(strOrder, optionalTags=False): #(str,tags):
+	def getTagName(strOrder, optionalTags=False):
 		if optionalTags == True:
 			separator="$"
 		else:
 			separator="%"
 		indices = [i for i, x in enumerate(strOrder) if x == separator]
 		length = len(indices)//2
-		tags = []
-		for i in range(0, length):
-			tags.append(strOrder[indices[2*i]+1:indices[2*i+1]])
+		tags = [strOrder[indices[2*i]+1:indices[2*i+1]] for i in range(0, length)]
 		for t in tags:
 			strOrder = strOrder.replace(t, '', 1)
 		return (strOrder, tags)
-	
-	
-	
+			
 	def __init__(self, treeOrder, **kwargs):
 		super().__init__(self)
 		
@@ -56,11 +52,9 @@ class Song(dict):
 				if 'ARTIST' in kwargs:
 					self.__setitem__( 'artist', kwargs['ARTIST'])
 
-
 	# Return the list of values for tag names tagNameList
 	def getValues(self, tagNameList):
 		return [self[name] for name in tagNameList]
-
 
 	# Return tag values customized with string around
 	# '[%date%] | -%artist%' will give ['[1998]', '-DaftPunk']
@@ -75,8 +69,7 @@ class Song(dict):
 				emptiedLevel = emptiedLevel.replace('%%', str(val), 1)
 			formatedValues.append(emptiedLevel)
 		return formatedValues
-			
-		
+					
 	# Add support for optional formating using '$ ... $'
 	def getOptionalValues(self, treeOrder):
 		#TODO Rewrite
@@ -94,9 +87,7 @@ class Song(dict):
 		        emptiedTreeOrder = emptiedTreeOrder.replace('$$', str(val), 1)
 		    else :
 		        emptiedTreeOrder = emptiedTreeOrder.replace('$$', '', 1)
-		return self.getFormatedValues(emptiedTreeOrder)
-		
-		
+		return self.getFormatedValues(emptiedTreeOrder)		
 		
 	# Return true iif searchedStr exactly matches at least one field of the song
 	# Do not match case
@@ -105,18 +96,16 @@ class Song(dict):
 		for value in self.values():
 		    if value.lower() == searchedStr:
 		        return True
-		return False
+		return False	
 	
-	
-	# Return true if searchedStr is a sub string of at least one field of song
+	# Return true if searchedStr is a substring of at least one field of song
 	# Do not match case
 	def preciseMatch(self, searchedStr):
 		searchedStr = searchedStr.lower()
 		for value in self.values():
 			if str(value).lower().find(searchedStr) != -1:
 				return True
-		return False
-	
+		return False	
 	
 	# Return true if any substring of searchedStr of length 3 is
 	# a sub string of at least one field of song, do not match case

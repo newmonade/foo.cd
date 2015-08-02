@@ -9,23 +9,23 @@ from PyQt4.QtGui import (QWidget, QApplication, QFileDialog, QMessageBox)
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 
-import song
-from song import Song
-from tree import Tree
-
-import thread
-from thread import WorkThread, WorkThreadPipe
-from table_playlist import Table
-
-from player import Player, ReplayGain
-import widget
-from widget import PlaybackButtons, SearchArea, VolumeSlider, Image, Equalizer, Retagging
-
-from table_radio import TableRadio
-
 from gi.repository import GObject
 from gi.repository import Gst
 
+import song
+from song import Song
+
+import thread
+from thread import WorkThread, WorkThreadPipe
+
+from player import Player, ReplayGain
+
+import widget
+from widget import PlaybackButtons, SearchArea, VolumeSlider, Image, Equalizer, Retagging
+
+from tree import Tree
+from table_playlist import Table
+from table_radio import TableRadio
 
 class Foo(QtGui.QMainWindow):
 
@@ -74,7 +74,7 @@ class Foo(QtGui.QMainWindow):
         
 		self.pixmap = Image(self, config['cover_names'], config['extensions'])
 		
-		# Clean this up
+		# Album cover connections
 		self.tree.selectionModel().selectionChanged.connect(lambda: self.pixmap.onSelectionChanged(self.tree.getChildren()[0].get('file', None)))
 		self.table.selectionModel().selectionChanged.connect(lambda:  self.pixmap.onSelectionChanged(self.table.getSelection().get('file', None)))
 		
@@ -139,14 +139,13 @@ class Foo(QtGui.QMainWindow):
 		
 		self.show()
 	
-	
 	def keyReleaseEvent(self, event):
 		if event.key() == Qt.Key_Alt:
 			self.menuBar().setVisible(not self.menuBar().isVisible())
 		else:
 			QWidget.keyPressEvent(self, event)
 		
-	#Triggered by player end of stream event
+	# Triggered by player end of stream event
 	# or called by hand to stop the stream
 	def stop(self, bus=None, msg=None):
 		self.player.stop()
@@ -187,17 +186,13 @@ class Foo(QtGui.QMainWindow):
 	def onDurationChanged(self, bus, msg):
 		self.table.displayNext()
 		print('Duration changed signal !')
-		#status = self.table.getStatus()
-		#self.setStatusEmission(status)
 
 	# Triggered by player at the end of a song
 	def onAboutToFinish(self, bus):
 		if self.table.model().rowCount()-1 > self.table.playingId:
 			print('About to finish !')
 			self.table.playingId+=1
-			#print('finish',self.playingId)
 			self.player.add(self.table.model().item(self.table.playingId,0).data()['file'])
-
 
 	def addSongsFromTree(self, list, play):
 		if not self.radio:
@@ -213,12 +208,10 @@ class Foo(QtGui.QMainWindow):
 				status = self.table.getStatus()
 				self.setStatusEmission(status)
 	
-	
 	def setStatusEmission(self, status):
 		if self.timeOut > 0:
 			GObject.source_remove(self.timeOut)
-		self.timeOut =  GObject.timeout_add(1000, self.update, status)
-		
+		self.timeOut =  GObject.timeout_add(1000, self.update, status)	
 		
 	def stopStatusEmission(self, status):
 		if self.timeOut > 0:
@@ -255,7 +248,6 @@ class Foo(QtGui.QMainWindow):
 				index = self.table.selectedIndexes()[0]
 			else:
 				index= self.table.model().index(self.table.selectionModel().currentIndex().row(),0)
-			#print(index.row())
 			songURI = index.model().itemFromIndex(index).data()['file']
 			
 			self.player.stop()
@@ -269,7 +261,13 @@ class Foo(QtGui.QMainWindow):
 	def readConfig(section):
 		from configparser import RawConfigParser
 		parser = RawConfigParser()
-		parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
+		if getattr(sys, 'frozen', False):
+			# frozen
+			parser.read(os.path.dirname(os.path.realpath(sys.executable))+'/config')
+		else:
+			# unfrozen
+			parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
+		
 		return dict(parser.items(section))
 
 	#Create menu bar
@@ -302,7 +300,7 @@ class Foo(QtGui.QMainWindow):
 		self.thread = WorkThread(Foo.readConfig('options')['music_folder'], False)
 		self.thread.finished.connect(self.tree.initUI)
 		self.thread.start()
-	
+		
 	# Menu Action 2
 	def showShortcut(self):
 		dictSC = Foo.readConfig('shortcuts')
@@ -316,8 +314,6 @@ class Foo(QtGui.QMainWindow):
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['radio_mode']+'''</b> : Toggle radio mode<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['equalizer']+'''</b> : Equalizer<br/>'''
 		print(len(self.findChildren(QtCore.QObject)))
-		for ittt in self.findChildren(QtCore.QObject):
-			print(ittt)
 		box = QMessageBox.about(self, 'About Message',
 		message)
 		print(len(self.findChildren(QtCore.QObject)))
@@ -341,12 +337,11 @@ class Foo(QtGui.QMainWindow):
 		self.table.close()
 		if not self.radio:
 			configRadio = Foo.readConfig('radios')
-			self.table=TableRadio( self.tree, configRadio)
+			self.table=TableRadio(self.tree, configRadio)
 			self.toggleRadioAction.setText('Switch to Library mode')
 			self.radio=True
 			self.player.playbin.disconnect(self.handlerATF)
-			self.handlerT = self.player.bus.connect('message::tag', self.table.onTag)
-			
+			self.handlerT=self.player.bus.connect('message::tag', self.table.onTag)		
 		else:
 			config = Foo.readConfig('options')
 			self.table=Table( self.tree, config)
@@ -427,9 +422,6 @@ class Foo(QtGui.QMainWindow):
 				self.tree.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Key_Return, Qt.KeyboardModifier(QtCore.Qt.ShiftModifier), ''))
 		if key == 'radio_mode':
 			self.shortRadioMode.activated.emit()
-			
-
-
 
 	def tmpTag(self, position):
 		menu = QtGui.QMenu()
@@ -474,14 +466,22 @@ class Foo(QtGui.QMainWindow):
 		else:
 			self.player.equalizer.set_property(str(band), value)
 
-
-
 def main():
-
 	app = QApplication(sys.argv)
 	ex = Foo()
 	sys.exit(app.exec_())
 	
 if __name__ == '__main__':
+	'''import cProfile, pstats, io
+	pr = cProfile.Profile()
+	pr.enable()
+	main()
+	pr.disable()
+	s = io.StringIO()
+	sortby = 'cumulative'
+	ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+	ps.print_stats()
+	print(s.getvalue())
+	'''
 	main()
 

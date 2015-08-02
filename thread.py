@@ -11,12 +11,13 @@ from collections import defaultdict
 #temp
 import time
 
-'''
-# Return the list of all single tag present in all the files
-def getAllKeys(fileList):
-	return list({key for file in fileList for key in taglib.File(file).tags 
-		 if key not in ['artist', 'album', 'date', 'genre']})
-'''
+
+# Used a lot so just define that folder variable
+if getattr(sys, 'frozen', False):
+	localFolder = os.path.dirname(os.path.realpath(sys.executable))
+else:
+	localFolder = os.path.dirname(os.path.realpath(__file__))
+
 # Return the list of all single tag present in all the files
 def getAllKeys(fileList):
 	return list({key for file in fileList for key in taglib.File(file).tags }) + ['FILE']
@@ -59,8 +60,9 @@ def modifyTags(tags):
 	return modified
 
 def exploreMusicFolder(musicFolder, append):
+	print("lets walk")
 	allFiles = ((taglib.File(os.path.join(root, name)), os.path.join('file://'+root, name) )
-for root,dirs,files in os.walk(musicFolder, topdown=True) 
+		for root,dirs,files in os.walk(musicFolder, topdown=True) 
 		for name in files 
 		if name.lower().endswith(".flac") or name.lower().endswith(".mp3"))
 			
@@ -114,33 +116,18 @@ def exploreMusicFolder(musicFolder, append):
 '''
 
 def save(database):
-	localFolder=os.path.dirname(os.path.realpath(__file__))
+	#localFolder=os.path.dirname(os.path.realpath(__file__))
 	with open(os.path.join(localFolder,'musicDatabase.json'), mode='w', encoding='utf-8') as f:
 		json.dump(database, f, indent=2)
   
 
 def load():
-	localFolder=os.path.dirname(os.path.realpath(__file__))
+	#localFolder=os.path.dirname(os.path.realpath(__file__))
 	try:
 		with open(os.path.join(localFolder,'musicDatabase.json'), 'r', encoding='utf-8') as f:
 			return json.load(f)
 	except IOError:
    		return []
-     
-
-'''
-def sanitize(database):
-	for dico in database:
-		if 'TRACKNUMBER' in dico:	
-			try: 
-				int(dico['TRACKNUMBER'])
-				isInt = True
-			except ValueError:
-				isInt = False
-			if isInt:
-				dico['TRACKNUMBER']=str(int(dico['TRACKNUMBER']))
-'''
-
 
 def sanitize(database):
 	for dico in database:
@@ -155,9 +142,7 @@ def sanitize(database):
 			except ValueError:
 				pass
 
-
-
-#Update the database, replacing all dicts in listDictTags
+# Update the database, replacing all dicts in listDictTags
 def updateDB(fileList):
 	taglibFiles = [taglib.File(f) for f in fileList]
 	listTags = [{key:', '.join(value) for (key, value) in f.tags.items()}
@@ -187,9 +172,6 @@ class WorkThread(QtCore.QThread):
 		start2 = time.perf_counter()
 		print('time', start2-start1)
 		self.deleteLater()
-		#self.quit()
-
-
 
 
 class WorkThreadPipe(QtCore.QThread):
@@ -200,13 +182,14 @@ class WorkThreadPipe(QtCore.QThread):
 		QtCore.QThread.__init__(self)
 
 	def run(self):
-		#constantly read the pipe and emit a signal every time there is something to read
-		pipein = open(os.path.join(sys.path[0], "pipe"), 'r')
+		pipePath=localFolder+'/pipe'
+		# Constantly read the pipe and emit a signal every time there is something to read
+		pipein = open(pipePath, 'r')
 		while True:
 			line = pipein.read()
 			if line != '':
 				self.hotKey.emit(line.replace('\n', ''))
-				#reopen because is kind of blocking and waiting for a new input
-				pipein = open(os.path.join(sys.path[0], "pipe"), 'r')
+				# Reopen because is kind of blocking and waiting for a new input
+				pipein = open(pipePath, 'r')
 
 
