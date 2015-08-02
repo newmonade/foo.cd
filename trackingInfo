@@ -56,7 +56,7 @@ Primary
 		* Following librairy selection
 		* Following playlist and librairy
 	
-	- Tree: add a root node (for tagging and possibly playlist auto creation)
+	- Tree: add a root node (for tagging and possibly playlist auto creation) -> Done
 	
 Secondary
 	- Customizable status bar

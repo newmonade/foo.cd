@@ -30,9 +30,46 @@ class Tree(QTreeView):
 		# return a list of string and int
 		return [ tryint(c) for c in re.split('([0-9]+)', values) ]
 
-		
-	
 	def populateTree(self,disco):
+		
+		if len(disco) >0:
+			attribs = [x+"modified" for x in  disco[0].getOptionalValues(self.comm)]
+			nodes = [QStandardItem("unmatchableStringForNonEmptyInit")]
+			# Create root node
+			root = QStandardItem('All music')
+			self.model().appendRow(root)
+		else:
+			# Create empty root node
+			root = [QStandardItem('Nothing')]
+			self.model().appendRow(root)
+	
+		# For every song
+		for s in disco:
+			attr = s.getOptionalValues(self.comm)
+			length=len(attr)
+			# First attribut separated because attached to node
+			if attr[0] != attribs[0]:
+				node=QStandardItem(attr[0])
+				#self.model().appendRow(node)
+				nodes[0]=node
+				root.appendRow(nodes[0])
+				attribs[0]=attr[0]		
+			
+			for i in range(1, length-1):
+				if (attr[i] != attribs[i]):
+					node=QStandardItem(attr[i])
+					nodes[i-1].appendRow(node)
+					if i<len(nodes):
+						nodes[i]=node
+					else:
+						nodes.append(node)
+					attribs[i]=attr[i]
+			# Last attribut
+			node = QStandardItem(attr[length-1])
+			nodes[length-2].appendRow(node)
+			node.setData(s)
+	
+	def populateTreeOLD(self,disco):
 		
 		# Get all attributes from first song
 		if len(disco) < 1:
@@ -166,11 +203,11 @@ class Tree(QTreeView):
 		#start2 = time.perf_counter()
 		#print('time', start2-start1)
 		
+		# Exand the root node
+		self.expand(self.indexAt(QtCore.QPoint(0,0)))
+		
 		self.show()
 	
-
-
-
 	def focusOutEvent(self, e):
 		self.selectionModel().clearSelection()
 

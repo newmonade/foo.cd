@@ -329,7 +329,6 @@ class Retagging(QtGui.QDialog):
 					QtCore.Qt.Horizontal,name.title())
 				
 	
-	
 	def saveChanges(self):
 		headers = [self.model.horizontalHeaderItem(x).text().upper() 
 				for x in range(self.model.columnCount())]
