@@ -137,6 +137,7 @@ class Equalizer(QtGui.QDialog):
 
 	def __init__(self, parent, config):
 		super().__init__(parent)
+		self.setWindowTitle("Equalizer")
 		self.setWindowModality(QtCore.Qt.ApplicationModal)
 		self.config = eval(config['settings'])
 		self.modified = False

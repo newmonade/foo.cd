@@ -8,7 +8,7 @@ from cx_Freeze import setup, Executable
 path = sys.path
 
 # Includes/excludes options
-includes = ["sip", "gi"]
+includes = ["gi"]
 excludes = []
 packages = ["gi"]
   
@@ -39,7 +39,7 @@ target = Executable(
 	script = "main.py",
 	base = base,
 	targetName = "Foo.cd",
-	compress = False,
+	compress = True,
 	icon = None,
 	)
   
