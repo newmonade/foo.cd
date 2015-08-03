@@ -215,41 +215,13 @@ class Tree(QTreeView):
 
 	def keyPressEvent(self, event):
 		if event.key() == Qt.Key_Return and int(event.modifiers()) == (QtCore.Qt.ShiftModifier):
-			#Table.keyPressEvent(self.window().table, event)
-			#index = self.selectedIndexes()[0]
-			#crawler = self.model().itemFromIndex(index)
-			#children=[]
 			children = self.getChildren()
 			self.addSongs.emit(children, False)
 		elif event.key() == Qt.Key_Return:
-			#index = self.selectedIndexes()[0]
-			#crawler = self.model().itemFromIndex(index)
-			#children=[]
 			children = self.getChildren()
 			self.addSongs.emit(children, True)
 		else:
 			QTreeView.keyPressEvent(self, event)
-
-	
-	# to delete
-	def getChildrenOld(self,item, children):
-		if item.hasChildren():
-			for childIndex in range(0,item.rowCount()):
-				self.getChildren(item.child(childIndex), children)
-		else:
-			children.append(item.data())
-
-	# to delete
-	def getChildrenShit(self,item):
-		def getChildrenRec(self, item, children):
-			if item.hasChildren():
-				for childIndex in range(0,item.rowCount()):
-					getChildrenRec(self, item.child(childIndex), children)
-			else:
-				children.append(item.data())
-		res = []
-		getChildrenRec(self, item, res)
-		return res
 			
 	def getChildren(self):
 		def getChildrenRec(self, item, children):

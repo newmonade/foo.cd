@@ -35,17 +35,15 @@ class TableRadio(TableMother):
 			#  Look there for list of available tags
 			#http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTagList.html
 			if tag == "bitrate":
-				_, song['bitrate'] = tagslist.get_uint(tag)
-				song['bitrate'] = song['bitrate']//1000
+				song['bitrate'] = tagslist.get_uint(tag)[1]//1000
 			elif tag == "title":
-				_, tmp = tagslist.get_string(tag)
-				song['title'], song['artist'] = tmp.split("-")
-				song['title'] = song['title'].strip()
-				song['artist'] = song['artist'].strip()
+				tmp = tagslist.get_string(tag)[1].split("-", 1)
+				song['title'] = tmp[0].strip()
+				song['artist'] = tmp[0].strip()
 			elif tag == "genre":
-				_, song['genre'] = tagslist.get_string(tag)
+				song['genre'] = tagslist.get_string(tag)[1]
 			elif tag == "channel-mode":
-				_, song['channels'] = tagslist.get_string(tag)	
+				song['channels'] = tagslist.get_string(tag)[1]	
 		taglist.foreach(handle_tag, None)
 		attribs = song.getOptionalValues(self.radioConfig['prefered_informations'])
 		self.model().item(self.playingId, 2).setText(attribs[0])
