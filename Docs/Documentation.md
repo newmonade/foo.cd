@@ -27,7 +27,7 @@ If you are running a 64bit linux distribution and do not want to install all the
 
 
 Default behaviour
-=============
+=================
 Press the *Alt* key to show or hide the main window menu.
 
 Library

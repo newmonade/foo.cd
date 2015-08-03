@@ -25,20 +25,21 @@ Install the dependencies: pyTagLib, pyQt4, gst-python 1.0. Copy the repository i
 
 
 Default behaviour
-=============
+=================
+Press the *Alt* key to show or hide the main window menu.
 
 Library
-- Enter: append songs to playlist and play
-- Shift+Enter: append songs to playlist
-- Right click: context menu for tagging and ReplayGain
+- *Enter*: append songs to playlist and play
+- *Shift+Enter*: append songs to playlist
+- *Right click*: context menu for tagging and ReplayGain
 
 Playlist
-- Enter: play
-- Del: delete song from playlist 
+- *Enter*: play
+- *Del*: delete song from playlist 
 
 
 Shortcuts
-=============
+=========
 
 Shortcuts concist of a combination of *modifier+key* to trigger an action. They can all be customized in the config file. Modifier takes value among: `Ctrl, Shift, Alt, Meta` (windows key).
 
