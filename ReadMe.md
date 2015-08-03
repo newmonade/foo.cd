@@ -2,13 +2,13 @@ Presentation
 =============
 
 A simple music player based on Python, Qt, GStreamer and TagLib. Functionalities include 
-- customizable library tree view
-- customizale playlist view
-- gapeless playback
-- library search
-- global shortcuts
-- remote control
-- web radio
+- Customizable library tree view
+- Customizale playlist view
+- Gapeless playback
+- Library search
+- Global shortcuts
+- Remote control
+- Web radio
 - 10 band equalizer
 - Tagging facilities
 
@@ -27,7 +27,7 @@ Install the dependencies: pyTagLib, pyQt4, gst-python 1.0. Copy the repository i
 Default behaviour
 =============
 
-Tree	
+Library
 - Enter: append songs to playlist and play
 - Shift+Enter: append songs to playlist
 - Right click: context menu for tagging and ReplayGain
@@ -40,11 +40,11 @@ Playlist
 Shortcuts
 =============
 
-Shortcuts concist of a combination of *modifier+key* to trigger an action. They can all be customized in the config file. Modifier takes value among: `Ctrl, Shift, Alt, Meta (windows key)`, and can be combined using `+` e.g. `Ctrl+Shift`.
+Shortcuts concist of a combination of *modifier+key* to trigger an action. They can all be customized in the config file. Modifier takes value among: `Ctrl, Shift, Alt, Meta` (windows key).
 
-Keys are named: `A, B, ..., F1, F2, ..., Left, Right, Tab, Del, Ins, PgUp, Plus, Minus, ...,`. They can be combined using `+`, e.g. `A+B, Ctrl+A, ... `
+Keys are named: `A, B, F1, F2, Left, Right, Tab, Del, Ins, PgUp, Plus, Minus, ...`. Modifiers and keys can be combined using `+`, e.g. `A+B, Ctrl+Shift, ... `
 
-Thus for a config file as:
+Thus for a configuration file as:
 ```
 ...
 modifier = Ctrl
@@ -69,26 +69,28 @@ Shortcut actions:
 Tree order and Playlist columns functions
 =============
 
-The hierarchy of the tree and the columns displayed can be customized from the config file, following a basic syntax.
-- Tags: `%tag%` e.g. `%albumartist%, %date%, %album%, %artist%, ...`
-- Optional parts: `$...$` e.g. `$Disc %discnumber%$` will display *Disc 1*
-		for files having a discnumber tag, and nothing for the others
-- Separator: `|` used as sub-level for the tree, new column for the playlist
-	
-Tags : `%length%, %samplerate%, %channels%, %bitrate%`, plus any tag in your file
+The hierarchy of the tree library and the playlist columns can be customized in the configuration file, following a basic syntax.
+
+`tree_order = %albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title%`
+
+where:
+
+- Tags are surrounded by *%*, they include any field present in your files plus the defaults: `%length%, %samplerate%, %channels%, %bitrate%`
+- Optional parts can be specified using `$...$`. This will display the formated tags for the tracks having the requested fields and nothing for the others. 
+	For example `$Disc %discnumber%$` will display *Disc 1* for files having a %discnumber% tag, and nothing for the others
+- The pipe `|` separator is used as sub-level for the tree and new column for the playlist
+
 
 Special tags : 
 - `%file%` : path of the file
-- `%albumartist%` : if the tag exist in the file it contains the value otherwise contains the artist tag. Useful for compilation type CDs.
-- `%trackartist%` : contains the artist tag for albums having an albumartist tag
+- `%albumartist%` : if the tag exist in the file it contains the value otherwise it si mapped to the artist tag. Useful for compilation type CDs.
+- `%trackartist%` : contains the artist tag only for albums having an albumartist tag different from artist tag
 
 
-A tree order as : `%albumartist% (%genre%)| [%date%] - %album% | $Disc %discnumber% | $ %tracknumber%. %title%`
-
-Will give the following tree :
+The tree order shown above will give the following tree :
 
 ```
-		Buena Vista Social Club (cubano)
+		Buena Vista Social Club (Cubano)
 			|-- [1996] - Buena Vista Social Club
 					|-- 1. Chan Chan
 					|-- 2. De Camino A La Vereda
@@ -109,21 +111,4 @@ Will give the following tree :
 Remote interface
 =============
 
-Foo.cd can be controlled by writing to the pipe, 
-allowing global shortcuts (e.g. using xmonad), ssh control, etc. The `remote.sh` script provide an example of that behaviour
-
-Key words:
-- play_pause
-- stop
-- volume_up
-- volume_down
-- song_next
-- song_prev
-- tree_up
-- tree_down
-- tree_left
-- tree_right
-- tree_validate
-- tree_append
-- radio_mode
-- quit
+Foo.cd can be controlled by writing keywords to the pipe, allowing global shortcuts (e.g. using xmonad), ssh control, etc. The `remote.sh` for the list of available keywords and actions.
