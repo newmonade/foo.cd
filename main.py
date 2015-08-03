@@ -12,6 +12,8 @@ from PyQt4 import QtGui
 from gi.repository import GObject
 from gi.repository import Gst
 
+from configparser import RawConfigParser
+
 import song
 from song import Song
 
@@ -259,7 +261,6 @@ class Foo(QtGui.QMainWindow):
 			
 	@staticmethod
 	def readConfig(section):
-		from configparser import RawConfigParser
 		parser = RawConfigParser()
 		if getattr(sys, 'frozen', False):
 			# frozen

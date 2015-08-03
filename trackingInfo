@@ -66,3 +66,11 @@ Secondary
 	- Option to activate or deactivate remote interface 
 	- webradio images -> API usable but tags from radio very inconcistent
 	- PLaying history / stats
+	
+Optimization
+Base : 0.055s
+new getTags: 0.044s
+
+tree ini, initui
+player init
+main init, initui

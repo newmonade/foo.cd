@@ -70,8 +70,6 @@ class TableRadio(TableMother):
 		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
 		for i,h in enumerate(headers):
 			model.setHeaderData(i+1,QtCore.Qt.Horizontal,h)
-		# One liner generator expression which is actually slower
-		#map(lambda (i, h): model.setHeaderData(i+1,QtCore.Qt.Horizontal,h), enumerate(headers))
 
 		self.resizeColumnsToContents()
 		self.resizeRowsToContents()

@@ -13,7 +13,7 @@ excludes = []
 packages = ["gi"]
   
 # Copy files/folder
-includefiles = [("config","config")]
+includefiles = [("config","config"), ("remote.sh","remote.sh")]
 
 # Additional libs
 binpathincludes = []
@@ -26,7 +26,8 @@ options = {"path": path,
 	"packages": packages,
 	"include_files": includefiles,
 	"bin_path_includes": binpathincludes,
-	"build_exe":"Foo.cd"
+	"build_exe":"Foo.cd",
+	"optimize": 2
 	}
   
 #############################################################################
@@ -40,7 +41,7 @@ target = Executable(
 	base = base,
 	targetName = "Foo.cd",
 	compress = True,
-	icon = None,
+	icon = None
 	)
   
 #############################################################################
