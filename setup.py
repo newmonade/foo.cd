@@ -13,7 +13,7 @@ excludes = []
 packages = ["gi"]
   
 # Copy files/folder
-includefiles = [("config","config"), ("remote.sh","remote.sh")]
+includefiles = [("config","config"), ("remote.sh","remote.sh"), ("Docs/Documentation.pdf","Docs/Documentation.pdf")]
 
 # Additional libs
 binpathincludes = []
