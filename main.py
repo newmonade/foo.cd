@@ -314,7 +314,7 @@ class Foo(QtGui.QMainWindow):
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['radio_mode']+'''</b> : Toggle radio mode<br/>''' + '''
 		<b>'''+dictSC['modifier']+'''+'''+dictSC['equalizer']+'''</b> : Equalizer<br/>'''
 		print(len(self.findChildren(QtCore.QObject)))
-		box = QMessageBox.about(self, 'About Message',
+		box = QMessageBox.about(self, 'About Shortcuts',
 		message)
 		print(len(self.findChildren(QtCore.QObject)))
 		print('must delete')

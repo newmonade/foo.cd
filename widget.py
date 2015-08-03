@@ -205,7 +205,7 @@ class Equalizer(QtGui.QDialog):
 			self.layout.itemAtPosition(2, index).widget().setValue(val)
     
 	def addPreset(self):
-		name, ok = QtGui.QInputDialog.getText(self, 'Input Dialog', 
+		name, ok = QtGui.QInputDialog.getText(self, 'Add new preset', 
 			'Name of this new preset:')
 		if ok:
 			if name in self.config.keys():
@@ -315,7 +315,7 @@ class Retagging(QtGui.QDialog):
 		self.resize(min(sum(maxWidth)+10, screen.width()-10), self.sizeHint().height())
 		
 	def addColumn(self):
-		name, ok = QtGui.QInputDialog.getText(self, 'Input Dialog', 
+		name, ok = QtGui.QInputDialog.getText(self, 'Add new tag', 
             			'Name of this new tag:')
 		if ok:
 			name = name.upper()
