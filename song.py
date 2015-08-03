@@ -26,15 +26,12 @@ class Song(dict):
 	@staticmethod
 	def getTagName(strOrder, optionalTags=False):
 		if optionalTags == True:
-			separator="$"
+			sep="$"
 		else:
-			separator="%"
-		indices = [i for i, x in enumerate(strOrder) if x == separator]
-		length = len(indices)//2
-		tags = [strOrder[indices[2*i]+1:indices[2*i+1]] for i in range(0, length)]
-		for t in tags:
-			strOrder = strOrder.replace(t, '', 1)
-		return (strOrder, tags)
+			sep="%"
+		splited = strOrder.split(sep)
+		# Take one every other
+		return ((sep+sep).join(splited[::2]), splited[1::2])
 			
 	def __init__(self, treeOrder, **kwargs):
 		super().__init__(self)
@@ -72,17 +69,16 @@ class Song(dict):
 					
 	# Add support for optional formating using '$ ... $'
 	def getOptionalValues(self, treeOrder):
-		#TODO Rewrite
 		(emptiedTreeOrder, optionalParts) = Song.getTagName(treeOrder, True)
-		optionalValues1 = []
+		optionalValuesMain = []
 		for part in optionalParts:
 		    (emptiedPart, optionalTagNames) = Song.getTagName(part)
 		    optionalValues = self.getValues(optionalTagNames)
 		    for val in optionalValues:
 		        emptiedPart = emptiedPart.replace('%%', str(val), 1)
-		    optionalValues1.append(emptiedPart)
+		    optionalValuesMain.append(emptiedPart)
 		
-		for val in optionalValues1:
+		for val in optionalValuesMain:
 		    if '???' not in val:
 		        emptiedTreeOrder = emptiedTreeOrder.replace('$$', str(val), 1)
 		    else :
