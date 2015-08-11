@@ -23,7 +23,7 @@ from thread import WorkThread, WorkThreadPipe
 from player import Player, ReplayGain
 
 import widget
-from widget import PlaybackButtons, SearchArea, VolumeSlider, Image, Equalizer, Retagging
+from widget import PlaybackButtons, SearchArea, VolumeSlider, ScrollSlider, Image, Equalizer, Retagging
 
 from tree import Tree
 from table_playlist import Table
@@ -68,11 +68,17 @@ class Foo(QtGui.QMainWindow):
 		self.playbackButtons.buttonNext.clicked.connect(self.next)
 		
 		self.volumeSlider = VolumeSlider(self)
-		self.scrollSlider = widget.createScrollSlider(self)
-		self.scrollSlider.sliderMoved.connect(self.player.seek)
+		self.volumeSlider.sliderMoved.connect(self.player.setVolume)
+		self.scrollSlider = ScrollSlider(self)
+		#self.scrollSlider.sliderMoved.connect(self.player.seek)
+		#self.scrollSlider.sliderMoved.connect(lambda val:print("A") if self.scrollSlider.isSliderDown() else print('B'))
 		self.scrollSlider.sliderPressed.connect(self.player.toggle)
 		self.scrollSlider.sliderReleased.connect(self.player.toggle)
-		self.volumeSlider.sliderMoved.connect(self.player.setVolume)
+		#include toggle in seek functions so if slider.down->player seek,
+		#otherwise slider.func
+		self.scrollSlider.sliderMoved.connect(self.player.seek)
+		#self.scrollSlider.valueChanged.connect(lambda val:self.player.seek(val) if self.scrollSlider.isSliderDown() else self.scrollSlider.func(val))
+        
         
 		self.pixmap = Image(self, config['cover_names'], config['extensions'])
 		

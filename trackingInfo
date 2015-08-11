@@ -57,7 +57,11 @@ Primary
 		* Following playlist and librairy
 	
 	- Tree: add a root node (for tagging and possibly playlist auto creation) -> Done
-	
+	- Click on slider moves to position directly
+	- Select multiple folders in add folder to library dialog
+	- xmobar currently playing
+
+
 Secondary
 	- Customizable status bar
 	- Histogram display, vu meter, spectrogram, ...

@@ -64,12 +64,28 @@ class VolumeSlider(QtGui.QSlider):
 			self.setValue(position-10)
 			self.sliderMoved.emit(position-10)
 
-def createScrollSlider(parent):
-	slider = QtGui.QSlider(QtCore.Qt.Horizontal, parent)
-	slider.setFocusPolicy(QtCore.Qt.NoFocus)
-	slider.setPageStep(1)
-	slider.setTracking(False)
-	return slider
+class ScrollSlider(QtGui.QSlider):
+	def __init__(self, parent):
+		super().__init__(QtCore.Qt.Horizontal, parent)
+		self.initUI()
+        
+	def initUI(self):
+		#slider = QtGui.QSlider(QtCore.Qt.Horizontal, parent)
+		self.setFocusPolicy(QtCore.Qt.NoFocus)
+		self.setPageStep(1)
+		self.setTracking(False)
+		self.actionTriggered.connect(self.action)
+	
+	def action(self, act):
+		if act == 3 or act == 4:
+			# Should get the position of click from widget
+			position = self.mapFromGlobal(QtGui.QCursor.pos()).x()
+			total = self.size().width()
+			val = (self.maximum() - self.minimum()) * (position/total)
+			#print(val)
+			self.setValue(val)
+			self.sliderMoved.emit(val)
+			
 
 class Image(QtGui.QLabel):
 
