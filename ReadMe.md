@@ -1,7 +1,7 @@
 Presentation
 =============
 
-A simple music player based on Python, Qt, GStreamer and TagLib. Functionalities include 
+A simple music player based on Python, Qt, GStreamer and TagLib. Functionalities include
 - Customizable library tree view
 - Customizale playlist view
 - Gapeless playback
@@ -34,7 +34,7 @@ Library
 
 Playlist
 - Enter: play
-- Del: delete song from playlist 
+- Del: delete song from playlist
 
 
 Shortcuts
@@ -76,12 +76,12 @@ The hierarchy of the tree library and the playlist columns can be customized in 
 where:
 
 - Tags are surrounded by *%*, they include any field present in your files plus the defaults: `%length%, %samplerate%, %channels%, %bitrate%`
-- Optional parts can be specified using `$...$`. This will display the formated tags for the tracks having the requested fields and nothing for the others. 
+- Optional parts can be specified using `$...$`. This will display the formated tags for the tracks having the requested fields and nothing for the others.
 	For example `$Disc %discnumber%$` will display *Disc 1* for files having a %discnumber% tag, and nothing for the others
 - The pipe `|` separator is used as sub-level for the tree and new column for the playlist
 
 
-Special tags : 
+Special tags :
 - `%file%` : path of the file
 - `%albumartist%` : if the tag exist in the file it contains the value otherwise it si mapped to the artist tag. Useful for compilation type CDs.
 - `%trackartist%` : contains the artist tag only for albums having an albumartist tag different from artist tag
@@ -105,9 +105,9 @@ The tree order shown above will give the following tree :
 						|-- ...
 					|-- Disc 2
 			|-- [2008] - Dukey Treats
-		...	
-```		
-	
+		...
+```
+
 Remote interface
 =============
 

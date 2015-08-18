@@ -38,10 +38,10 @@ def getAllTags(fileList):
 
 
 def getRepresentationAllTags(fileList):
-    allTags = getAllTags(fileList)
-    return {key: value[0] if value.count(value[0]) == len(value) else 'Multiple Values' for (key, value) in allTags.items()}
+	allTags = getAllTags(fileList)
+	return {key: value[0] if value.count(value[0]) == len(value) else 'Multiple Values' for (key, value) in allTags.items()}
 
-# Modify the file tags 
+# Modify the file tags
 def modifyTags(tags):
 	modified=False
 	file = taglib.File(tags['FILE'])
@@ -62,10 +62,10 @@ def modifyTags(tags):
 def exploreMusicFolder(musicFolder, append):
 	print("lets walk")
 	allFiles = ((taglib.File(os.path.join(root, name)), os.path.join('file://'+root, name) )
-		for root,dirs,files in os.walk(musicFolder, topdown=True) 
-		for name in files 
+		for root,dirs,files in os.walk(musicFolder, topdown=True)
+		for name in files
 		if name.lower().endswith(".flac") or name.lower().endswith(".mp3"))
-			
+
 	database =[]
 	for (f, p) in allFiles:
 		tags = {key:', '.join(value) for (key, value) in f.tags.items() }
@@ -76,11 +76,11 @@ def exploreMusicFolder(musicFolder, append):
 	if append:
 		db = load()
 		database.extend(db)
-		
+
 	save(database)
 	print('Finished scanning music folder')
 	return database
-	
+
 ''' Try with more music in folders
 def exploreMusicFolder(musicFolder, append):
 	database =[]
@@ -109,7 +109,7 @@ def exploreMusicFolder(musicFolder, append):
 	if append:
 		db = load()
 		database.extend(db)
-		
+
 	save(database)
 	print('Finished scanning music folder')
 	return database
@@ -119,7 +119,7 @@ def save(database):
 	#localFolder=os.path.dirname(os.path.realpath(__file__))
 	with open(os.path.join(localFolder,'musicDatabase.json'), mode='w', encoding='utf-8') as f:
 		json.dump(database, f, indent=2)
-  
+
 
 def load():
 	#localFolder=os.path.dirname(os.path.realpath(__file__))
@@ -127,13 +127,13 @@ def load():
 		with open(os.path.join(localFolder,'musicDatabase.json'), 'r', encoding='utf-8') as f:
 			return json.load(f)
 	except IOError:
-   		return []
+		return []
 
 def sanitize(database):
 	for dico in database:
 		track = dico.get('TRACKNUMBER', None)
 		if track != None:
-			try: 
+			try:
 				track = str(int(dico['TRACKNUMBER']))
 				if len(track) == 1:
 					dico['TRACKNUMBER'] = track.rjust(2, '0')
@@ -165,7 +165,7 @@ class WorkThread(QtCore.QThread):
 		QtCore.QThread.__init__(self)
 		self.musicFolder = musicFolder
 		self.append = append
-		
+
 	def run(self):
 		start1 = time.perf_counter()
 		exploreMusicFolder(self.musicFolder, self.append)
@@ -177,7 +177,7 @@ class WorkThread(QtCore.QThread):
 class WorkThreadPipe(QtCore.QThread):
 
 	hotKey = QtCore.pyqtSignal(str)
-   
+
 	def __init__(self):
 		QtCore.QThread.__init__(self)
 
