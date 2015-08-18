@@ -1,27 +1,27 @@
 # -*- coding: utf-8 -*-
 
 class Song(dict):
-	
+
 	def __getitem__(self, key):
 		if key == 'albumartist':
 			return self.get('albumartist', None) or self.get('artist', None) or '???'
 		elif key == 'trackartist':
 			albumArtist = self.get('albumartist', None)
 			artist = self.get('artist', None)
-			
+
 			if albumArtist != artist and albumArtist != None and artist != None:
 				return artist
 			else:
 				return '???'
 		else:
 			return self.get(key, '???')
-	
-	
+
+
 	#add tag names included in 'str' into 'tags'
 	#et retourne 'str' vidé de ses tags
-	#e.g. optionalTags False : ' %tracknumber%. %title% $- %trackartist%$ 
+	#e.g. optionalTags False : ' %tracknumber%. %title% $- %trackartist%$
 	#           -> (' %%. %% $- %%$', ['tracknumber', 'title', 'trackartist'])
-	#e.g. optionalTags True : ' %tracknumber%. %title% $- %trackartist%$ 
+	#e.g. optionalTags True : ' %tracknumber%. %title% $- %trackartist%$
 	#                    -> (' %tracknumber%. %title% $$', ['- %trackartist%'])
 	@staticmethod
 	def getTagName(strOrder, optionalTags=False):
@@ -32,13 +32,13 @@ class Song(dict):
 		splited = strOrder.split(sep)
 		# Take one every other
 		return ((sep+sep).join(splited[::2]), splited[1::2])
-			
+
 	def __init__(self, treeOrder, **kwargs):
 		super().__init__(self)
-		
+
 		(str, fields) = Song.getTagName(treeOrder)
 		fields.extend(['file', 'length', 'samplerate', 'channels', 'bitrate'])
-		
+
 		for f in fields:
 			if f.upper() in kwargs:
 				self.__setitem__(f, kwargs[f.upper()])
@@ -60,13 +60,13 @@ class Song(dict):
 		formatedValues = []
 		for level in treeLevels:
 			(emptiedLevel, tagNames) = Song.getTagName(level)
-			
+
 			values = self.getValues(tagNames)
 			for val in values:
 				emptiedLevel = emptiedLevel.replace('%%', str(val), 1)
 			formatedValues.append(emptiedLevel)
 		return formatedValues
-					
+
 	# Add support for optional formating using '$ ... $'
 	def getOptionalValues(self, treeOrder):
 		(emptiedTreeOrder, optionalParts) = Song.getTagName(treeOrder, True)
@@ -77,14 +77,14 @@ class Song(dict):
 		    for val in optionalValues:
 		        emptiedPart = emptiedPart.replace('%%', str(val), 1)
 		    optionalValuesMain.append(emptiedPart)
-		
+
 		for val in optionalValuesMain:
 		    if '???' not in val:
 		        emptiedTreeOrder = emptiedTreeOrder.replace('$$', str(val), 1)
 		    else :
 		        emptiedTreeOrder = emptiedTreeOrder.replace('$$', '', 1)
-		return self.getFormatedValues(emptiedTreeOrder)		
-		
+		return self.getFormatedValues(emptiedTreeOrder)
+
 	# Return true iif searchedStr exactly matches at least one field of the song
 	# Do not match case
 	def exactMatch(self, searchedStr):
@@ -92,8 +92,8 @@ class Song(dict):
 		for value in self.values():
 		    if value.lower() == searchedStr:
 		        return True
-		return False	
-	
+		return False
+
 	# Return true if searchedStr is a substring of at least one field of song
 	# Do not match case
 	def preciseMatch(self, searchedStr):
@@ -101,8 +101,8 @@ class Song(dict):
 		for value in self.values():
 			if str(value).lower().find(searchedStr) != -1:
 				return True
-		return False	
-	
+		return False
+
 	# Return true if any substring of searchedStr of length 3 is
 	# a sub string of at least one field of song, do not match case
 	def fuzzyMatch(self, searchedStr):
@@ -118,6 +118,5 @@ class Song(dict):
 		            if str(value).lower().find(searchedStr) != -1:
 		                return True
 		return False
-		
-		
-		
+
+

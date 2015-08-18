@@ -26,7 +26,7 @@ class Tree(QTreeView):
 				return int(s)
 			except:
 				return s
-		# Split the string between numeric and literal chunks and 
+		# Split the string between numeric and literal chunks and
 		# return a list of string and int
 		return [ tryint(c) for c in re.split('([0-9]+)', values) ]
 
@@ -41,20 +41,20 @@ class Tree(QTreeView):
 			# Create empty root node
 			root = [QStandardItem('Nothing')]
 			self.model().appendRow(root)
-	
+
 		# For every song
 		for s in disco:
 			attr = s.getOptionalValues(self.comm)
 			length=len(attr)
-			
+
 			# First attribut separated because attached to node
 			if attr[0] != attribs[0]:
 				node=QStandardItem(attr[0])
 				nodes = [node]
 				attribs = [x+"modified" for x in  attr]
 				root.appendRow(nodes[0])
-				attribs[0]=attr[0]		
-			
+				attribs[0]=attr[0]
+
 			for i in range(1, length-1):
 				if (attr[i] != attribs[i]):
 					node=QStandardItem(attr[i])
@@ -68,7 +68,7 @@ class Tree(QTreeView):
 			node = QStandardItem(attr[length-1])
 			nodes[-1].appendRow(node)
 			node.setData(s)
-	
+
 	def populateTreeOLD(self,disco):
 		# Get all attributes from first song
 		if len(disco) < 1:
@@ -76,7 +76,7 @@ class Tree(QTreeView):
 		else:
 			attribs = disco[0].getOptionalValues(self.comm)
 		length=len(attribs)
-			
+
 		if length >0:
 			# Create corresponding nodes
 			nodes = []
@@ -94,7 +94,7 @@ class Tree(QTreeView):
 			nodes = [QStandardItem('Nothing')]
 			nodes[0].setData('nothing')
 			self.model().appendRow(nodes[0])
-	
+
 		#Pour la tail de la liste
 		for s in disco[1:]:
 			attr = s.getOptionalValues(self.comm)
@@ -105,8 +105,8 @@ class Tree(QTreeView):
 				#self.model().appendRow(node)
 				nodes[0]=node
 				self.model().appendRow(nodes[0])
-				attribs[0]=attr[0]		
-			
+				attribs[0]=attr[0]
+
 			for i in range(1, length-1):
 				if (attr[i] != attribs[i]):# or differ:
 					node=QStandardItem(attr[i])
@@ -120,7 +120,7 @@ class Tree(QTreeView):
 			node = QStandardItem(attr[length-1])
 			nodes[length-2].appendRow(node)
 			node.setData(s)
-			
+
 	#should be checked on big librairy before using this version
 	'''
 	def populateTree(self,disco):
@@ -130,7 +130,7 @@ class Tree(QTreeView):
 		else:
 			attribs = disco[0].getOptionalValues(self.comm)
 		length=len(attribs)
-		
+
 		if length >0:
 			#Create corresponding nodes
 			nodes = [QStandardItem(x) for x in attribs]
@@ -147,7 +147,7 @@ class Tree(QTreeView):
 			nodes[0].setData('nothing')
 			self.model().appendRow(nodes[0])
 
-		
+
 		#Pour la tail de la liste
 		#for s in disco[1:]:
 		#	attr = s.getOptionalValues(self.comm)
@@ -160,8 +160,8 @@ class Tree(QTreeView):
 				#self.model().appendRow(node)
 				nodes[0]=node
 				self.model().appendRow(nodes[0])
-				attribs[0]=attr[0]		
-			
+				attribs[0]=attr[0]
+
 			for i in range(1, length-1):
 				if (attr[i] != attribs[i]):# or differ:
 					node=QStandardItem(attr[i])
@@ -176,14 +176,14 @@ class Tree(QTreeView):
 			nodes[length-2].appendRow(node)
 			node.setData(attr)
 	'''
-	
+
 	addSongs = QtCore.pyqtSignal(list,bool)
-	
+
 	def __init__(self, parent, comm):
 		super(Tree, self).__init__(parent)
 		self.comm=comm
 		self.initUI()
-        
+
 	def initUI(self):
 		self.setModel(QStandardItemModel())
 		self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -194,19 +194,19 @@ class Tree(QTreeView):
 
 		db = thread.load()
 		songList = [Song(self.comm, **dict) for dict in db]
-		
+
 		songList.sort(key=self.sortFunc)
-		
+
 		#start1 = time.perf_counter()
 		self.populateTree(songList)
 		#start2 = time.perf_counter()
 		#print('time', start2-start1)
-		
+
 		# Exand the root node
 		self.expand(self.indexAt(QtCore.QPoint(0,0)))
-		
+
 		self.show()
-	
+
 	def focusOutEvent(self, e):
 		self.selectionModel().clearSelection()
 
@@ -222,7 +222,7 @@ class Tree(QTreeView):
 			self.addSongs.emit(children, True)
 		else:
 			QTreeView.keyPressEvent(self, event)
-			
+
 	def getChildren(self):
 		def getChildrenRec(self, item, children):
 			if item.hasChildren():
@@ -239,5 +239,4 @@ class Tree(QTreeView):
 			return res
 		except:
 			return [{}]
-			
-			
+

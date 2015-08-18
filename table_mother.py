@@ -18,10 +18,10 @@ class TableMother(QtGui.QTableView):
 		self.setSelectionBehavior(QAbstractItemView.SelectRows)
 		self.setSelectionMode(QAbstractItemView.ExtendedSelection)
 		self.setTabKeyNavigation(False)
-		# No lines between cells	
+		# No lines between cells
 		self.setShowGrid(False)
 		self.setAlternatingRowColors(True)
-		self.setEditTriggers(QAbstractItemView.NoEditTriggers)	
+		self.setEditTriggers(QAbstractItemView.NoEditTriggers)
 		self.setWordWrap(False)
 		#Don't bold header when get focus
 		self.horizontalHeader().setHighlightSections(False)
@@ -53,13 +53,13 @@ class TableMother(QtGui.QTableView):
 				if self.model().item(i,0).text()=='[ ]':
 					oldPlayingId = i
 				self.model().item(i,0).setText('')
-		
+
 		self.model().item(indice,0).setText('>')
 		self.playingId = indice
 
 	#Update signs '[ ]' and '>'
 	#Different than stoptoplay because can be called by a shortcut
-	#Thus not having a positive indice 
+	#Thus not having a positive indice
 	def displayPauseToPlay(self, indice):
 		if self.playingId > -1:
 			self.model().item(self.playingId,0).setText('')
@@ -85,14 +85,14 @@ class TableMother(QtGui.QTableView):
 			self.model().item(self.playingId+1,0).setText('')
 		if self.playingId == 0:
 			self.model().item(self.playingId,0).setText('>')
-			
+
 
 	#Update signs '[ ]' and '>'
 	def displayPlayToStop(self):
 		if self.playingId > -1:
 			self.model().item(self.playingId,0).setText('[ ]')
 			self.playingId = -1
-	
+
 	#Update signs '||' and '>'
 	def displayPlayToPause(self):
 		if self.playingId > -1:
@@ -101,7 +101,7 @@ class TableMother(QtGui.QTableView):
 
 	def getStatus(self):
 		raise NotImplementedError( "Should have implemented this" )
-	
-	
-	
-	
+
+
+
+
