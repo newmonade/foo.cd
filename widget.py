@@ -70,11 +70,23 @@ class ScrollSlider(QtGui.QSlider):
 		self.initUI()
         
 	def initUI(self):
+		style = """
+	QSlider::groove:horizontal {
+                border-image: url(./waveform.png);            
+            }
+            QSlider::handle:horizontal {
+                background: #bbf;
+		width: 10px;
+            }"""
 		#slider = QtGui.QSlider(QtCore.Qt.Horizontal, parent)
 		self.setFocusPolicy(QtCore.Qt.NoFocus)
 		self.setPageStep(1)
 		self.setTracking(False)
 		self.actionTriggered.connect(self.action)
+		self.setStyleSheet(style)
+		#self.setStyleSheet("border-image: url(./waveform.png)")
+		
+		
 	
 	def action(self, act):
 		if act == 3 or act == 4:
