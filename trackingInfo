@@ -38,6 +38,8 @@ Done
 		* changing column name removes old tag and write new one -> Done
 		* remove multiple selection at once with del -> Done
 	- Webradio tags -> Done
+	- Tree: add a root node (for tagging and playlist auto creation) -> Done
+	- Click on slider moves to position directly -> Done
 	
 Primary
 	- Replay Gain ->TBD
@@ -56,10 +58,8 @@ Primary
 		* Following librairy selection
 		* Following playlist and librairy
 	
-	- Tree: add a root node (for tagging and possibly playlist auto creation) -> Done
-	- Click on slider moves to position directly
 	- Select multiple folders in add folder to library dialog
-	- xmobar currently playing
+	
 
 
 Secondary
@@ -70,6 +70,7 @@ Secondary
 	- Option to activate or deactivate remote interface 
 	- webradio images -> API usable but tags from radio very inconcistent
 	- PLaying history / stats
+	- xmobar currently playing
 	
 Optimization
 Base : 0.055s

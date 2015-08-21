@@ -29,6 +29,10 @@ from tree import Tree
 from table_playlist import Table
 from table_radio import TableRadio
 
+
+
+from PyQt4.QtWebKit import *
+
 class Foo(QtGui.QMainWindow):
 
 	def __init__(self):
@@ -70,16 +74,10 @@ class Foo(QtGui.QMainWindow):
 		self.volumeSlider = VolumeSlider(self)
 		self.volumeSlider.sliderMoved.connect(self.player.setVolume)
 		self.scrollSlider = ScrollSlider(self)
-		#self.scrollSlider.sliderMoved.connect(self.player.seek)
-		#self.scrollSlider.sliderMoved.connect(lambda val:print("A") if self.scrollSlider.isSliderDown() else print('B'))
 		self.scrollSlider.sliderPressed.connect(self.player.toggle)
 		self.scrollSlider.sliderReleased.connect(self.player.toggle)
-		#include toggle in seek functions so if slider.down->player seek,
-		#otherwise slider.func
 		self.scrollSlider.sliderMoved.connect(self.player.seek)
-		#self.scrollSlider.valueChanged.connect(lambda val:self.player.seek(val) if self.scrollSlider.isSliderDown() else self.scrollSlider.func(val))
-        
-        
+
 		self.pixmap = Image(self, config['cover_names'], config['extensions'])
 		
 		# Album cover connections
@@ -111,8 +109,8 @@ class Foo(QtGui.QMainWindow):
 		
 		self.splitterTopBottom.addWidget(self.table)
 		self.splitterTopBottom.addWidget(self.infoFrame)
-		self.splitterTopBottom.setStretchFactor(0,3)
-		self.splitterTopBottom.setStretchFactor(1,1)
+		self.splitterTopBottom.setStretchFactor(0,1)
+		#self.splitterTopBottom.setStretchFactor(1,0)
 
 		splitterLeftRight.addWidget(libFrame)
 		splitterLeftRight.addWidget(self.splitterTopBottom)
@@ -361,10 +359,10 @@ class Foo(QtGui.QMainWindow):
 		# Since the frame is already attached to the splitter, 
 		# it only moves it to the new position
 		self.splitterTopBottom.addWidget(self.infoFrame)
-		self.splitterTopBottom.setStretchFactor(0,3)
-		self.splitterTopBottom.setStretchFactor(1,1)
 		self.table.runAction.connect(self.tableAction)
 		self.setTabOrder(self.tree, self.table)
+		self.splitterTopBottom.setStretchFactor(0,10)
+		#self.splitterTopBottom.setStretchFactor(3,1)
 		
 	@QtCore.pyqtSlot()
 	def startSearch(self):
