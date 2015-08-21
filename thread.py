@@ -65,7 +65,13 @@ def exploreMusicFolder(musicFolder, append):
 		for root,dirs,files in os.walk(musicFolder, topdown=True) 
 		for name in files 
 		if name.lower().endswith(".flac") or name.lower().endswith(".mp3"))
-			
+	
+	
+	# Should try to replace with list comprehension
+	# using dict merging : z = {**x, **y}
+	# database = [{**{key:', '.join(value) for (key, value) in f.tags.items() }, 
+	#		**{'FILE':p, 'LENGTH':f.length, 'SAMPLERATE': f.sampleRate, 'CHANNELS':f.channels, 'BITRATE':f.bitrate}}
+	#			for (f,p) in allFiles]
 	database =[]
 	for (f, p) in allFiles:
 		tags = {key:', '.join(value) for (key, value) in f.tags.items() }
@@ -82,7 +88,7 @@ def exploreMusicFolder(musicFolder, append):
 	return database
 	
 ''' Try with more music in folders
-def exploreMusicFolder(musicFolder, append):
+def exploreMusicFolder2(musicFolder, append):
 	database =[]
 	for root, dirs, files in os.walk(musicFolder, topdown=True):
 		for name in files:
@@ -116,13 +122,11 @@ def exploreMusicFolder(musicFolder, append):
 '''
 
 def save(database):
-	#localFolder=os.path.dirname(os.path.realpath(__file__))
 	with open(os.path.join(localFolder,'musicDatabase.json'), mode='w', encoding='utf-8') as f:
 		json.dump(database, f, indent=2)
   
 
 def load():
-	#localFolder=os.path.dirname(os.path.realpath(__file__))
 	try:
 		with open(os.path.join(localFolder,'musicDatabase.json'), 'r', encoding='utf-8') as f:
 			return json.load(f)
