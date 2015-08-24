@@ -22,7 +22,7 @@ class Table(TableMother):
 		for i in attribs:
 			nodes.append(QStandardItem(i))
 			nodes[-1].setData(song)
-		self.model().appendRow(nodes) 
+		self.model().appendRow(nodes)
 
 	def __init__(self, parent, configOption):
 		#super(QtGui.QTableView, self).__init__(parent)
@@ -31,26 +31,26 @@ class Table(TableMother):
 		self.extensions = configOption['extensions'].replace(' ', '').split('|')
 		self.coverNames = configOption['cover_names'].replace(' ', '').split('|')
 		self.initUI()
-        
+
 	def initUI(self):
 		self.playingId = -1
 		model = QStandardItemModel()
 		self.setModel(model)
-		
+
 		#self.selectionModel().selectionChanged.connect(self.selectionChanged)
 
 		# Dummy line to display headers
 		self.addRow(Song(self.playlistOrder))
 		self.model().removeRow(0)
 
-        	# Fill headers, with first capital letter using title()
+			# Fill headers, with first capital letter using title()
 		headers = self.playlistOrder.title().replace('%','').split('|')
 		model.setHeaderData(0,QtCore.Qt.Horizontal,'')
 		for i,h in enumerate(headers):
 			model.setHeaderData(i+1,QtCore.Qt.Horizontal,h)
 		# One liner which is slower start1 = time.perf_counter()
 		#map(lambda (i, h): model.setHeaderData(i+1,QtCore.Qt.Horizontal,h), enumerate(headers))
-				
+
 		self.resizeColumnsToContents()
 		self.resizeRowsToContents()
 
@@ -60,7 +60,7 @@ class Table(TableMother):
 		if event.key() == Qt.Key_Delete:
 			index = self.selectedIndexes()[0]
 			row = index.model().itemFromIndex(index).row()
-			
+
 			childIndex=self.model().index(row+1,0)
 			childIndex2=self.model().index(row+1,self.model().columnCount()-1)
 			self.selectionModel().clearSelection()
@@ -82,9 +82,9 @@ class Table(TableMother):
 			status+='Stereo'
 		m, s = divmod(song['length'], 60)
 		status+= ' | %/'+"%02d:%02d" % (m, s)+' - Playing'
-	
+
 		return status
-	
+
 	def getSelection(self):
 		try:
 			return self.model().itemFromIndex(self.selectedIndexes()[0]).data()

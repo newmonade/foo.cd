@@ -40,7 +40,7 @@ Done
 	- Webradio tags -> Done
 	- Tree: add a root node (for tagging and playlist auto creation) -> Done
 	- Click on slider moves to position directly -> Done
-	
+
 Primary
 	- Replay Gain ->TBD
 		* Autoconvert foobar tags to GST tags ->they are accurate actually...
@@ -51,15 +51,15 @@ Primary
 		* Audio element in pipe
 			.replace rganalysis by rgvolume -> are tags really used ?
 		* If RG tags already there, bugs during recomputation : to many calls to onTag => different list size...
-	
+
 	- Artwork behavior :
 		* Fixed on song playing
 		* Following playlist selection
 		* Following librairy selection
 		* Following playlist and librairy
-	
+
 	- Select multiple folders in add folder to library dialog
-	
+
 
 
 Secondary
@@ -67,11 +67,11 @@ Secondary
 	- Histogram display, vu meter, spectrogram, ...
 	- volume bar style (stylesheet)
 	- Randomize playlist/Shuffle
-	- Option to activate or deactivate remote interface 
+	- Option to activate or deactivate remote interface
 	- webradio images -> API usable but tags from radio very inconcistent
 	- PLaying history / stats
 	- xmobar currently playing
-	
+
 Optimization
 Base : 0.055s
 new getTags: 0.044s
