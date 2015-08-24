@@ -38,7 +38,7 @@ class Foo(QtGui.QMainWindow):
 	def __init__(self):
 		super(Foo, self).__init__()
 		self.initUI()
-
+        
 	def initUI(self):
 		config = Foo.readConfig('options')
 		self.timeOut = -1
@@ -46,31 +46,31 @@ class Foo(QtGui.QMainWindow):
 		self.statusBar().showMessage('Ready')
 		self.createMenu()
 		self.setWindowTitle("Foo.cd")
-
+        
 		self.player = Player(Foo.readConfig('audio'))
 		self.player.bus.connect('message::eos', self.stop)
 		self.player.bus.connect('message::duration-changed', self.onDurationChanged)
-
+		   
 		self.tree = Tree(self, config['tree_order'])
 		self.tree.addSongs.connect(self.addSongsFromTree)
 		self.tree.customContextMenuRequested.connect(self.tmpTag)
-
+		
 		if not self.radio:
 			self.table=Table( self, config)
-			self.handlerATF = self.player.playbin.connect("about-to-finish", self.onAboutToFinish)
+			self.handlerATF = self.player.playbin.connect("about-to-finish", self.onAboutToFinish)   
 			self.table.runAction.connect(self.tableAction)
 		else:
 			configRadio = Foo.readConfigRadios()
 			self.table=TableRadio( self, configRadio)
 			self.table.runAction.connect(self.tableAction)
 			self.handlerT = self.player.bus.connect('message::tag', self.table.onTag)
-
+		
 		self.playbackButtons = PlaybackButtons(None)
 		self.playbackButtons.buttonPlay.clicked.connect(self.toggleSong)
 		self.playbackButtons.buttonStop.clicked.connect(self.stop)
 		self.playbackButtons.buttonPrev.clicked.connect(self.previous)
 		self.playbackButtons.buttonNext.clicked.connect(self.next)
-
+		
 		self.volumeSlider = VolumeSlider(self)
 		self.volumeSlider.sliderMoved.connect(self.player.setVolume)
 		self.scrollSlider = ScrollSlider(self)
@@ -79,34 +79,34 @@ class Foo(QtGui.QMainWindow):
 		self.scrollSlider.sliderMoved.connect(self.player.seek)
 
 		self.pixmap = Image(self, config['cover_names'], config['extensions'])
-
+		
 		# Album cover connections
 		self.tree.selectionModel().selectionChanged.connect(lambda: self.pixmap.onSelectionChanged(self.tree.getChildren()[0].get('file', None)))
 		self.table.selectionModel().selectionChanged.connect(lambda:  self.pixmap.onSelectionChanged(self.table.getSelection().get('file', None)))
-
+		
 		self.searchArea = SearchArea(self)
-		self.searchArea.searchLine.returnPressed.connect(self.startSearch)
-
+		self.searchArea.searchLine.returnPressed.connect(self.startSearch)	
+		
 		self.playbackButtons.addWidget(self.volumeSlider)
 		self.playbackButtons.addWidget(self.scrollSlider)
-
+		
 		splitterLeftRight = QtGui.QSplitter()
 		self.splitterTopBottom = QtGui.QSplitter(Qt.Vertical, self)
-
+		
 		self.infoFrame = QtGui.QFrame()
 		infoLayout = QtGui.QVBoxLayout()
 		infoLayout.setContentsMargins(0,0,0,0)
 		infoLayout.addLayout(self.playbackButtons)
 		infoLayout.addWidget(self.pixmap)
 		self.infoFrame.setLayout(infoLayout)
-
+		
 		libLayout = QtGui.QVBoxLayout()
 		libLayout.setContentsMargins(0,0,0,0)
 		libLayout.addWidget(self.tree)
 		libLayout.addLayout(self.searchArea)
 		libFrame = QtGui.QFrame()
 		libFrame.setLayout(libLayout)
-
+		
 		self.splitterTopBottom.addWidget(self.table)
 		self.splitterTopBottom.addWidget(self.infoFrame)
 		self.splitterTopBottom.setStretchFactor(0,1)
@@ -120,11 +120,11 @@ class Foo(QtGui.QMainWindow):
 		mainLayout = QtGui.QGridLayout()
 		mainLayout.setContentsMargins(4, 4, 4, 4)
 		mainLayout.addWidget(splitterLeftRight)
-
+		
 		dummyWidget = QtGui.QWidget()
-		dummyWidget.setLayout(mainLayout)
+		dummyWidget.setLayout(mainLayout)  
 		self.setCentralWidget(dummyWidget)
-
+		
 		self.setTabOrder(self.tree, self.table)
 
 		dictShortcuts = self.readConfig('shortcuts')
@@ -138,7 +138,7 @@ class Foo(QtGui.QMainWindow):
 		self.shortVolUp = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['volume_up']), self, self.volumeSlider.incr)
 		self.shortRadioMode = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['radio_mode']), self, self.toggleRadio)
 		self.shortEqualizer = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['equalizer']), self, self.openEqualizer)
-
+		
 		thread = QtCore.QThread(self)
 		thread.worker = WorkThreadPipe()
 		thread.worker.moveToThread(thread);
@@ -148,20 +148,20 @@ class Foo(QtGui.QMainWindow):
 		thread.worker.finished.connect(thread.worker.deleteLater)
 		thread.finished.connect(thread.deleteLater)
 		thread.start()
-
-
-
-
-
-
+		
+		
+		
+		
+		
+		
 		self.show()
-
+	
 	def keyReleaseEvent(self, event):
 		if event.key() == Qt.Key_Alt:
 			self.menuBar().setVisible(not self.menuBar().isVisible())
 		else:
 			QWidget.keyPressEvent(self, event)
-
+		
 	# Triggered by player end of stream event
 	# or called by hand to stop the stream
 	def stop(self, bus=None, msg=None):
@@ -176,29 +176,29 @@ class Foo(QtGui.QMainWindow):
 			self.table.playingId-=1
 			self.player.add(self.table.model().item(self.table.playingId,0).data()['file'])
 			self.player.play()
-
+			
 	def next(self):
 		if self.table.model().rowCount()-1 > self.table.playingId:
 			self.player.stop()
 			self.table.playingId+=1
 			self.player.add(self.table.model().item(self.table.playingId,0).data()['file'])
 			self.player.play()
-
-	def toggleSong(self):
+	
+	def toggleSong(self):			
 		state = self.player.playbin.get_state(Gst.State.NULL)
 		if state[1] == Gst.State.PLAYING:
 			self.table.displayPlayToPause()
 			self.player.toggle()
-
+			
 			status = self.statusBar().currentMessage().replace('Playing', 'Paused')
-			self.stopStatusEmission(status)
+			self.stopStatusEmission(status)	
 		else:
 			self.table.displayPauseToPlay(self.table.playingId)
 			self.player.toggle()
 			#self.onDurationChanged(0,0)
 			status = self.table.getStatus()
 			self.setStatusEmission(status)
-
+			
 	# Triggered by player when a song starts
 	def onDurationChanged(self, bus, msg):
 		self.table.displayNext()
@@ -224,33 +224,33 @@ class Foo(QtGui.QMainWindow):
 				self.table.displayStopToPlay(i)
 				status = self.table.getStatus()
 				self.setStatusEmission(status)
-
+	
 	def setStatusEmission(self, status):
 		if self.timeOut > 0:
 			GObject.source_remove(self.timeOut)
-		self.timeOut =  GObject.timeout_add(1000, self.update, status)
-
+		self.timeOut =  GObject.timeout_add(1000, self.update, status)	
+		
 	def stopStatusEmission(self, status):
 		if self.timeOut > 0:
 			GObject.source_remove(self.timeOut)
 		self.timeOut = GObject.timeout_add(0, self.update, status)
 		self.timeOut=-1
-
+	
 	def update(self, status):
 		print('.')
 		try:
 			duration_nanosecs = self.player.getDuration()
 			duration = float(duration_nanosecs) / 1000000000
 			self.scrollSlider.setRange(0, duration)
-
+			
 			nanosecs = self.player.getPosition()
-			position = float(nanosecs) // 1000000000
+			position = float(nanosecs) // 1000000000	
 			self.scrollSlider.setValue(position)
 			m, s = divmod(position, 60)
 			self.statusBar().showMessage(status.replace('%',"%02d:%02d" % (m, s)))
 		except Exception as e:
 			print(e)
-			pass
+			pass	
 		if 'Playing' in status:
 			return True
 		else:
@@ -266,14 +266,14 @@ class Foo(QtGui.QMainWindow):
 			else:
 				index= self.table.model().index(self.table.selectionModel().currentIndex().row(),0)
 			songURI = index.model().itemFromIndex(index).data()['file']
-
+			
 			self.player.stop()
 			self.player.add(songURI)
 			self.player.play()
 			self.table.displayStopToPlay(index.row())
 			status = self.table.getStatus()
 			self.setStatusEmission(status)
-
+			
 	@staticmethod
 	def readConfig(section):
 		parser = RawConfigParser()
@@ -283,7 +283,7 @@ class Foo(QtGui.QMainWindow):
 		else:
 			# unfrozen
 			parser.read(os.path.dirname(os.path.realpath(__file__))+'/config')
-
+		
 		return dict(parser.items(section))
 
 	#Create menu bar
@@ -291,16 +291,16 @@ class Foo(QtGui.QMainWindow):
 		self.menuBar()
 		self.menuBar().setVisible(False)
 		actionMenu = self.menuBar().addMenu('&Action')
-		scanMusicFolderAction = QtGui.QAction('Scan Music Folder', self)
+		scanMusicFolderAction = QtGui.QAction('Scan Music Folder', self) 
 		showShortcutAction = QtGui.QAction('Show Shortcut',self)
-		addFolderToLibraryAction = QtGui.QAction('Add Folder to Library',self)
+		addFolderToLibraryAction = QtGui.QAction('Add Folder to Library',self) 
 		self.toggleRadioAction= QtGui.QAction('Switch to Radio mode',self)
-		if not self.radio:
+		if not self.radio: 
 			self.toggleRadioAction.setText('Switch to Radio mode')
 		else:
-			self.toggleRadioAction.setText('Switch to Library mode')
-		#scanMusicFolderAction.setShortcut('Ctrl+N')
-		#scanMusicFolderAction.setStatusTip('Create new file')
+			self.toggleRadioAction.setText('Switch to Library mode') 
+		#scanMusicFolderAction.setShortcut('Ctrl+N') 
+		#scanMusicFolderAction.setStatusTip('Create new file') 
 		scanMusicFolderAction.triggered.connect(self.scanMusicFolder)
 		actionMenu.addAction(scanMusicFolderAction)
 		showShortcutAction.triggered.connect(self.showShortcut)
@@ -309,8 +309,8 @@ class Foo(QtGui.QMainWindow):
 		actionMenu.addAction(addFolderToLibraryAction)
 		self.toggleRadioAction.triggered.connect(self.toggleRadio)
 		actionMenu.addAction(self.toggleRadioAction)
-
-
+		
+		
 	# Menu Action 1
 	def scanMusicFolder(self):
 		thread = QtCore.QThread(self)
@@ -322,7 +322,7 @@ class Foo(QtGui.QMainWindow):
 		thread.finished.connect(thread.deleteLater)
 		thread.finished.connect(self.tree.initUI)
 		thread.start()
-
+		
 	# Menu Action 2
 	def showShortcut(self):
 		dictSC = Foo.readConfig('shortcuts')
@@ -348,10 +348,17 @@ class Foo(QtGui.QMainWindow):
 				"Open Directory",
 				Foo.readConfig('options')['music_folder'],
 				QFileDialog.ShowDirsOnly
-				| QFileDialog.DontResolveSymlinks)
-		self.thread = WorkThread(dir, True)
-		self.thread.finished.connect(self.tree.initUI)
-		self.thread.start()
+				| QFileDialog.DontResolveSymlinks)		
+		thread = QtCore.QThread(self)
+		thread.worker = WorkThread(dir, True)
+		thread.worker.moveToThread(thread)
+		thread.started.connect(thread.worker.process)
+		thread.worker.finished.connect(thread.quit)
+		thread.worker.finished.connect(thread.worker.deleteLater)
+		thread.finished.connect(thread.deleteLater)
+		thread.finished.connect(self.tree.initUI)
+		thread.start()
+		
 
 	# Menu Action4
 	def toggleRadio(self):
@@ -363,7 +370,7 @@ class Foo(QtGui.QMainWindow):
 			self.toggleRadioAction.setText('Switch to Library mode')
 			self.radio=True
 			self.player.playbin.disconnect(self.handlerATF)
-			self.handlerT=self.player.bus.connect('message::tag', self.table.onTag)
+			self.handlerT=self.player.bus.connect('message::tag', self.table.onTag)		
 		else:
 			config = Foo.readConfig('options')
 			self.table=Table( self.tree, config)
@@ -373,34 +380,34 @@ class Foo(QtGui.QMainWindow):
 			self.player.bus.disconnect(self.handlerT)
 
 		self.splitterTopBottom.addWidget(self.table)
-		# Since the frame is already attached to the splitter,
+		# Since the frame is already attached to the splitter, 
 		# it only moves it to the new position
 		self.splitterTopBottom.addWidget(self.infoFrame)
 		self.table.runAction.connect(self.tableAction)
 		self.setTabOrder(self.tree, self.table)
 		self.splitterTopBottom.setStretchFactor(0,10)
 		#self.splitterTopBottom.setStretchFactor(3,1)
-
+		
 	@QtCore.pyqtSlot()
 	def startSearch(self):
 		input = self.searchArea.searchLine.text()
-
+		
 		db = thread.load()
 		songList = []
 		songGenerator = (Song(self.tree.comm, **dict) for dict in db)
 		self.tree.model().removeRows(0, self.tree.model().rowCount())
-
+		
 		if self.searchArea.searchExact.isChecked():
 			songList = [ e for e in songGenerator if e.exactMatch(input) ]
 		elif self.searchArea.searchPrecise.isChecked():
 			songList = [ e for e in songGenerator if e.preciseMatch(input) ]
 		else:
-			songList = [ e for e in songGenerator if e.fuzzyMatch(input) ]
-
+			songList = [ e for e in songGenerator if e.fuzzyMatch(input) ]	
+		
 		del db[:]
 		songList.sort(key=self.tree.sortFunc)
 		self.tree.populateTree(songList)
-
+		
 	@QtCore.pyqtSlot(str)
 	def onHotKey(self, key):
 		print('Hotkey was pressed', key)
@@ -449,7 +456,7 @@ class Foo(QtGui.QMainWindow):
 		menu = QtGui.QMenu()
 		tagging = QtGui.QAction('Tagging',self)
 		replayGain = QtGui.QAction('ReplayGain',self)
-
+		
 		tagging.triggered.connect(self.openTagging)
 		replayGain.triggered.connect(self.startReplayGain)
 		menu.addAction(tagging)
@@ -460,7 +467,7 @@ class Foo(QtGui.QMainWindow):
 		children = self.tree.getChildren()
 		self.RG = ReplayGain([x['file'] for x in children])
 		self.RG.exec_()
-
+	
 	def openTagging(self):
 		children = self.tree.getChildren()
 		#[7:] to drop the 'file://' appended for gstreamer
@@ -469,7 +476,7 @@ class Foo(QtGui.QMainWindow):
 		if res:
 			self.tree.initUI()
 		print(res)
-
+	
 	def openEqualizer(self):
 		from configparser import RawConfigParser
 		equa = Equalizer(self, Foo.readConfig('audio'))
@@ -480,7 +487,7 @@ class Foo(QtGui.QMainWindow):
 			parser['audio']['settings']= str(equa.config)
 			with open(os.path.dirname(os.path.realpath(__file__))+'/config', 'w') as configfile:
 				parser.write(configfile)
-
+		
 	def applyEqua(self,band, value):
 		print('receiving equa', str(band), value)
 		if str(band) == 'band0' and value == 0:
@@ -492,7 +499,7 @@ def main():
 	app = QApplication(sys.argv)
 	ex = Foo()
 	sys.exit(app.exec_())
-
+	
 if __name__ == '__main__':
 	'''import cProfile, pstats, io
 	pr = cProfile.Profile()
