@@ -59,10 +59,14 @@ def modifyTags(tags):
 	file.save()
 	return modified
 
+
+def errorAug(err):
+	print(err)
+
 def exploreMusicFolder(musicFolder, append):
 	print("lets walk")
 	allFiles = ((taglib.File(os.path.join(root, name)), os.path.join('file://'+root, name) )
-		for root,dirs,files in os.walk(musicFolder, topdown=True) 
+		for root,dirs,files in os.walk(musicFolder, topdown=True, onerror=errorAug) 
 		for name in files 
 		if name.lower().endswith(".flac") or name.lower().endswith(".mp3"))
 	
@@ -73,12 +77,23 @@ def exploreMusicFolder(musicFolder, append):
 	#		**{'FILE':p, 'LENGTH':f.length, 'SAMPLERATE': f.sampleRate, 'CHANNELS':f.channels, 'BITRATE':f.bitrate}}
 	#			for (f,p) in allFiles]
 	database =[]
+	counter=0
 	for (f, p) in allFiles:
-		print(f)
-		print(p)
+		#print(f)
+		#print(p)
 		tags = {key:', '.join(value) for (key, value) in f.tags.items() }
 		tags.update({'FILE':p, 'LENGTH':f.length, 'SAMPLERATE': f.sampleRate, 'CHANNELS':f.channels, 'BITRATE':f.bitrate})
 		database.append(tags)
+		counter+=1
+		
+		if counter==10:
+			sanitize(database)
+			print("aaa")
+			db = load()
+			print("bbb")
+			database.extend(db)
+			database=[]
+			counter=0
 
 	sanitize(database)
 	if append:
