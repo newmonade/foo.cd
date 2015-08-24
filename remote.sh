@@ -7,7 +7,7 @@ SCRIPTPATH=$(dirname $(readlink -f "$0"))
 PIPE="pipe"
 
 echo -e \\033c
-	
+
 	echo -e '\e[91m	  -=+/  Foo.cd pipe commands  \+=- \e[39m'
 	echo ""
 	echo -e "\e[37m	Play/Pause       Stop         Quit \e[21m"
@@ -23,9 +23,9 @@ echo -e \\033c
 	echo -e "\e[1m	  Enter          TBD \e[21m"
 	echo ""
 	echo ""
-	
+
 while [ $i -lt 1 ]
-do	
+do
 	read -rsn1 ui
 	case "$ui" in
 		$'\x1b')    # Handle ESC sequence.
@@ -43,7 +43,7 @@ do
 		fi
 		# Flush "stdin" with 0.1  sec timeout.
 		read -rsn5 -t 0.01;;
-		
+
 		# Other one byte (char) cases. Here only quit.
 		"") echo "tree_validate" > $SCRIPTPATH/$PIPE;;
 		z) echo "tree_up" > $SCRIPTPATH/$PIPE;;
@@ -55,5 +55,5 @@ do
 		9) echo "quit" > $SCRIPTPATH/$PIPE; i=1 ;;
 		*) printf "ERROR: Invalid selection"; printf $ui;;
 	esac
-	
+
 done

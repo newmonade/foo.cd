@@ -19,12 +19,12 @@ class TableRadio(TableMother):
 		attribs = song.getOptionalValues('%name%|'+self.radioConfig['prefered_informations'])
 		nodes = [QStandardItem(x) for x in attribs]
 		map(lambda x : x.setData(song), nodes)
-		
+
 		n = QStandardItem('')
 		n.setData(song)
 		nodes.insert(0, n)
 		self.model().appendRow(nodes)
-		
+
 	def onTag(self, bus, msg):
 		song = self.model().item(self.playingId, 0).data()
 		(emptiedStr, tagNames) = Song.getTagName(self.radioConfig['prefered_informations'])
@@ -43,26 +43,26 @@ class TableRadio(TableMother):
 			elif tag == "genre":
 				song['genre'] = tagslist.get_string(tag)[1]
 			elif tag == "channel-mode":
-				song['channels'] = tagslist.get_string(tag)[1]	
+				song['channels'] = tagslist.get_string(tag)[1]
 		taglist.foreach(handle_tag, None)
 		attribs = song.getOptionalValues(self.radioConfig['prefered_informations'])
 		self.model().item(self.playingId, 2).setText(attribs[0])
-		
+
 	def __init__(self, parent, radioConfig):
 		super().__init__(parent)
 		self.radioConfig = radioConfig
 		self.initUI()
-        
+
 	def initUI(self):
 		self.playingId = -1
 		model = QStandardItemModel()
 		self.setModel(model)
-		
+
 		#self.selectionModel().selectionChanged.connect(self.selectionChangedCustom)
- 
+
 		stations = self.radioConfig['stations'].split('|')
 		for station in stations:
-			tags = dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')]))	 
+			tags = dict(zip(['NAME','FILE'], [st.strip() for st in station.split('!')]))
 			self.addRow(Song('%name%'+self.radioConfig['prefered_informations'], **tags))
 
 		# Fill in the header, with capital for the first letter(title())
@@ -74,7 +74,7 @@ class TableRadio(TableMother):
 		self.resizeColumnsToContents()
 		self.resizeRowsToContents()
 		self.show()
-		
+
 	def keyPressEvent(self, event):
 		if event.key() == Qt.Key_Return:
 			self.runAction.emit('play')

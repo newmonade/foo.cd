@@ -37,7 +37,7 @@ Library
 
 Playlist
 - *Enter*: play
-- *Del*: delete song from playlist 
+- *Del*: delete song from playlist
 
 
 Shortcuts
@@ -79,12 +79,12 @@ The hierarchy of the tree library and the playlist columns can be customized in 
 where:
 
 - Tags are surrounded by *%*, they include any field present in your files plus the defaults: `%length%, %samplerate%, %channels%, %bitrate%`
-- Optional parts can be specified using `$...$`. This will display the formated tags for the tracks having the requested fields and nothing for the others. 
+- Optional parts can be specified using `$...$`. This will display the formated tags for the tracks having the requested fields and nothing for the others.
 	For example `$Disc %discnumber%$` will display *Disc 1* for files having a %discnumber% tag, and nothing for the others
 - The pipe `|` separator is used as sub-level for the tree and new column for the playlist
 
 
-Special tags : 
+Special tags :
 - `%file%` : path of the file
 - `%albumartist%` : if the tag exist in the file it contains the value otherwise it si mapped to the artist tag. Useful for compilation type CDs.
 - `%trackartist%` : contains the artist tag only for albums having an albumartist tag different from artist tag
@@ -108,8 +108,8 @@ The tree order shown above will give the following tree :
 						|-- ...
 					|-- Disc 2
 			|-- [2008] - Dukey Treats
-		...	
-```		
+		...
+```
 
 Album art
 =========
@@ -132,7 +132,7 @@ All the children of that node will be selected.
 - Tags can be edited by double clicking in any cell
 - Multiple selection can be deleted by pressing the delete key
 
-**Note** : For any cell left empty or containing only whitespaces the corresponding tag will be removed from the files (or not created if a column is added and only some of its cells are filled). 
+**Note** : For any cell left empty or containing only whitespaces the corresponding tag will be removed from the files (or not created if a column is added and only some of its cells are filled).
 
 
 ReplayGain
@@ -143,10 +143,10 @@ Config replay_gain_album_mode
 
 Radio
 =====
-It is possible to switch between *radio* and *library* mode using a shortcut (specified in the configuration file). 
-The `stations` field in the configuration file is the list of web radios separated by a pipe character `|`. Each radio is a tuple: the name given to the radio and its url, separated by `!` 
+It is possible to switch between *radio* and *library* mode using a shortcut (specified in the configuration file).
+The `stations` field in the configuration file is the list of web radios separated by a pipe character `|`. Each radio is a tuple: the name given to the radio and its url, separated by `!`
 
-When in radio mode, Foo.cd will retrieve available tags from the stream and display them. The `prefered_information` field in the configuration file allow to specify which tags should be displayed. It is important to remember that the availability of tags depends on the stream. 
+When in radio mode, Foo.cd will retrieve available tags from the stream and display them. The `prefered_information` field in the configuration file allow to specify which tags should be displayed. It is important to remember that the availability of tags depends on the stream.
 
 Remote interface
 =============
@@ -172,4 +172,4 @@ The actions related to keywords should be self explanatory.
 In radio mode  `tree_up` and `tree_down` actually control the selection in the radio list up and down,
 `song_next` and `song_prev` directly change the radio station being listened,
 `tree_left, tree_right` and `tree_append` are deactivated,
-and the others function just like in library mode. 
+and the others function just like in library mode.
