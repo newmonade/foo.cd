@@ -139,9 +139,20 @@ class Foo(QtGui.QMainWindow):
 		self.shortRadioMode = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['radio_mode']), self, self.toggleRadio)
 		self.shortEqualizer = QtGui.QShortcut(QtGui.QKeySequence(modifier+dictShortcuts['equalizer']), self, self.openEqualizer)
 		
-		pipeWorker = WorkThreadPipe()   
-		pipeWorker.hotKey.connect(self.onHotKey)
-		pipeWorker.start()
+		thread = QtCore.QThread(self)
+		thread.worker = WorkThreadPipe()
+		thread.worker.moveToThread(thread);
+		thread.started.connect(thread.worker.process)
+		thread.worker.hotKey.connect(self.onHotKey)
+		thread.worker.finished.connect(thread.quit)
+		thread.worker.finished.connect(thread.worker.deleteLater)
+		thread.finished.connect(thread.deleteLater)
+		thread.start()
+		
+		
+		
+		
+		
 		
 		self.show()
 	
@@ -302,9 +313,15 @@ class Foo(QtGui.QMainWindow):
 		
 	# Menu Action 1
 	def scanMusicFolder(self):
-		self.thread = WorkThread(Foo.readConfig('options')['music_folder'], False)
-		self.thread.finished.connect(self.tree.initUI)
-		self.thread.start()
+		thread = QtCore.QThread(self)
+		thread.worker = WorkThread(Foo.readConfig('options')['music_folder'], False)
+		thread.worker.moveToThread(thread)
+		thread.started.connect(thread.worker.process)
+		thread.worker.finished.connect(thread.quit)
+		thread.worker.finished.connect(thread.worker.deleteLater)
+		thread.finished.connect(thread.deleteLater)
+		thread.finished.connect(self.tree.initUI)
+		thread.start()
 		
 	# Menu Action 2
 	def showShortcut(self):

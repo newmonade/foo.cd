@@ -74,6 +74,8 @@ def exploreMusicFolder(musicFolder, append):
 	#			for (f,p) in allFiles]
 	database =[]
 	for (f, p) in allFiles:
+		print(f)
+		print(p)
 		tags = {key:', '.join(value) for (key, value) in f.tags.items() }
 		tags.update({'FILE':p, 'LENGTH':f.length, 'SAMPLERATE': f.sampleRate, 'CHANNELS':f.channels, 'BITRATE':f.bitrate})
 		database.append(tags)
@@ -164,36 +166,39 @@ def updateDB(fileList):
 				database[i] = listTags[j]
 	save(database)
 
-class WorkThread(QtCore.QThread):
+class WorkThread(QtCore.QObject):
+	finished = QtCore.pyqtSignal()
 	def __init__(self, musicFolder, append):
-		QtCore.QThread.__init__(self)
+		QtCore.QObject.__init__(self)
 		self.musicFolder = musicFolder
 		self.append = append
 		
-	def run(self):
-		start1 = time.perf_counter()
+	def process(self):
+		#start1 = time.perf_counter()
 		exploreMusicFolder(self.musicFolder, self.append)
-		start2 = time.perf_counter()
-		print('time', start2-start1)
-		self.deleteLater()
+		#start2 = time.perf_counter()
+		#print('time', start2-start1)
+		#self.deleteLater()
+		self.finished.emit()
 
 
-class WorkThreadPipe(QtCore.QThread):
+class WorkThreadPipe(QtCore.QObject):
 
 	hotKey = QtCore.pyqtSignal(str)
+	finished = QtCore.pyqtSignal()
    
 	def __init__(self):
-		QtCore.QThread.__init__(self)
+		QtCore.QObject.__init__(self)
 
-	def run(self):
+	def process(self):
 		pipePath=localFolder+'/pipe'
 		# Constantly read the pipe and emit a signal every time there is something to read
 		pipein = open(pipePath, 'r')
 		while True:
 			line = pipein.read()
 			if line != '':
-				self.hotKey.emit(line.replace('\n', ''))
+				self.hotKey.emit(line.replace('\n', ''))				
 				# Reopen because is kind of blocking and waiting for a new input
 				pipein = open(pipePath, 'r')
 
-
+		finished.emit()

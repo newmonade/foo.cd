@@ -8,7 +8,9 @@ import os
 class PlaybackButtons(QtGui.QHBoxLayout):
 
 	def __init__(self, parent):
+	
 		super().__init__(parent)
+		
 		self.initUI()
         
 	def initUI(self):
@@ -28,16 +30,14 @@ class PlaybackButtons(QtGui.QHBoxLayout):
 		self.buttonNext.setMaximumSize(25,25)
 		self.buttonNext.setFocusPolicy(QtCore.Qt.NoFocus)
 		self.buttonNext.setFont(QtGui.QFont('TypeWriter', 9))
-		self.setContentsMargins(0, 0, 0, 0)  
+		self.setContentsMargins(0, 0, 0, 0)
 		
 		self.addWidget(self.buttonPrev)
 		self.addWidget(self.buttonStop)
 		self.addWidget(self.buttonPlay)
 		self.addWidget(self.buttonNext)
         
-        
 class VolumeSlider(QtGui.QSlider):
-
 	def __init__(self, parent):
 		super().__init__(QtCore.Qt.Horizontal, parent)
 		self.initUI()
