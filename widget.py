@@ -5,6 +5,7 @@ from PyQt4.QtCore import Qt
 import thread
 import os
 
+
 class PlaybackButtons(QtGui.QHBoxLayout):
 
 	def __init__(self, parent):
@@ -78,15 +79,18 @@ class ScrollSlider(QtGui.QSlider):
 				background: #bbf;
 		width: 10px;
 			}"""
-		#slider = QtGui.QSlider(QtCore.Qt.Horizontal, parent)
+		
 		self.setFocusPolicy(QtCore.Qt.NoFocus)
 		self.setPageStep(1)
 		self.setTracking(False)
 		self.actionTriggered.connect(self.action)
-		self.setStyleSheet(style)
-		#self.setStyleSheet("border-image: url(./waveform.png)")
-
-
+		# One or the other
+		#self.setStyleSheet(style)
+		self.setStyleSheet("border-image: url(./wave.png)")
+		
+		
+		
+	
 
 	def action(self, act):
 		if act == 3 or act == 4:

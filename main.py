@@ -28,10 +28,9 @@ from widget import PlaybackButtons, SearchArea, VolumeSlider, ScrollSlider, Imag
 from tree import Tree
 from table_playlist import Table
 from table_radio import TableRadio
+import wave
 
 
-
-from PyQt4.QtWebKit import *
 
 class Foo(QtGui.QMainWindow):
 
@@ -148,12 +147,7 @@ class Foo(QtGui.QMainWindow):
 		thread.worker.finished.connect(thread.worker.deleteLater)
 		thread.finished.connect(thread.deleteLater)
 		thread.start()
-		
-		
-		
-		
-		
-		
+			
 		self.show()
 	
 	def keyReleaseEvent(self, event):
@@ -203,6 +197,11 @@ class Foo(QtGui.QMainWindow):
 	def onDurationChanged(self, bus, msg):
 		self.table.displayNext()
 		print('Duration changed signal !')
+		filename = self.table.model().item(self.table.playingId,0).data()['file'][7:]
+		data = wave.getDBData(filename)
+		wave.createImg(data)
+		self.scrollSlider.setStyleSheet("border-image: url(./wave.png)")
+		
 
 	# Triggered by player at the end of a song
 	def onAboutToFinish(self, bus):
@@ -293,20 +292,21 @@ class Foo(QtGui.QMainWindow):
 		actionMenu = self.menuBar().addMenu('&Action')
 		scanMusicFolderAction = QtGui.QAction('Scan Music Folder', self) 
 		showShortcutAction = QtGui.QAction('Show Shortcut',self)
-		addFolderToLibraryAction = QtGui.QAction('Add Folder to Library',self) 
-		self.toggleRadioAction= QtGui.QAction('Switch to Radio mode',self)
+		addFolderToLibraryAction = QtGui.QAction('Add Folder to Library',self)
+		scanWaveformsAction = QtGui.QAction('Scan wave froms',self)
+		#self.toggleRadioAction= QtGui.QAction('Switch to Radio mode',self)
 		if not self.radio: 
-			self.toggleRadioAction.setText('Switch to Radio mode')
+			self.toggleRadioAction= QtGui.QAction('Switch to Radio mode',self)
 		else:
-			self.toggleRadioAction.setText('Switch to Library mode') 
-		#scanMusicFolderAction.setShortcut('Ctrl+N') 
-		#scanMusicFolderAction.setStatusTip('Create new file') 
+			self.toggleRadioAction= QtGui.QAction('Switch to Library mode',self)
 		scanMusicFolderAction.triggered.connect(self.scanMusicFolder)
 		actionMenu.addAction(scanMusicFolderAction)
 		showShortcutAction.triggered.connect(self.showShortcut)
 		actionMenu.addAction(showShortcutAction)
 		addFolderToLibraryAction.triggered.connect(self.addFolderToLibrary)
 		actionMenu.addAction(addFolderToLibraryAction)
+		scanWaveformsAction.triggered.connect(self.scanWaveforms)
+		actionMenu.addAction(scanWaveformsAction)
 		self.toggleRadioAction.triggered.connect(self.toggleRadio)
 		actionMenu.addAction(self.toggleRadioAction)
 		
@@ -359,8 +359,20 @@ class Foo(QtGui.QMainWindow):
 		thread.finished.connect(self.tree.initUI)
 		thread.start()
 		
-
-	# Menu Action4
+	# Menu action 4
+	def scanWaveforms(self):
+		from wave import Wave
+		thread = QtCore.QThread(self)
+		thread.worker = Wave(Foo.readConfig('options')['music_folder'])
+		thread.worker.moveToThread(thread)
+		thread.started.connect(thread.worker.processScan)
+		thread.worker.finished.connect(thread.quit)
+		thread.worker.finished.connect(thread.worker.deleteLater)
+		thread.finished.connect(thread.deleteLater)
+		thread.finished.connect(self.tree.initUI)
+		thread.start()
+	
+	# Menu Action5
 	def toggleRadio(self):
 		self.table.deleteLater()
 		self.table.close()
